@@ -1,0 +1,39 @@
+
+\renewcommand{\currentPart}{Other technical considerations}
+
+\newpage
+\part{Other technical considerations}
+
+\subsection*{Overwriting the files}
+
+In all implementations (\python, \awk, \perl. \julia), we overwrite the file whenever we open a new one. \\
+
+This was done out of convenience for our particular example, to verify our results more easily (see Part \ref{verify-results}). In our case:
+\begin{itemize}
+	\item we needed to make sure that our output files are overwritten each time a script is executed again (i.e. we do not want the result of previous executions in our output files), even if we forget to purge our output files before each execution
+	\item we knew that our input data (a MariaDB database dump file) would not switch back and forth between buckets (i.e. bucket A, then bucket B, then back to bucket A) so our scripts would never write to the same output file twice.
+\end{itemize}
+
+For these reasons, we decided to \emph{overwrite} our output files, instead of \emph{appending} to them. 
+We also made sure to \emph{number each of our files}, so that we easily reconstruct the input from the output files (as described in Part \ref{verify-results}: \emph{``\nameref{verify-results}"}). \\
+
+
+
+That being said, depending on your use-case you might want to modify our scripts in order to write to the same output file more than once. To do so, you will need to take the following precautions:
+
+\begin{enumerate}
+	\item first of all, before executing the script you would need to clear the content of existing output files, but \emph{only if necessary} (there are cases when you would want to keep the result of previous executions and append data to existing files)
+	
+	In any case, it is \emph{your responsibility} to empty (or remove) the output files in-between executions of the scripts.
+	
+	\item  then, you would need to modify the scripts to \emph{append} data to files instead of \emph{overwriting} files
+	
+	\begin{itemize}
+		\item in the \python\ script, this is done by changing the file open \cmd{mode} from \cmd{"w+"} to \cmd{"a+"}
+		\item in the \gawk\ script, this is done by changing the \cmd{print  > file} to \newline
+		\cmd{print >> file}
+		\item in the \perl\ script, this is done by changing the file open \cmd{mode} from \cmd{">"} to \cmd{">>"}
+	\end{itemize}
+\end{enumerate}
+
+Of course, we could add an option for the scripts to \emph{append to} the output files instead of overwriting them (similar to the \emph{-a} option of the \texttt{tee} command), but this goes beyond the scope of this article.

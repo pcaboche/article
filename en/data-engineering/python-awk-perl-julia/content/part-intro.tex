@@ -1,0 +1,131 @@
+
+\renewcommand{\currentPart}{Preamble}
+
+
+\section*{Target audience}
+
+This article might be of interest for:
+\begin{itemize}
+	\item programmers in general
+	\item people who need to quickly get started with \python, \awk, \perl, or \julia
+	\item Data Engineers, who regularly need to write scripts for processing large files
+	\begin{itemize}
+		\item in our example, we will split data into ``buckets".
+		\item specifically, we will take a MariaDB database dump file, and separate the data on a per-table basis
+	\end{itemize}
+\end{itemize}
+
+
+
+
+\newpage
+
+\section*{Introduction}
+
+\python\ is a general-purpose language which has become extremely popular in domains such as Big Data, Data Engineering, Machine Learning, etc. \python\ also has a number of applications in other fields due to its flexibility and relative ease of use. \\
+
+In this article, we will try to use \python\ to process a large text file (a very common problem in Big Data and other fields), evaluate Python's abilities to accomplish this task, and then compare it with solutions using other scripting languages (namely: \awk, \perl, and \julia). \\
+
+The problem we are trying to solve is the following: we have been given a huge text file, and its data needs to be separated into several smaller, more manageable files (``buckets" of data) based on certain conditions. \\
+
+In our example, the file will be a ``backup" (dump file) of a MySQL / MariaDB database, as produced by the \mysqldump\ utility, and we need to separate the data on a per-table basis (1 file per table). \\
+
+I have chosen this example because:
+\begin{itemize}
+	\item it should be easy to follow (we will deliberately keep the examples simple)
+	\item it touches different domains
+	\begin{itemize}
+		\item Data Engineering (for the main concept)
+		\item MySQL / MariaDB database administration (for the example)
+	\end{itemize}
+\end{itemize}
+
+
+\medskip
+
+\subsection*{Scripting languages}
+
+To process our files, we will be using scripting languages only (Python, AWK, Perl).
+The advantage of scripting languages is that the scripts can be easily edited, without the need to recompile the code into an executable. \\
+
+Our scripts will be compatible with the Linux Command Line Interface (CLI). 
+On Windows, it is possible to run such scripts using Windows Subsystem for Linux (WSL) 2. \\
+
+
+
+
+In this article, we see how to implement a very common problem (processing a text file), in the following scripting languages: 
+
+\begin{itemize}
+	\item \python
+	\item AWK
+	\item \perl
+	\item \julia
+\end{itemize}
+
+\newpage
+
+For each language, we will see how to perform some common operations. This will not only allow us to easily get started with these languages, but it will also allow us to compare how these operations are performed in each language: \\
+\begin{itemize}
+	\item General
+	\begin{itemize}
+		\item how to run the script
+		\item variables (strings, integers)
+		\item string operation (concatenation, formatting)
+	\end{itemize}
+	\item Files and I/O
+	\begin{itemize}
+		\item how to read a stream of data from the standard input ( \stdin\ )
+		\item how to open and close files
+		\item how to write to standard output ( \stdout\ ), standard error ( \stderr\ ), and files
+	\end{itemize}
+	\item Regular expressions
+	\begin{itemize}
+		\item how to test if the data matches a certain \emph{regular expression}
+		\item how to capture groups in a \emph{regular expression} (named groups, vs. numbered groups)
+	\end{itemize}
+\end{itemize}
+
+
+\medskip
+
+\subsection*{The general problem}
+
+
+The type of problem we're trying to solve is of the following form:
+
+\begin{itemize}
+	\item we have a text file containing a lot of data
+	\item this data needs to be split into several smaller ``buckets" (one file per bucket)
+	\item we are reading the input file line by line, and writing to different output files
+	\item by analysing the content of a line, we decide when to switch between the different output files
+\end{itemize}
+
+
+\medskip
+
+For example, we may have a file with the following template:
+
+\begin{lstlisting}[language=Python]
+# The following needs to go to file #1
+Some data here...
+(...)
+
+# The following needs to go to file #2
+More data there...
+(...)
+
+# The following needs to go to file #1
+Even more data, which needs to go to the first bucket...
+(...)	
+\end{lstlisting}
+
+\medskip
+
+
+In this example, the ``bucket switch" is indicated by a line of the form:
+\begin{lstlisting}[language=Python]
+# The following needs to go to file ...
+\end{lstlisting}
+\dots and we determine which bucket to switch to based on the content of the line.
+

@@ -1,0 +1,375 @@
+
+\renewcommand{\currentPart}{Perl} 
+
+\newpage
+\part{Perl} \label{perl}
+
+After rewriting the script from Python to \gawk, I though that for the sake of comparison I might as well do it in \perl\ too, and see how it goes.
+
+\section*{The script}
+
+And just like with the \gawk\ script, what you're seeing here is my very first \perl\ program ever... 
+
+\begin{figure}[h]
+	\caption{bucket.pl}
+	\lstinputlisting[language=python]{"files/bucket.pl"}
+\end{figure}
+
+
+\newpage
+Make sure this script is executable by performing a:
+\begin{lstlisting}[language=sh]
+chmod u+x bucket.pl
+\end{lstlisting}
+
+\section*{Result}
+
+\begin{lstlisting}[language=sh]
+[user@gen-8 test]$ time pv mysql_dump.sql | ./bucket.pl
+7.42GiB 0:00:08 [ 946MiB/s] [====================================================>] 100%
+
+real	0m8.035s
+user	0m3.238s
+sys		0m4.056s
+\end{lstlisting}
+
+The execution time is quite consistent with that of \gawk, varying between 8 seconds (when the output folder exists but is empty) and 15 seconds (when the output folder contains hundreds of result files from a previous execution, which need to be emptied), with some outliers at around 18 seconds. \\
+
+
+Now let's take a look at the \perl\ syntax...
+
+
+\section*{Perl implementation}
+
+This is a rapid tutorial about \perl\ (with even more comparisons to \python\ and \awk), in which we'll go through the key parts of our script.
+
+
+\subsection*{Semicolons}
+
+In \python\ and \awk, if a line contained only one statement, then it was possible to omit the semicolon ( \cmd{;} ) at the end of the line. \\
+
+In \perl\ however, semicolon are mandatory at the end of each statement.
+
+
+\medskip
+
+\subsection*{BEGIN: and END:}
+
+These are labels, which can be used as a target of a \cmd{goto} statement \footnote{\cmd{goto} statements are to be avoided. This is bad programming}. \\
+
+In our script, they are used to show the equivalent of the BEGIN and END rules from our \gawk\ implementation, as well as to highlight the initialisation and clean up parts of the script.
+
+Other than that (i.e. making the \perl\ script slightly clearer), those 2 labels could be removed and the script would behave exactly the same.
+
+
+
+\newpage
+
+\subsection*{Variables}
+
+\perl\ has different types of variables, and each type is represented by a character, called \emph{sigil}, which appears in front of the variable name:
+
+\begin{itemize}
+	\item scalar variables (e.g. integer, floating points, strings...): have their name preceded by the \emph{sigil} \cmd{\$}
+	\item arrays: have their name preceded by the \emph{sigil} \cmd{@}
+	\item hash variables (key/value pairs): have their name preceded by the \emph{sigil} \cmd{\%}
+\end{itemize}
+
+Our script only mainly scalar variables (e.g. \cmd{\$filename}, \cmd{\$outdir}...), as well as a special variable: \cmd{\$+} .
+
+
+
+\medskip
+
+\subsection*{String concatenation}
+
+This is done with the \cmd{.} operator:
+
+\begin{lstlisting}[language=perl]
+$filename = $outdir . "/0000_BEGIN.sql"
+\end{lstlisting}
+
+
+
+
+\medskip
+
+\subsection*{String formating}
+
+For that, we use the \cmd{sprintf} function:
+\begin{lstlisting}[language=perl]
+$filename = sprintf("%s/%04d_%s.sql", $outdir, $file_num, $1) ;
+\end{lstlisting}
+
+This is very similar to the \awk\ syntax:
+\begin{lstlisting}[language=awk]
+filename = sprintf("%s/%04d_%s.sql",  outdir,  file_num, a[1])
+\end{lstlisting}
+
+$\dots$but very different from the (recommended) way to format strings in Python 3:
+\begin{lstlisting}[language=python]
+filename = "{dir}/{num:04d}_{tbl}.sql".format(
+dir = outdir, num = file_num, tbl = table )
+\end{lstlisting}
+
+
+
+\medskip
+
+\subsection*{Creating the directory}
+
+
+We create a directory (and all sub-directories) by using the \cmd{make_path} function:
+
+\begin{lstlisting}[language=perl]
+use File::Path qw(make_path) ;
+...
+
+make_path($outdir, { chmod=>0770 }) ;
+\end{lstlisting}
+
+
+
+
+\newpage
+
+\subsection*{Reading from \stdin}
+
+The diamond operator \cmd{<>} allows to read from the standard input (\stdin). However, if a file name is passed as a parameter to the \perl\ script, then \perl\ will read from this file instead of \stdin. \\
+
+To read from \stdin\ only , we may use \cmd{<STDIN>} instead of \cmd{<>}. \\
+
+The input stream will be read line by line in a \cmd{while} loop. \
+The content of each line (including the \cmd{\n} line terminator) will be stored in the built-in variable \cmd{\$_} :
+
+\begin{lstlisting}[language=perl]
+while (<>) {
+	# The content of the line is stored in $_
+	
+	# Process the line here
+	...
+}
+\end{lstlisting}
+
+
+
+
+
+\medskip
+
+\subsection*{Matching against regular expressions}
+
+Now that the content of the current line is stored in \cmd{\$_}, it's time to try and match it with a \emph{regular expression}. \\
+
+This is done with the \cmd{=~} operator.
+
+\begin{lstlisting}[language=perl]
+if ($_ =~ /^-- Table structure for table `?(?<TABLE>\w+)`?/i) {
+	# Do something if the match is successful
+	...
+}
+\end{lstlisting}
+
+In this regular expression, we use a named capturing group (available since Perl 5, and borrowed from Python). 
+
+A named capturing group in \perl\ is of the form \cmd{(?<group_name>expression)}. 
+The captured values go into the special variable \cmd{\$+}, which contains key/value pairs. \\
+
+In our regular expression, we have the following \cmd{(?<TABLE>\\w+)} . Here, the group is named `TABLE`. If the match succeeds, the captured value can be retrieved using: \lstinline|$+{TABLE}|. \\
+
+Captured values are also stored in variables \cmd{\$1}, \cmd{\$2}, \cmd{\$3}\dots where \cmd{\$1} is the \nth{1} captured value, \cmd{\$1} the \nth{2}, and so on\dots  \\
+
+
+\note{
+	The problem when working with \emph{numbered} capturing group (as opposed to \emph{named} capturing group) is that if your regular expression changes (especially if you add or remove parentheses) then the numbering might change too. This can make it very difficult to work on complex regular expressions. \\
+	
+	For this reason, it is advisable to use named capturing group when supported by a given language or tool. %(for example in Javascript, this feature is specified since ECMAScript 2018 but is unfortunately not supported by all recent browsers\dots)
+}
+
+Named capturing group in \python\ are of the following form: 
+
+\cmd{(?P<group_name>expression)} . \\
+
+To my knowledge, \gawk\ does not seem to support named capturing group, so we used numbered capturing group instead.
+
+
+
+\medskip
+
+\subsection*{Variables \cmd{\$1}, \cmd{\$2}, \cmd{\$3}\dots\ and \cmd{\$0}}
+
+As we've just seen, the variables \cmd{\$1}, \cmd{\$2}, \cmd{\$3}\dots\ can be used to retrieve the values of capturing group from regular expressions. \\
+
+The variable \cmd{\$0}, however, has a totally different purpose as it contains the name of the script being executed (just like in \cmd{shell} scripts).
+
+
+
+
+\medskip
+
+\subsection*{Printing to \stdout}
+
+The \cmd{print} function is used to print variables or literals:
+
+\begin{lstlisting}[language=perl]
+print "Hello " . $name . "\n" ;
+\end{lstlisting}
+
+Note that in \perl, the \cmd{print} instruction does not automatically add a new line at the end (unlike in \awk\ or \python, where it does). So in \perl\ you need to specify when you want to print \cmd{"\n"} . \\
+
+In \perl, it is therefore possible to output the content of the current line (as read by the diamond \cmd{<>} operator) by printing \cmd{\$_} :
+
+\begin{lstlisting}[language=perl]
+print $_ ;
+\end{lstlisting}
+
+$\dots$but like with \awk, this can be simplified to just:
+
+\begin{lstlisting}[language=perl]
+print ;
+\end{lstlisting}
+
+
+
+\medskip
+
+\subsection*{Printing to \stderr}
+
+To print to the standard error, just call \cmd{print} with the \cmd{STDERR} handle:
+\begin{lstlisting}[language=perl]
+print STDERR $filename . "\n" ;
+\end{lstlisting}
+
+\cmd{STDERR} is the handle for the standard error.
+
+There exists a handle for the standard output (\cmd{STDOUT}), but calling \newline 
+\cmd{print STDOUT} is exactly the same as just calling \cmd{print} . \\
+
+Finally, we can pass a file handle (which we'll call \cmd{FH}) to print to a file, as we'll see in the next paragraph...
+
+
+
+\newpage
+
+\subsection*{Writing to files}
+
+
+The first thing to do is to open the file with the function:
+\begin{lstlisting}[language=perl]
+open(file_handler, mode, path)
+\end{lstlisting}where:
+
+\cmd{path} is the path to the file to open.
+
+\cmd{mode} is one of the following:
+
+
+
+
+\begin{table}[h]
+	\caption{File modes in Perl}
+	\label{file-modes-perl}
+	\begin{tabular}{| c | l |}
+		\hline
+		\cmd{mode}$^{(*)}$          & \multicolumn{1}{c|}{Description} \\
+		\hline
+		& \\
+		\cmd{"<" or "r"}    & Opens for reading. \\	
+		& The file pointer is placed at the beginning of the file. \\
+		& \\
+		\cmd{"+<" or "r+"}  & Opens for both reading and writing.  \\
+	    & The file pointer is placed at the beginning of the file. \\
+		& \\
+		\cmd{">" or "w"}    & Opens for writing only.  \\
+	    & Overwrites the file if the file exists. \\
+	    & If the file does not exist, creates a new file for writing. \\
+		& \\
+		\cmd{"+>" or "w+"}  & Opens for both writing and reading.  \\
+		& Overwrites the file if the file exists. \\
+		& If the file does not exist, creates a new file for writing. \\
+		& \\
+		\cmd{">>" or "a"}    & Opens for appending. \\	
+		& If the file exists, the file pointer is at the end of the file. \\
+		& If the file does not exist, creates a new file for writing. \\
+		& \\
+		\cmd{"+>>" or "a+"}  & Opens for both appending and reading. \\	
+		& If the file exists, the file pointer is at the end of the file. \\
+		& If the file does not exist, creates a new file for writing. \\
+		& \\
+		\hline
+	\end{tabular}
+$^{(*)}$add \cmd{":raw"} for binary mode.
+	\begin{flushright}
+	Sources: \cite{python-file-modes}, \cite{perl-binary-file}, \cite{gfg-perl} %, \citep{tutorialspoint-perl}.
+	\end{flushright}
+\end{table}
+
+
+
+
+	
+\medskip
+
+
+Once opened, the file will be represented by a \cmd{file_handler}, which can be used in the same way as handler such as \cmd{STDERR} or \cmd{STDOUT}. \\
+
+For example, we open a file (for overwriting) like this:
+\begin{lstlisting}[language=perl]
+open(FH, ">", $filename) ;
+\end{lstlisting}
+
+Then we can use our file handler \cmd{FH} to write to the file:
+\begin{lstlisting}[language=perl]
+print FH "some string" ;
+print FH $some_variable ; 
+
+### Print the line read from <>
+print FH $_ ;
+print FH ;
+\end{lstlisting}
+
+
+\bigskip
+
+
+Finally, we'll need to close the file with:
+\begin{lstlisting}[language=perl]
+close(FH) ;
+\end{lstlisting}
+
+
+
+\newpage
+
+\subsubsection*{File modes in Python}
+
+Here is a quick comparison of the file modes in \python\ and \perl:
+
+\begin{table}[h]
+	\caption{File modes in Python vs. Perl}
+
+	\begin{tabular}{| c | c | l |}
+		\hline
+		File \cmd{mode}     & File \cmd{mode} & \multicolumn{1}{c|}{Description} \\
+		in Python & in Perl & \\
+		\hline
+		\cmd{"r"}   & \cmd{"<" or "r"}    & \\	
+		\cmd{"r+"}  & \cmd{"+<" or "r+"}  & \\
+		\cmd{"w"}   & \cmd{">" or "w"}    & \\
+		\cmd{"w+"}  & \cmd{"+>" or "w+"}  & See Table \ref{file-modes-perl} \\
+		\cmd{"a"}   & \cmd{">>" or "a"}   & \\
+		\cmd{"a+"}  & \cmd{"+>>" or "a+"} & \\
+		\cmd{"rb"}  & \cmd{"<:raw" or "r:raw"} & Same as \cmd{"r"},  but in binary format. \\
+		\cmd{"rb+"} & \cmd{"+<:raw" or "r+:raw"} & Same as \cmd{"r+"}, but in binary format. \\
+		\cmd{"wb"}  & \cmd{">:raw" or "w:raw"} & Same as \cmd{"w"},  but in binary format. \\
+		\cmd{"wb+"} & \cmd{"+>:raw" or "w+:raw"} & Same as \cmd{"w+"}, but in binary format. \\
+		\cmd{"ab"}  & \cmd{">>:raw" or "a:raw"} & Same as \cmd{"a"},  but in binary format. \\
+		\cmd{"ab+"} & \cmd{"+>>:raw" or "a+:raw"} & Same as \cmd{"a+"}, but in binary format. \\
+		\cmd{"x"}   & n/a & Open for exclusive creation; \\
+		& & fails if the file already exists (Python 3) \\
+		\hline
+	\end{tabular}
+	\begin{flushright}
+		\cite{python-file-modes}, \cite{perl-binary-file}
+	\end{flushright}
+\end{table}

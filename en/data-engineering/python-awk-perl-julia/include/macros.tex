@@ -1,0 +1,45 @@
+\usepackage{mdframed}
+\mdfsetup{
+	%innertopmargin=10pt,
+	frametitleaboveskip=-\ht\strutbox,
+	frametitlealignment=\center
+}
+
+
+\newcommand{\note}[1]{
+	\mdfsetup{
+		middlelinewidth=2pt,
+		backgroundcolor=yellow!10
+	}
+	\begin{mdframed}#1\end{mdframed}
+	\mdfsetup{
+		backgroundcolor=white
+	}
+}
+
+
+\newcommand{\cmd}[1]{\lstinline|#1|}
+
+
+\newcommand{\python}{Python}
+\newcommand{\awk}{AWK}
+\newcommand{\perl}{Perl}
+\newcommand{\julia}{Julia}
+\newcommand{\gawk}{\texttt{gawk}}
+\newcommand{\mawk}{\texttt{mawk}}
+\newcommand{\sed}{\texttt{sed}}
+\newcommand{\grep}{\texttt{grep}}
+
+\newcommand{\stdin}{\texttt{stdin}}
+\newcommand{\stdout}{\texttt{stdout}}
+\newcommand{\stderr}{\texttt{stderr}}
+
+\newcommand{\mysqldump}{\texttt{mysqldump}}
+\newcommand{\cat}{\texttt{cat}}
+\newcommand{\pv}{\texttt{pv}}
+\newcommand{\shell}{\texttt{shell}}
+
+\newcommand{\Unix}{UNIX\textregistered}
+\newcommand{\Intel}{Intel\textregistered}
+\newcommand{\Core}{Core\texttrademark}
+

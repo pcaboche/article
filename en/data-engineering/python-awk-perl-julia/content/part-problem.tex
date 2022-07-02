@@ -1,0 +1,155 @@
+
+\renewcommand{\currentPart}{Splitting a MariaDB dump file, on a per-table basis}
+
+\newpage
+\part{MySQL / MariaDB : splitting a database dump file, on a per-table basis}
+
+This specific problem will serve as our example throughout the article:
+
+\begin{itemize}
+	\item we've been given a big \cmd{.sql} file, which is the result of running \mysqldump to ``backup" a MySQL/MariaDB database
+	\item the \cmd{.sql} file contains the data from all our tables
+	\item we need to split that data into several \cmd{.sql} files, one file per table
+	\item the string \cmd{-- Table structure for table `table_name`} marks the beginning of the definition for table \cmd{table_name}, followed by its data. \
+	\item Whenever we encounter such a string, we need to change the output of our script (to a file named \cmd{table_name.sql})
+\end{itemize}
+
+
+In this problem, each table constitutes a ``bucket". \\
+
+If, for example, we wanted to separate the table structure from its actual data, this would constitute 2 buckets per table (one for the structure, and one for the data). To make our script easier to understand, we will keep 1 bucket per table. \\
+
+What's important to remember is:
+\begin{itemize}
+	\item a ``bucket" represents how the data is separated \emph{logically}
+	\item a file is how the bucket data is stored \emph{physically}
+	\item we decide to make just 1 bucket per table (and therefore, 1 output file per table)
+\end{itemize}
+
+
+
+\newpage
+
+\section*{Note on the example}
+
+Our database ``dump" file actually contains more than the tables' definition and data. For example, it may contain definitions for views, stored procedures, and other definitions. \\
+
+A fully working example would require more complex logic, and may also depend on external factors which are out of my control (such as: how the "dump" file was generated in the first place, the version of \mysqldump, and others).
+
+We have deliberately kept the examples in this article simple and easy to follow. \\
+
+The scripts provided in this article are FOR ILLUSTRATION PURPOSE ONLY, USE AT YOUR OWN RISK.
+
+
+\section*{What the scripts will do}
+
+Our scripts will:
+\begin{itemize}
+	\item read data from the standard input ( \stdin\ )
+	\item write to different files based on some conditions
+\end{itemize}
+
+
+The output file names will follow the same form: \newline
+\lstinline|${number}_${table_name}.sql| \\
+
+For example: \cmd{0041_some_table_name.sql} \\
+
+
+We are numbering our files in order to reassemble them later (and in the correct order), and compare the input with the output of our scripts (this will be important later\dots) \\
+
+
+The output files will be stored in an output directory. 
+We will use a different output directory for each of our implementations (\cmd{python/}, \cmd{awk/}, \cmd{perl/}). This will be useful later, to compare the output results.
+
+
+\section*{Tools}
+
+Here is a typical example of how we will run a script:
+
+\begin{lstlisting}[language=sh]
+$ time pv input_file | ./script.py
+\end{lstlisting}
+
+\note{
+	We use the linux \cmd{time} command to measure how long a script took to execute.
+}
+
+
+\note{
+	We use \emph{pipes} ( \cmd{|} ) to pass data from one process to another. The output of one process ( \stdout ) is passed to the standard input ( \stdin\ ) of the next. \\
+	
+	Our scripts will read data from the standard input ( \stdin\ ). This approach is generally more flexible that reading data from files.
+}
+
+\note{
+	We prefer to use the \pv\ (\emph{pipe viewer}) command instead of \cat\ (or the \cmd{<} file indirection).
+	
+	\pv\ will not only read the file, but also provide extra information, such as: the file size, \emph{current} read speed (in a unit such as MiB/s), and overall progress. This immediately tells us when the read/processing speed is abnormally slow.
+}
+
+Please note however, that when talking about the \emph{overall} read speed, we divide the file size by the real time (as reported by \cmd{time}), not what is displayed by \pv\ (which is the \emph{current} read speed at the end of the file processing). 
+
+
+\section*{Execution environment} \label{execution-environment}
+
+
+I first ran the experiment on a computer equipped with a fast SSD on NVMe PCIe gen 3. 
+We'll call this computer \emph{``gen-8"}, for it has an \nth{8} generation \Intel\ \Core~i5 processor. \\
+
+Later on I got access to a more recent computer (\nth{11} generation \Intel\ \Core~i5) with a faster SSD (PCIe gen 4). I re-ran the tests, and included them for comparison.
+We'll call this computer \emph{``gen-11"}. \\
+
+
+
+Below is some information about the hardware and software used\ldots
+
+\begin{table}[h]
+	\caption{Hardware comparison}
+	\centering
+	\begin{tabular}{| c | c | c |}
+		\hline
+			& Computer 1 & Computer 2 \\
+		\hline
+			& & \\
+		Name & gen-8 & gen-11 \\
+			& & \\
+		CPU & \Intel\ \Core\ i5-8259U CPU & \Intel\ \Core\ i5-1135G7 \\
+		    & 8 $\times$ 2.30GHz (max: 3.80 GHz) & 8 $\times$ 2.40GHz (max: 4.20 GHz) \\
+		    & \footnotesize Released: Q2'2018 & \footnotesize Released: Q3'2020 \\
+			& & \\
+		RAM & 16 GB & 16 GB \\
+			& (2 $\times$ 8GB, DDR4-2400 MHz) & (2 $\times$ 8GB, DDR4-3200 MHz) \\
+			& & \\
+		%& ADATA 512 GB& Samsung 980 Pro 1 TB\\
+     	SSD & NVMe PCIe \emph{gen 3} & NVMe PCIe \emph{gen 4} \\
+		    & Seq. read: $\sim$2.3 GB/s & Seq. read: $\sim$6.5 GB/s \\
+     		& Seq. write: $\sim$1.7 GB/s & Seq. write: $\sim$4 GB/s \\
+			& \footnotesize Partition format: XFS & \footnotesize Partition format: XFS \\
+			& & \\
+		\hline
+	\end{tabular}
+\end{table}
+
+\begin{table}[h]
+	\caption{Software versions}
+	\centering
+	\begin{tabular}{ l  l }
+		& \\
+		OS & Linux (Fedora 35) \\
+		\python & 3.10.5 \\
+		GNU Awk &  GNU Awk 5.1.0, API: 3.0 (GNU MPFR 4.1.0-p13, GNU MP 6.2.0) \\
+		\perl & v5.34.1 \\
+		\julia & 1.7.3 \\
+\end{tabular}
+\end{table}	
+
+
+
+\medskip
+
+I also tested the scripts on a Windows 10 laptop, using WSL 2 (Windows Subsystem for Linux, version 2). \\
+
+The scripts run well under WSL 2, but that laptop had a slower SSD, which impacted the results (some scripts were bottlenecked by the read speed of its SSD, of $\sim$700 MB/s).
+
+

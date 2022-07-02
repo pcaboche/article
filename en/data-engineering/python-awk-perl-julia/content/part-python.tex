@@ -1,0 +1,152 @@
+
+\renewcommand{\currentPart}{Python}
+
+\newpage
+\part{Python} \label{python}
+
+We will use the \python\ script as a reference. We will study its implementation details later, when we compare the Python implementation with the \awk\ and \perl\ scripts\dots \\
+
+
+Below is our original implementation, in \python:
+
+\begin{figure}[h]
+	\caption{bucket.py}
+	\lstinputlisting[language=python]{"files/bucket.py"}
+\end{figure}  
+
+
+\newpage
+
+
+Make sure this script is executable by performing a:
+\begin{lstlisting}[language=sh]
+chmod u+x bucket.py
+\end{lstlisting}
+
+
+
+\section*{A few things to notice\dots}
+
+Below are a few things I would like to point out regarding scripts in general, and this Python script in particular\dots
+
+
+\subsection*{Specifying the interpreter}
+
+Unlike Windows, Linux does not rely on a file extension to determine how to run a program. As long as a file is marked as ``executable", Linux will consider is as executable. \\
+
+To determine which interpreter to use, the program loader looks at the first line of a script. \\
+
+In a Linux script, the first characters of the first line are \cmd{\#!}, also called \emph{``shebang"} (because it comprises a ha\emph{sh}tag and an exclamation mark, also known as \emph{``bang!"} Hence the name \emph{``shebang"}) \\
+
+Once a \emph{``shebang"} is detected, the program loader reads the rest of the first line to determine which interpreter to use (and with which parameters). \\
+
+Note that we need to specify the full path of the interpreter executable. Usually, this will start with \cmd{/usr/bin} \footnote{\cmd{/usr/bin} contains binaries available to all users in multi-user mode, as opposed to \cmd{/bin} which is contains essential binaries required at boot up and single-user mode}. \\
+
+\bigskip
+
+
+
+In this article, we will use the following at the beginning of our scripts\dots \\
+
+For \cmd{python}:
+\begin{lstlisting}[language=sh]
+#!/usr/bin/python3
+\end{lstlisting}
+
+For \gawk:
+\begin{lstlisting}[language=sh]
+#!/usr/bin/gawk -f
+\end{lstlisting}
+
+For \cmd{perl}:
+\begin{lstlisting}[language=sh]
+#!/usr/bin/perl
+\end{lstlisting}
+
+For \cmd{julia}:
+\begin{lstlisting}[language=sh]
+#!/usr/bin/julia
+\end{lstlisting}
+
+
+\newpage
+\subsection*{Incrementing an integer}
+
+\note{
+	\python\ doesn't have the \cmd{++} operator for incrementation. \\
+	
+	In other languages, the misuse of the \cmd{++} operator might lead to unforeseen consequences, which \emph{may} be the reason why \cmd{++} has been left out of \python.
+}
+
+
+If you try using the \cmd{++} operator in \python\ (like you might be doing in other programming languages), then you'll be met with a syntax error, which can be confusing at first. \\
+
+In any case, in \python, to increment an integer, you would need to do a \cmd{+= 1}:
+
+\begin{lstlisting}[language=python]
+# Python
+file_num += 1
+\end{lstlisting}
+
+\medskip
+
+
+In the other languages ( \awk\ and \perl\ ), we will use the \cmd{++} unary operator to increment integers. For example in \awk:
+
+\begin{lstlisting}[language=awk]
+# AWK
+file_num++ 
+\end{lstlisting}
+
+
+
+\subsection*{Compiling the regular expression}
+
+Near the beginning of our script, we have the following instructions:
+
+\begin{lstlisting}[language=python]
+pattern=r'^-- Table structure for table `?(?P<TABLE>\w+)`?'
+parser = re.compile(pattern, re.IGNORECASE)
+\end{lstlisting}
+
+Here, we ``compile" the regular expression once, store the compiled expression in a variable (\cmd{parser}), and then use it again and again ( \cmd{parser.match(line)} ).
+
+This is to avoid compiling the regular expression every time we need it.
+
+\subsection*{Reading from \stdin\ }
+
+We read the content of \stdin\ line by line, with the following loop:
+\begin{lstlisting}[language=python]
+	for line in sys.stdin :
+	# loop instructions...
+\end{lstlisting}
+
+In this code, \cmd{sys.stdin} is an \emph{iterator} over \stdin, and our loop follows this pattern:
+\begin{lstlisting}[language=python]
+for <variable> in <iterator> :
+# loop instructions...
+\end{lstlisting}
+
+
+\newpage
+
+\section*{Result} 
+
+
+The result of execution is as follows (\emph{note: some of the output was edited to fit in the page}):
+
+\begin{lstlisting}[language=sh]
+[user@gen-8 test]$ time pv mysql_dump.sql | ./bucket.py
+7.42GiB 0:14:55 [8.49MiB/s] [====================================================>] 100%  
+
+real    14m55.335s
+user    14m29.250s
+sys     0m28.531s
+\end{lstlisting}
+
+As you can see, our input file was 7.42 GiB in size, and Python took nearly 15 minutes to process it at an abysmal 8 MiB/s... ( = 7420 / 15 / 60 ) \\
+
+When running the script for the first time, \pv\ showed a very low 10 MiB/s, and my first reaction was: \emph{``did I do something wrong?"}.
+As we'll discover later, this was not the case\dots \\
+
+In the meantime (and while the \python\ script was still running\dots), I wanted to try another implementation. So I rewrote the script in \awk\dots

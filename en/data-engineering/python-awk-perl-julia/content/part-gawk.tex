@@ -1,0 +1,370 @@
+
+\renewcommand{\currentPart}{GNU awk} 
+
+\newpage
+\part{GNU awk} \label{awk}
+
+\awk\ is a domain-specific tool (with its own scripting language) for text manipulation. While the original \awk\ was created at Bell Labs in the 1970s, today there are several implementations (\cmd{nawk}, \cmd{gawk}, \cmd{mawk}, etc.) \\
+
+
+\gawk\ (the GNU implementation of \awk) offers many improvements over the original \awk\, like the ability to capture groups in \emph{regular expressions} (which we will need in our script). \\
+
+Usually on linux, the \cmd{awk}\ command is actually a symbolic link to some implementation of \awk, generally either \gawk\ or \mawk. \\
+
+For example, in Fedora 35 we can see that \cmd{/usr/bin/awk} is a symbolic link to \cmd{/usr/bin/gawk} :
+\begin{lstlisting}[language=sh]
+$ which awk
+/usr/bin/awk
+$ ls -l /usr/bin/awk
+lrwxrwxrwx. 1 root root 4 Jul 22  2021 /usr/bin/awk -> gawk
+\end{lstlisting}
+
+\bigskip
+
+
+
+\mawk\ was designed for speed of execution, but it does not implement certain features (like group capturing, which we'll need). \\
+
+In other words\dots
+\note{
+	On Linux, when using the ``\cmd{awk}" command, you are never entirely sure which implementation you're actually using (it depends on how the system has been configured). \\
+	
+	It is therefore recommended to explicitly specify which flavour of AWK you intend to use (\gawk, \mawk, or other), because they don't all implement the same set of features.
+	
+	Different implementations of AWK are not always compatible with each other.
+}
+
+For this article, we'll be using \gawk. \\
+
+
+
+\medskip
+
+As seen in the previous part, our Python script was extremely slow. So I was curious to see if \awk\ could: 1) perform the task; and 2) fare better than Python in the performance department\dots \\
+
+Here is the thing though: before that day, I had never written any \awk\ script. 
+My experience with \awk\ was limited to the occasional one-liner command adapted from some sample code found online. Writing a full-fledged \awk\ script would be something new to me\dots\
+
+But while Python was still wrestling with our data, I would start looking into GNU awk and see what it could do. \\
+
+
+
+\newpage
+
+\section*{The script}
+
+After a bit of research, this is the script I came up with. Incidentally, this is also the very first \awk\ script I wrote in my life\dots
+\begin{figure}[h]
+	\caption{bucket.awk}
+	\lstinputlisting[language=python]{"files/bucket.awk"}
+\end{figure}
+
+\medskip
+
+
+Make sure this script is executable, on Linux:
+\begin{lstlisting}[language=sh]
+chmod u+x bucket.awk
+\end{lstlisting}
+
+
+\newpage
+
+\section*{Result}
+
+\begin{lstlisting}[language=sh]
+[user@gen-8 test]$ time pv mysql_dump.sql | ./bucket.awk
+7.42GiB 0:00:08 [ 921MiB/s] [====================================================>] 100%
+
+real	0m8.253s
+user	0m2.134s
+sys		0m5.450s
+\end{lstlisting}
+
+Okay... so not only is the \gawk\ script a lot more concise than its Python counterpart, but it's also a lot faster too! \\
+
+The execution time was around 8 seconds (if the output folder exists and is empty). 15 seconds if the output folder still contained files from a previous execution (a few hundred of them)\footnote{in other words, most of the execution time would be spent on things like: creating folders, emptying existing files\dots\ rather than actually processing the data.}. \\
+
+
+
+This is a whopping \textbf{60 to 100 TIMES FASTER} than Python! \\
+
+By switching from Python to \gawk\ we quite literally took our execution time from 15 \textbf{minutes} down to 15 \textbf{seconds}\dots \\
+
+
+Now that we saw how \awk\ performed, let's try to understand how the script works\dots 
+
+
+\section*{GNU awk implementation}
+
+This is a rapid tutorial about \gawk\ (with \emph{some} comparisons to \python\ and \perl), which will takes us through the key parts of our script.
+
+\subsection*{BEGIN and END}
+
+The BEGIN rule is run once, before any input record is read.
+We use it to initialise the script.
+
+The END rule is run once, when we reach the end of the file/stream (and after all the input has been read and processed).
+We use it for cleanup purposes (i.e. closing the file handler for the last output file). \\ 
+
+\emph{Note: even if we omitted the END rule entirely, \gawk\ would close any open file handler at the end of the script execution. It is, however, a good habit to close any resource that we don't want to use anymore.}
+
+
+\subsection*{String concatenation}
+
+In \awk, string concatenation is done simply by putting variables (or literals) next to each other. \\
+
+For example the line:
+\begin{lstlisting}[language=awk]
+file = outdir a[1] ".sql"
+\end{lstlisting}
+
+\dots will concatenate the values of variable \cmd{outdir}, \cmd{a[1]} (element of indice 1 in array \cmd{a}), and the string literal \cmd{".sql"}; then assign the result to variable \cmd{file}. \\
+
+This way of concatenating strings might seem odd at first (especially if you have some prior experience with other languages). \\
+
+However, it is consistent with the behaviour of the \cmd{echo} command for the original AT\&T \Unix, for which \awk\ was initially developed.
+
+
+\subsection*{String formating}
+
+For that, we use the `sprintf` function:
+\begin{lstlisting}[language=awk]
+filename = sprintf("%s/%04d_%s.sql", outdir, file_num, a[1])
+\end{lstlisting}
+
+
+
+
+\subsection*{Creating the directory}
+
+We create a directory (and all sub-directories) by calling the system command to ``make a path": \cmd{mkdir -p} \\
+
+The original \cmd{awk} from Bell Labs was designed to run exclusively on the original AT\&T \Unix. Given that context, performing such system calls makes perfect sense\dots (later languages would have dedicated APIs to make system calls in a portable way).
+
+
+
+\subsection*{Matching regular expressions}
+
+We need to check if a regular expression is matched, use some capture groups, and branch if the expression is not matched. We use the \cmd{match} function for that:
+
+\begin{lstlisting}[language=awk]
+if ( match($0, /^-- Table structure for table `?(\w+)`?/, a) ) {
+	### When expression is matched
+	...
+	
+} else {  ## (optional)
+	### When expression is not matched
+	...
+}
+\end{lstlisting}
+
+The previous construct:
+\begin{itemize}
+	\item allows to capture groups (stored in array \cmd{a})
+	\item allows the use of an \cmd{else} statement
+\end{itemize}
+
+If the \cmd{match} function succeeds, the result will be stored in array \cmd{a}: \newline
+\cmd{a[0]} contains the whole matched expression. \newline
+\lstinline|a[1]| contains the \nth{1} captured value. \newline
+\lstinline|a[2]| contains the \nth{2} captured value. \newline
+And so on\dots \\
+
+In \perl, the captured groups would be stored in variables \cmd{\$1}, \cmd{\$2}, \cmd{\$3}, etc. but these have a different meaning in \awk\ (see below). \\
+
+To my knowledge, \gawk\ does not support named group capturing (unlike \python\ and \perl\ 5), so we will need to rely on group numbering only, which is harder to maintain. \\
+
+
+If we didn't need to capture groups (just need to check that the line matches the regular expression), we could use the following construct (\emph{note: needs to be inside a rule}):
+\begin{lstlisting}[language=awk]
+if ( $0 ~ /some regular expression here/ ) {
+	# What to do if the pattern matches
+} else {  ## (optional)
+	### When expression is not matched
+	...
+}
+\end{lstlisting}
+
+Finally, if we don't need to capture groups and don't need the \cmd{else} clause either, then we could use a rule:
+\begin{lstlisting}[language=awk]
+/some regular expression here/ {
+	# What to do if the pattern matches
+}
+\end{lstlisting}
+
+\medskip
+
+
+So these are three ways to see if a line (or a string) matches a regular expression. The \cmd{match} function is the one we'll use, as we need to capture groups. \\
+
+
+\emph{Note: later we will see how it is possible, and in many cases preferable, to get rid of \cmd{else} clauses entirely.}
+
+
+
+
+\subsection*{Variables \cmd{\$0}, \cmd{\$1}, \cmd{\$2}, \cmd{\$3}\dots}
+
+In \awk, the built-in variable \cmd{\$0} contains the content of the current input line. \\
+
+By default, \awk\ uses \emph{whitespaces} and \emph{tabs} as a field separator.
+The built-in variables \cmd{\$1}, \cmd{\$2}, \cmd{\$3}, (and so on...) will contain the values for fields 1, 2, 3, (and so on...). This is very useful when dealing with \emph{tabular files} (in which the data is presented in the form of rows and columns). \\
+
+This meaning of such variables, however, is very different in \perl\ (as we'll see later\dots)
+
+
+\subsection*{Printing to \stdout}
+
+The \cmd{print} function is used to print variables or literals:
+
+\begin{lstlisting}[language=awk]
+print "Hello!"
+\end{lstlisting}
+
+It is therefore possible to output the content of this line by printing \cmd{\$0}:
+
+\begin{lstlisting}[language=awk]
+print $0
+\end{lstlisting}
+
+\dots but this can be simplified to just:
+
+\begin{lstlisting}[language=awk]
+print
+\end{lstlisting}
+
+Then it is also possible to redirect the output of \cmd{print} to \stderr\ or to a file (as we'll see below...)
+
+
+
+
+
+\subsection*{Printing to \stderr}
+
+Here is an example where we print the value of `filename` to `stderr` :
+\begin{lstlisting}[language=awk]
+print filename  > "/dev/stderr"
+\end{lstlisting}
+
+Note that \cmd{"/dev/stderr"} is in quotes (and therefore a string). \\
+
+This tells \gawk\ to output to the \emph{standard error}, even on systems that don't have the \cmd{/dev/stderr} file.
+
+
+
+\subsection*{Writing to files}
+
+When switching files, we do the following:
+\begin{lstlisting}[language=awk]
+print > file
+\end{lstlisting}
+
+Internally, this will open a file descriptor (for writing) to the file named \cmd{file}. This file descriptor will remain open until we explicitly close it, or will be closed automatically at the end of the script. \\
+
+Because this is a single redirection ( \cmd{>} ), if the file exists its content will be overwritten (i.e. the file content will be erased). If the file does not exist, then the file will be created. Once the file is (created and) open, this instruction will output the current line to the file named \cmd{file}. \\
+
+This is equivalent to:
+\begin{lstlisting}[language=awk]
+print $0 > file
+\end{lstlisting}
+
+\medskip
+
+
+Later on, we'll need to \emph{append} more lines to the file (note that the file descriptor is still open at that point).
+
+This is done using the double redirection \cmd{>>} :
+
+\begin{lstlisting}[language=awk]
+print >> file
+\end{lstlisting}
+
+\medskip
+
+
+Finally, we will close the file descriptor with the following instruction:
+\begin{lstlisting}[language=awk]
+close(file)
+\end{lstlisting}
+
+Then we'll open the next file and the cycle starts again.
+
+
+
+\subsection*{Opening many files}
+
+
+It is possible to keep the file descriptor open. At the end of the execution, \awk\ will close all open file descriptors automatically for us. \\
+
+The problem with keeping too many files open is that we might exceed the maximum number of files that can be open simultaneously by one process. In linux, you can retrieve such (soft) limit with the command \cmd{ulimit -Sn} :
+\begin{lstlisting}[language=sh]
+$ ulimit -Sn
+1024
+\end{lstlisting}
+
+Here, we can see that the policy for the current user is to have no more than 1024 files open per process (this limit can be raised, but it requires super-user rights).
+
+For this reason (and to avoid locking the file), it is recommended to limit the number of files open at the same time. Ideally, a file should be closed when no longer in active use.
+
+
+\newpage
+\subsection*{Removing the \cmd{else} clause}
+
+The problem with the \cmd{if ... then ... [else if ...] else ...} construct is that it is prone to generating a long list of conditions which depend on each other. This makes the code harder to read and maintain. \\
+
+To avoid this problem (in general, not just in AWK), the idea is to have a list of independent \cmd{if ...} constructs (without \cmd{else}), with some mechanisms to ignore the remaining \cmd{if} statements. \\
+
+This can be done by using a function (and the \cmd{return} statement, to exit the function early):
+\begin{lstlisting}[language=sh]
+function foo( arguments ) {
+	
+	if ( condition1 ) {
+		...
+		return;  # early exit
+	}
+	
+	if ( condition2 ) {
+		...
+		return;  # early exit
+	}
+	...
+}
+\end{lstlisting}
+
+\bigskip
+
+
+An \awk\ script can have the following structure
+
+\begin{itemize}
+	\item a \cmd{BEGIN} block, which will execute at the beginning of the program, before any record is processed (initialisation)
+	\item a series of separate rules, which will be evaluated in sequence for each record.
+	The \cmd{next} statement can be used to stop processing the current record, and move to the next one.
+	
+	The approach can be used in some cases to avoid writing an \awk\ script as just one very long \texttt{if \dots\ else if \dots\ else \dots} block.
+	
+	\item an \cmd{END} block, which will execute after the last record has been processed
+\end{itemize}
+
+
+
+\medskip
+
+
+Regarding the \cmd{next} statement, here is an excerpt from the GNU AWK documentation:
+\begin{quote}
+	The \cmd{next} statement forces \cmd{awk} to immediately stop processing the current record and go on to the next record. This means that no further rules are executed for the current record, and the rest of the current rule's action isn't executed. \citep{gawk-next}
+\end{quote}
+
+\newpage
+Below is a new version of our script, rewritten to remove the \cmd{else} clause:
+
+\begin{figure}[h]
+	\caption{bucket2.awk}
+	\lstinputlisting[language=awk]{"files/bucket2.awk"}
+\end{figure}
+
+
+Both versions have roughly the same performance. \\
+Feel free to choose whichever version you find more readable.

@@ -1,0 +1,81 @@
+
+\renewcommand{\currentPart}{Verifying our results} 
+
+\newpage
+\part{Verifying our results} \label{verify-results}
+
+We need to verify that our output files are correct, which means that if we were to concatenate them back together (and in the same order), the result would be identical to the original files.
+
+
+\section*{Our approach}
+
+From the beginning, we took care to separate our output files by implementation, so it will be easier to compare the results. 
+
+We also numbered our files, so we know in which order they were created. Our file names start with \cmd{0000}, \cmd{0001}, \cmd{0002}, and so on... This way we can sort the files alphabetically, and it will follow the order in which they where created.
+
+
+\note{
+	We cannot compare the file contents directly with one another because \textbf{the files are too big}, so a tool like \cmd{diff} would quickly run out of memory. \\
+	
+	Instead, we are going to compute some checksum (with a command like \cmd{sha512sum} ) and then compare those checksums with each other. Any minor change in the data will result in widely different checksums, and the risk of different data having the same checksum is infinitesimally low.\\
+	
+	Also, we are not going to concatenate the files back together (in yet another temporary file), but instead use a linux command (like \cat or \pv) to read the files one by one, and feed this stream of data to \cmd{sha512sum} using pipes.
+}
+
+So first, we need to calculate the checksum of the original file (\emph{note: some of the output was edited to fit in the page}):
+
+\begin{lstlisting}[language=sh]
+[user@gen-8 ~]$ time pv in/mysql_dump.sql | sha512sum
+7.42GiB 0:00:12 [ 589MiB/s] [====================================================>] 100%
+1e3429096ec3f412c2eecca81eafd82a9237e7cd03f070cace01b28e33a2445
+072af2773aee6f18c415f3e98162d55b0df3662e5dbf3df18855584823d5176
+b5  -
+
+real	0m12.890s
+user	0m11.841s
+sys	0m2.833s
+\end{lstlisting}
+
+\newpage
+Then we can compare with the checksum of our output files for each implementation:
+
+\begin{lstlisting}[language=sh]
+[user@gen-8 test]$ pv out/perl/* | sha512sum
+7.42GiB 0:00:13 [ 584MiB/s] [====================================================>] 100%
+1e3429096ec3f412c2eecca81eafd82a9237e7cd03f070cace01b28e33a2445
+072af2773aee6f18c415f3e98162d55b0df3662e5dbf3df18855584823d5176
+b5  -
+
+[user@gen-8 test]$ pv out/awk/* | sha512sum
+7.42GiB 0:00:13 [ 572MiB/s] [====================================================>] 100%
+1e3429096ec3f412c2eecca81eafd82a9237e7cd03f070cace01b28e33a2445
+072af2773aee6f18c415f3e98162d55b0df3662e5dbf3df18855584823d5176
+b5  -
+
+[user@gen-8 test]$ pv out/julia/* | sha512sum
+7.42GiB 0:00:13 [ 572MiB/s] [====================================================>] 100%
+1e3429096ec3f412c2eecca81eafd82a9237e7cd03f070cace01b28e33a2445
+072af2773aee6f18c415f3e98162d55b0df3662e5dbf3df18855584823d5176
+b5  -
+
+[user@gen-8 test]$ pv python/* | sha512sum
+7.40GiB 0:00:12 [ 592MiB/s] [====================================================>] 100%
+48d32c2dd1badac05aca840a1e61d97383ea5514abc9b0b4c116144a2b7a492
+4ca487bccd9218c2f3300961849ff7c8533f35eefbfa0bfcd62fca311f69b9d
+a5  -
+\end{lstlisting}
+
+What we can see from those results is that the checksums for the output of the \awk\, \perl\, and \julia\ implementations are identical to that of the original file (i.e. the content is correct). \\
+
+However, the checksums for the output of the \python\ script is completely different. Also, the total size of the output data for \python\ is smaller than the original. Because of the encoding problem we encountered earlier, \textbf{some data was lost}. \\
+
+
+
+\section*{Margins of error}
+
+As we have seen previously, our \awk,  \perl, and \julia\ scripts usually executed in only a few seconds. \\
+
+However, there were times when those scripts would take longer to execute, probably because some other background processes which interfered with our script execution in one way or another (e.g. by accessing the file system at the same time). Although a few seconds are barely noticeable over the span of several minutes, it becomes a problem when the time-frame is smaller (i.e. every 1 second delay on a process which usually executes in 5 seconds represents a margin of error of 20\%, which is enormous).
+To counteract this issue, I executed the scripts several times, to get a better overall average execution time. \\
+
+That being said, no matter how you measure it, \python\ still remains 1 or 2 orders of magnitude slower than all the others scripting languages tested\ldots

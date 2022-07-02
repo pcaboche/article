@@ -1,0 +1,112 @@
+% Note: use XeLaTeX for rendering
+% !TEX encoding = UTF-8
+
+
+\documentclass[twoside]{article}
+
+\setlength{\parindent}{0pt}
+
+%% Packages and their configuration
+\input{include/packages.tex}
+
+%% Custom macros
+\input{include/macros.tex}
+
+% Opening
+
+\title{Python vs. AWK, Perl, Julia: \\ Processing large data files}
+\author{Pierre S. Caboche}
+
+%% Custom format to indicate revision date (if needed)
+\date{
+	July 2, 2022
+	% \\	\medskip \footnotesize (Revised: \today)
+}
+
+
+\begin{document}
+	
+	\maketitle
+	
+	\begin{abstract}
+		In this article we will learn how to perform a very useful task (processing a large text file, splitting data into ``buckets") using three different scripting languages: Python, AWK, and Perl.
+		This will allow use to compare those four languages in terms of features, syntax, and performance. \\
+		
+		This will also give us the opportunity to learn more about these languages. Our examples and explanations should help you easily get started, even if you have no prior experience with Python, AWK, Perl, or Julia.
+	\end{abstract}
+
+
+\bigskip
+\bigskip
+\bigskip
+
+%%% Intro
+
+\input{"content/part-intro.tex"}
+
+\newpage
+\section*{General Information}
+
+This document was first published at: \\
+\mbox{} \hfill \url{https://pcaboche.github.io} 
+
+\subsection*{Legal}
+\input{"READ_ME_(LEGAL).txt"}
+
+%%% TOC
+\newpage
+\renewcommand{\currentPart}{Table of Contents}
+
+\addtocontents{toc}{\setcounter{tocdepth}{3}}
+\setcounter{tocdepth}{3}
+\tableofcontents
+
+%%% Article body
+\newpage
+\input{"content/part-problem.tex"}
+
+\newpage
+\input{"content/part-python.tex"}
+
+\newpage
+\input{"content/part-gawk"}
+
+\newpage
+\input{"content/part-perl"}
+
+\newpage
+\input{"content/part-julia"}
+
+\newpage
+\input{"content/part-other-technical-considerations"}
+
+\newpage
+\input{"content/part-python-issues"}
+
+\newpage
+\input{"content/part-verifying-results"}
+
+\newpage
+\input{"content/part-results-and-conclusion"}
+
+\bigskip
+
+%%% Bibliography
+
+\newpage
+\renewcommand{\formatPartTitle}{}
+
+\bibliography{content/biblio-python-awk-perl}
+\bibliographystyle{apalike}
+
+\bigskip
+\bigskip
+
+\listoffigures
+\listoftables
+
+
+% Label on the last page. Allows to easily get the page number
+\label{LastPage}
+
+\end{document}

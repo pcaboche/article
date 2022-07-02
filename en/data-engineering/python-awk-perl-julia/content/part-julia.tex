@@ -1,0 +1,170 @@
+
+\renewcommand{\currentPart}{Julia} 
+
+\newpage
+\part{Julia} \label{Julia}
+
+The last language we will evaluate is \julia. It is the most recent on our list, first appearing in 2012 (for reference, \awk\ first appeared in 1977, \perl\ in 1988, and \python\ in 1991). \\
+
+\julia\ took some inspiration from a variety of languages released before it (from Matlab to Python, Ruby, Perl, and more\dots) with a focus on speed, as explained by Bezanson et al. in their article \emph{``Why We Created Julia"}:
+
+\begin{quote}
+	\emph{``We want a language that's open source, with a liberal license. We want the speed of C with the dynamism of Ruby. We want a language that's homoiconic, with true macros like Lisp, but with obvious, familiar mathematical notation like Matlab. We want something as usable for general programming as Python, as easy for statistics as R, as natural for string processing as Perl, as powerful for linear algebra as Matlab, as good at gluing programs together as the shell. Something that is dirt simple to learn, yet keeps the most serious hackers happy. We want it interactive and we want it compiled."} --- \cite{julia-manifesto}
+\end{quote} 
+
+\bigskip
+\bigskip
+
+Being a relatively recent language, \julia\ currently has considerably less adoption than other languages like \python.
+\\
+
+\julia\ provides a lot of interesting features, like: 
+distributed and parallel computation,
+interoperability with other languages (like \python, C, MATLAB\dots),
+a great support for Unicode,
+a built-in package manager,
+support for metaprogramming and Lisp-like macros, and many more\dots\ 
+\citep{features-of-julia} \citep{julia-features} \citep{julia-awesome-features}
+\\
+
+It is to be noted that \julia\ currently has a number of bugs, and is in constant evolution. 
+\citep{is-julia-right-for-you} \\
+
+\bigskip
+
+Now we see how our script looks when rewritten in \julia, and later we will compare its performance with other languages on our list\dots
+\\
+
+\newpage
+
+Here is our \julia\ script:
+
+\begin{figure}[h]
+	\caption{bucket.jl}
+	\lstinputlisting[language=python]{"files/bucket.jl"}
+\end{figure}
+
+\bigskip
+
+
+The syntax of \julia\ is quite easy to follow, especially if you are already used to a language like \python, with a few differences\dots \\
+
+
+\subsection*{Variables scope}
+
+In the \julia\ script, we've put the implementation in a function (\cmd{put_in_buckets}) which we later call. This has to do with how \julia\ handles variable scopes. \\
+
+It is possible to use global variables in \julia, but it is not advisable. Indeed, if we didn't put out implementation inside of a function, then within the different code blocks (i.e. \cmd{for}, \cmd{if}), \julia\ would create local variables with the same name as the global variables. 
+
+This means we would need to use the \cmd{global} keyword whenever we need to assign a value to a global variable (in our script, this would mean using the \cmd{global} keyword for variables: \cmd{file_num}, \cmd{filename}, and \cmd{FH}). \\
+
+
+Without the \cmd{global} keyword, \julia\ will refer to a local variable instead (which is not correct), and issue some warnings and errors, as illustrated below: \\
+
+\begin{lstlisting}[language=sh]
+┌ Warning: Assignment to `file_num` in soft scope is ambiguous because a global variable by the same name exists: `file_num` will be treated as a new local. Disambiguate by using `local file_num` to suppress this warning or `global file_num` to assign to the existing global variable.
+└ @ path/to/bucket.jl:29
+ERROR: LoadError: UndefVarError: file_num not defined
+Stacktrace:
+[1] top-level scope
+@ path/to/bucket.jl:29
+in expression starting at path/to/bucket.jl:21
+\end{lstlisting}
+
+\bigskip
+\bigskip
+
+In other words, in \julia\ it is better to avoid modifying global values, and organise the code in functions. \\
+
+
+
+\subsection*{Code blocks}
+
+Regarding code blocks, languages like \awk\ or \perl\ use curly brackets ( \cmd{\{} and \cmd{\}} ) to define code blocks, and \python\ relies on indentation for that purpose.
+
+\julia\ has a different approach\dots \\
+
+
+In our script, keywords like \cmd{function}, \cmd{for}, or \cmd{if} marks the beginning of a code block. What follows will be evaluated by \julia, and the end of a code block will be indicated by the keyword \cmd{end}. \\
+
+So for example, in a \cmd{if} block where the condition spans over several lines, we would need to put the condition in parenthesis. The instructions then follow, up until the \cmd{end} keyword is met:
+
+\begin{lstlisting}[language=python]
+if (   <condition1>
+    && <condition2>
+    && <condition3>
+)
+	<instructions>
+end
+\end{lstlisting}
+
+
+
+\subsection*{Semicolons}
+
+Unlike with \perl, statements do not always need to be terminated by a semicolon in \julia. Where it makes sense, \julia\ will consider the end of line to mark the end of a statement (otherwise it will continue the evaluation on the next line). \\
+
+\newpage
+
+\subsection*{Reading line by line}
+
+All four implementations read the file line by line, whether it be using a \cmd{for} loop (\python, \julia), a \cmd{while} loop (\perl), or a totally different mechanism (\awk). \\
+
+In \julia:
+\begin{lstlisting}[language=python]
+for line = eachline()
+\end{lstlisting}
+
+\bigskip
+
+\marginnote{Is this a bug or a feature?} One thing worth noting with the \julia\ implementation is that, unlike with other languages, the string value does not include the end of line character (``\lstinline|\n|").
+
+Therefore, when writing to the file handler (\cmd{FH}) we need to specifically add an end of line:
+\begin{lstlisting}[language=python]
+write(FH, line, "\n")
+\end{lstlisting}
+
+
+
+
+\subsection*{Incrementing an integer}
+
+Just like \python\ (and unlike \awk\ and \perl), \julia\ doesn't have the \cmd{++} operator for incrementation. \\
+
+That's why we perform a \cmd{+= 1} to increment an integer:
+
+\begin{lstlisting}[language=python]
+# Julia
+file_num += 1
+\end{lstlisting}
+
+
+
+\subsection*{Regular expressions}
+
+\julia\ uses \perl-compatible regular expressions, as provided by the PCRE library. \\
+
+This means that \julia's regular expressions support a lot of features, including named groups (not supported by \awk), which makes working with regular expressions easier. \\
+
+In our regular expression, we define the ``TABLE" named group, which is later extracted (from \cmd{m}, our list of matches) like this:
+
+\begin{lstlisting}[language=python]
+table_name = m[:TABLE]
+\end{lstlisting}
+
+
+
+\subsection*{Logger}
+
+In our \julia\ implementation, we do not display the progress to the standard output, but instead we register the computation progress using the Logging module, which allows to keep track of events with different gravity levels: debug, info, warn, error. \\
+
+We are using the ``info" level to display the name of the file our script is writing to:
+\begin{lstlisting}[language=python]
+### Output the filename to logger
+@info filename
+\end{lstlisting}
+
+\bigskip
+
+By default, events of level ``info" will be displayed in the standard output. This can be configured programmatically (as described in the ``Logging" section of the \julia\ documentation). \\
+

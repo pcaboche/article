@@ -1,0 +1,116 @@
+
+\renewcommand{\currentPart}{Python issues}
+
+\newpage
+\part{Python issues}
+
+\section*{So\dots\ why is Python so slow?}
+
+So far we haven't seen why the Python script was so much slower than the \gawk\ implementation. To try and answer this question, we'll use a Python profiler (\emph{cProfile}).
+
+The output of \emph{cProfile} is a bit large, so I've removed some of it (\emph{the removed parts do not affect the conclusion}). Some of the output results like high timings have been emphasised (\emph{emphasis mine}):
+
+\begin{figure}[h]
+	\caption{Profiling our Python script}
+\begin{lstlisting}[basicstyle=\fontsize{7}{7}\selectfont\ttfamily,keywordstyle=\itshape\color{red},otherkeywords={891.720,891.533,834.227}]
+[user@gen-8 test]$ time pv mysql_dump.sql | python3 -m cProfile ./bucket.py
+7.42GiB 0:14:57 [8.47MiB/s] [==========================================================>] 100%            
+17332856 function calls (17332841 primitive calls) in 897.093 seconds
+
+Ordered by: standard name
+
+ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+1    0.000    0.000    0.000    0.000 __init__.py:43(normalize_encoding)
+1    0.000    0.000    0.000    0.000 __init__.py:70(search_function)
+828    0.001    0.000    0.002    0.000 _bootlocale.py:33(getpreferredencoding)
+1    0.000    0.000    0.000    0.000 codecs.py:1005(getreader)
+828    0.000    0.000    0.000    0.000 codecs.py:186(__init__)
+828    0.000    0.000    0.000    0.000 codecs.py:260(__init__)
+546234    0.048    0.000    0.048    0.000 codecs.py:276(reset)
+828    0.001    0.000    0.001    0.000 codecs.py:309(__init__)
+546234    0.186    0.000    0.234    0.000 codecs.py:327(reset)
+1    0.000    0.000    0.000    0.000 codecs.py:423(__init__)
+1269646    5.147    0.000   15.599    0.000 codecs.py:451(read)
+546235   40.593    0.000  891.533    0.002 codecs.py:531(readline)
+546235    0.187    0.000  891.720    0.002 codecs.py:642(__next__)
+1    0.000    0.000    0.000    0.000 codecs.py:650(__iter__)
+1    0.000    0.000    0.000    0.000 codecs.py:94(__new__)
+2    0.000    0.000    0.000    0.000 enum.py:313(__call__)
+2    0.000    0.000    0.000    0.000 enum.py:631(__new__)
+(...)
+2    0.000    0.000    0.000    0.000 {method 'rfind' of 'str' objects}
+1    0.000    0.000    0.000    0.000 {method 'rstrip' of 'str' objects}
+2343068  834.227    0.000  834.227    0.000 {method 'splitlines' of 'str' objects}
+546234    4.491    0.000    4.725    0.000 {method 'write' of '_io.TextIOWrapper' objects}
+
+
+real	14m57.128s
+user	14m52.051s
+sys 	0m32.191s
+\end{lstlisting}
+\end{figure}
+
+
+From the output of \emph{cProfile}, we can see that the \cmd{readline} function takes the longest time. \\
+
+The \cmd{readline} function is called when we do a:
+\begin{lstlisting}[language=python]
+for line in sys.stdin :
+\end{lstlisting}
+
+
+This type of loop goes through the element of an iterator, and is of the form:
+\begin{lstlisting}[language=python]
+for <variable> in <iterator> :
+\end{lstlisting}
+
+
+The profiler doesn't show it, but the memory consumption of the script is very low (at around 10 MB). As expected, the input is read line by line. What was not expected, however, was the fact that this operation would be so slow in Python. \\
+
+
+When looking for solution online, I saw many people suggesting that \cmd{readlines} (plural) is a lot faster than \cmd{readline}. However, this forces to put the whole file in memory first, which is not viable (because we might deal with streams, or very large files).
+
+
+This approach might work if you can afford to put all your data in memory before working on it, but it starts to fall apart when you can't. 
+
+Some Data Analysts may be fine with this approach; they would usually use smaller data sets to train / validate/ test Machine Learning models, and then use those models to make predictions on small data sets.
+Data Engineers, on the other hand, often need to clean / filter large amounts of data for use by Data Analysts (e.g. separate the data in smaller files like in our example). They might be better off using \awk\ to process such large files. \\
+
+That being said, speed is not the only problem we've encountered with Python.
+Indeed, there is worse\dots
+
+
+\section*{Problems with UTF-8 encoding}
+
+For the sake of clarity I haven't mentioned another problem that I met with Python. Now is the time to talk about it.
+
+The files we are trying to process are MySQL database backup (dump) files. Some of the data they contain might be of type binary. This has some consequences\dots
+
+When trying to process such file with Python, the following error occurs:
+\begin{lstlisting}
+UnicodeDecodeError: 'utf-8' codec can't decode byte 0xe2 in position 3987: invalid continuation byte
+\end{lstlisting}
+
+
+To get around this problem, some comments online suggested to do the following:
+
+\begin{lstlisting}[language=python]
+import codecs
+sys.stdin = codecs.getreader('utf8')(sys.stdin.detach(), errors='ignore')
+\end{lstlisting}
+
+
+Although it removed the previous error and allowed to execute the script (albeit in an excruciatingly long time), some of the data was missing from the output (as implied by \cmd{errors='ignore'}, we are simply ignoring the errors thrown by the \cmd{utf8} codec). \\
+
+This isn't good. \\
+
+Another solution would be to read the input as binary, but then it's not possible to call the \cmd{readline} function (directly or indirectly). We would then have to implement our own buffer, detect the ends of lines, apply our regular expression only when needed (at the beginning of a line)\dots 
+This makes the script much more complicated, which defeats the purpose of using Python, a language often hailed for its simplicity. \\
+
+In the end, we \emph{might} eventually achieve \emph{correctness}, but at the detriment of \emph{simplicity} (and we would most likely not achieve \emph{speed} either\dots). \\
+
+I didn't explore the Python solution any further. I had initially chosen Python because it was supposed to be simple, but then new problems surfaced (utf-8 error, speed\dots), which required finding new solutions or workarounds. \\
+
+That's when I thought it would be better to take a step back, try a solution in \awk\ (a language I knew almost nothing about), and see how it compares to Python\dots\ Later I would also try other solutions in \perl\ and \julia, which both confirmed my previous results.
+
+
