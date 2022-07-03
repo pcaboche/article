@@ -1,3 +1,4 @@
+% Copyright 2022 Pierre S. Caboche. All rights reserved.
 
 \renewcommand{\currentPart}{GNU awk} 
 
@@ -140,8 +141,11 @@ filename = sprintf("%s/%04d_%s.sql", outdir, file_num, a[1])
 
 We create a directory (and all sub-directories) by calling the system command to ``make a path": \cmd{mkdir -p} \\
 
-The original \cmd{awk} from Bell Labs was designed to run exclusively on the original AT\&T \Unix. Given that context, performing such system calls makes perfect sense\dots (later languages would have dedicated APIs to make system calls in a portable way).
+The original \cmd{awk} from Bell Labs was designed to run on AT\&T \Unix\ machines. In this environment, performing system calls was not out of the ordinary. \\
 
+\marginnote{Something to keep in mind\dots}However, this approach introduces some security issues. A directory is created through a system call, namely: \texttt{system( "mkdir -p " outdir )} where the value of \texttt{outdir} is read from the data file. With that in mind, it is trivially easy to craft a data file that will result in the \cmd{outdir} variable containing "\texttt{some\_dir; some\_linux\_command}" and the command in question being executed on the system. \\
+
+In all other languages in this article, directories are created through a dedicated API (not by blindly executing some Linux commands). \\
 
 
 \subsection*{Matching regular expressions}
