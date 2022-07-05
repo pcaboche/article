@@ -143,7 +143,7 @@ We create a directory (and all sub-directories) by calling the system command to
 
 The original \cmd{awk} from Bell Labs was designed to run on AT\&T \Unix\ machines. In this environment, performing system calls was not out of the ordinary. \\
 
-\marginnote{Something to keep in mind\dots}However, this approach introduces some security issues. A directory is created through a system call, namely: \texttt{system( "mkdir -p " outdir )} where the value of \texttt{outdir} is read from the data file. With that in mind, it is trivially easy to craft a data file that will result in the \cmd{outdir} variable containing "\texttt{some\_dir; some\_linux\_command}" and the command in question being executed on the system. \\
+\marginnote{Something to keep in mind\dots}However, this approach introduces some security issues. A directory is created through a system call, namely: \texttt{system( "mkdir -p " outdir )} where the value of \texttt{outdir} is read from the data file. With that in mind, it is trivially easy to craft a data file which will inject "\texttt{some\_dir; some\_linux\_command}" into the \cmd{outdir} variable, resulting in the command in question being executed on the system. \\
 
 In all other languages in this article, directories are created through a dedicated API (not by blindly executing some Linux commands). \\
 
