@@ -1,0 +1,202 @@
+% Copyright 2022 Pierre S. Caboche. All rights reserved.
+
+\part{\LaTeX} \label{latex}
+
+\renewcommand{\currentPart}{\LaTeX}
+
+In the previous part, we talked about the fonts necessary to render CJK characters, and where to find them. \\
+
+Next we'll need a working \LaTeX\ environment\dots
+
+\section*{Differences between \TeX, \LaTeX, and others}
+
+The original \TeX\ was created in the late 1970s by Donald Knuth, who needed a new typesetting program. 
+
+\emph{At that time, Knuth was revising the second volume of his book \emph{``The Art of Computer Programming"},  got the galleys from his publisher, and was very disappointed in the result. The quality was so far below that of the first edition that he couldn't stand it. Around the same time, he saw a new book that had been produced digitally, and thought he could produce a digital typesetting system. So he started to learn about typography, type design, and the rules for typesetting math} \citep{tug}\footnote{I highly recommend you look at \cite{tug} if you want to learn more about the history of \TeX}, and thus started his work on \TeX.
+
+\note{
+The idea behind \TeX\ was \emph{``to allow anybody to produce high-quality books with minimal effort, and to provide a system that would give exactly the same results on all computers, at any point in time"} \citep{wiki-tex}
+}
+
+The commands in \TeX\ were basic, but allowed the creation of macros to extend the list of commands. \\
+
+In the early 1980s, Leslie Lamport created \LaTeX, a typesetting program written in the \TeX\ macro language. \citep{wiki-latex} As such, \LaTeX\ provides a large set of macros for \TeX\ to interpret, and \TeX\ is in charge of formatting the output.
+
+
+\LaTeX\ packages are centralised in a repository called ``The Comprehensive \TeX\ Archive Network" (CTAN), \emph{``the central place for all kinds of material around \TeX"} \citep{CTAN}.
+
+\note{Broadly speaking, you can think of \LaTeX\ as: \emph{``\TeX, enhanced with a huge collection of macros: more than 6000 packages to date in \cite{CTAN}."}}
+
+
+In 1989, Knuth declared that \TeX\ was feature-complete, and only bug fixes would be made \citep{tex-vs-latex}. Since then, new typesetting programs based on \TeX\ appeared: \pdfTeX, \XeTeX, \LuaTeX\dots\\
+
+When those typesetting programs are used in conjunction with the \LaTeX\ macros, we talk of:  \pdfLaTeX, \XeLaTeX, \LuaLaTeX\dots \\
+
+The advantage of \XeTeX\ (and therefore \XeLaTeX) is that:
+\begin{itemize}
+	\item \XeTeX\ supports UTF-8 by default
+	\item \XeTeX\ can make use of the fonts that are installed on your computer (not just the standard \LaTeX\ fonts)
+\end{itemize}
+
+This is required to handle texts in Japanese, Chinese, or other languages. We'll use \XeLaTeX\ to generate our documents. \\
+
+
+
+\section*{Getting \LaTeX}
+
+The official \LaTeX\ Project website \citep{latex-project} provides some information about \LaTeX\ (including how to install \LaTeX). \\
+
+Link: \url{https://www.latex-project.org} \\
+
+That being said, here is some information to get you started\dots
+
+
+\subsection*{\Windows}
+
+On \Windows, I would recommend using \MiKTeX, which includes (among other things):
+
+\begin{itemize}
+	\item an \emph{``integrated package manager"} \citep{miktex-project} (which will help you download the missing \TeX\ packages, as you need them. This allows you to keep \emph{``just enough \TeX"} on your computer for your work)
+	\item \TeXworks, a \emph{``simple \TeX\ front-end program (working environment)"} \citep{texworks}
+\end{itemize}
+
+When it comes to \TeX\ editors, I have a preference for \TeXstudio.
+The goal of \TeXstudio\ is to \emph{``make writing \LaTeX\ as easy and comfortable as possible"} \citep{texstudio}. \\
+
+On Windows, I would usually install the following:
+\begin{itemize}
+	\item \MiKTeX:   \url{https://miktex.org}
+	\item \TeXstudio: \url{https://www.texstudio.org} 
+\end{itemize}
+
+
+\subsection*{\Linux}
+
+On \Linux, I normally install \texttt{texlive}  
+(as most Linux distribution provide it through their official repositories \citep{texlive}), as well as an editor for \TeX\ (usually \TeXstudio).
+
+\begin{description}
+	\item[texlive] \mbox{} \\ 
+	\emph{Required}.
+	\TeX\ formatting system.
+	
+	\item[texstudio] \mbox{} \\
+	\emph{Recommended}.
+	A feature-rich editor for \LaTeX\ documents. \\
+\end{description}
+
+
+To install these packages in Fedora (requires \emph{super user} privileges):
+\begin{lstlisting}[language=sh]
+$ sudo dnf install texlive texstudio
+\end{lstlisting}
+
+\bigskip
+
+Additional \TeX\ packages need to be installed separately. \\
+
+Such packages normally have a name that starts with "\texttt{texlive-}" \\
+( e.g. \texttt{texlive-mdframed} )
+
+\bigskip
+
+
+\section*{Installing fonts}
+
+This is a reminder (from the previous part) that we need to install some specialised fonts to be able to render CJK characters. \
+
+In the previous part, we also explained how to choose which fonts to install (based on our needs), and how to install them. \\
+
+Please see \emph{``\nameref{fonts}"} for more details. \\
+
+
+\section*{Additional packages}
+
+Some of our examples require additional packages. \\
+
+My advice is to try and render the documents we provide as examples. If you come across any error, then install the missing packages. This will save you some disk space.
+
+\subsection*{Windows}
+
+If you're using \MiKTeX, then it will automatically handle package dependencies (\MiKTeX\ will ask you permission before downloading the missing packages for you). \\
+
+This allows to keep \emph{``just enough TeX"} (i.e. only install the necessary packages).
+The downside is, the \MiKTeX\ repositories can be significantly slower than those of major Linux distributions.
+
+
+\subsection*{Linux}
+
+Under Linux, you will need to install the necessary \LaTeX\ packages (installation requires \emph{super user} privileges):
+
+\begin{description}
+	\item[xeCJK] \mbox{} \\ 
+	\emph{Required} \\
+	Support for CJK documents in \XeLaTeX. \citep{xecjk} \\
+	Package name (Fedora): \texttt{texlive-xecjk}
+
+	\item[xpinyin] \mbox{} \\
+	\emph{Optional} \\
+	Automatically add pinyin to Chinese characters. \citep{xpinyin} \\
+	Package name (Fedora): \texttt{texlive-xpinyin}
+\end{description}
+
+\xxpinyin\ is a really impressive package! It contains a large database of Chinese characters and their pronunciation. \\
+
+
+\newpage
+
+\section*{Documentation for \xeCJK\ and \xxpinyin}
+
+To this day, the documentation for \xeCJK\ \citep{xecjk} and \xxpinyin\ \citep{xpinyin} is available in Chinese only. \\
+
+While ``CJK" stands for \emph{``Chinese, Japanese, Korean"}, only Chinese speakers have access to the documentation (which is very technical).
+
+The \xxpinyin\ documentation is a bit easier to follow, despite the language barrier (it is reasonable to assume that \xxpinyin\ might be used by learners of Mandarin Chinese, who wish to quickly add \emph{pinyin} to the texts they want to study). \\
+
+Finding a document covering all the steps for rendering CJK characters in \LaTeX\ (including fonts, package installation and use) was hard. Hopefully this article will help you getting set up. \\
+
+I am focusing primarily on Japanese and Chinese scripts. That being said, some of the information contained in this document may apply to other writing systems. \\
+
+
+\newpage
+
+\section*{Using CJK fonts in \LaTeX}
+
+To manage the CJK fonts, we'll need to use the \cmd{xeCJK} package:
+\begin{lstlisting}[language=tex]
+\usepackage{xeCJK}
+\end{lstlisting}
+
+We can set the CJK fonts to be used for the \emph{whole} document. This must be done in the \emph{preamble}:
+\begin{lstlisting}[language=tex]
+\setCJKmainfont{Noto Serif JP}
+\setCJKsansfont{Noto Sans JP}
+\setCJKmonofont{Noto Sans Mono CJK JP}
+\end{lstlisting}
+
+This way, when \lstinline|\sffamily| is used (e.g. inside a \lstinline|\textsf{}| block), \LaTeX\ will automatically render CJK characters with the \emph{Noto Sans JP} font.\\
+
+
+
+It is also possible to manually switch to a different CJK font:
+\begin{lstlisting}[language=tex]
+\CJKfontspec{Noto Sans JP}
+\end{lstlisting}
+
+\bigskip
+
+\section*{Finding the font names}
+
+In our document, we'll need to tell \LaTeX\ which fonts we want to use. This implies referring to the font by name. \\
+
+To find the font name, we have several solutions:
+\begin{enumerate}
+	\item explore the directory where the \emph{Noto fonts} are installed \newline
+	( e.g. \cmd{usr/share/fonts/google-noto-cjk} ), open the font with a program like \cmd{gnome-font-viewer}, and copy the font name
+	\item open \emph{LibreOffice} and view the list of available fonts, sorted by name
+\end{enumerate}
+
+I know, it is rather ironic to use \LibreOffice\ in order to find the font name we wish to use in a \LaTeX\ document, but in many cases it might be more convenient this way.
+
+
+

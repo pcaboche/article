@@ -1,0 +1,140 @@
+% Copyright 2022 Pierre S. Caboche. All rights reserved.
+
+\renewcommand{\currentPart}{Preamble}
+
+\section*{Background}
+I started to use \LaTeX\ to write documents containing a lot of Japanese text and \furigana\footnote{one of my hobbies is to study the lyrics of the Japanese songs I like, then try to sing them at the \emph{karaoke}. \LaTeX\ allows me to quickly add \furigana\ to the lyrics, or any other Japanese text}. From my experience (and by using some of the techniques described in this article), adding \furigana\ was considerably faster to do in \LaTeX\ than in either \Word\ or \LibreOffice, as we'll discover towards the end of this  article\dots \\
+
+
+However, when I switched to \Linux, I discovered that my \LaTeX\ documents didn't render at all. \\
+
+When I tried to look for a solution online, I found a lot of documents whose advice were either:
+\begin{itemize}
+	\item \emph{outdated}, as they relied on the obsolete packages % \texttt{CJKutf8} package under \pdfLaTeX
+	\item \emph{not portable}: they were written with \Windows\ in mind, and recommended the use of fonts that are not readily available on other systems (e.g. \Meiryo)
+\end{itemize}
+
+I eventually found a solution to those issues, I decided to share my findings in this article.
+
+
+
+
+\section*{Goal}
+
+Our goal in this article is to learn how to perform the following:
+
+\begin{itemize}
+	\item in \LaTeX, display texts in Chinese, Japanese, etc. \\
+	\phantom{MM}\dots without relying on proprietary fonts, which might not be available on \Linux
+	\item add \rruby\ characters, especially Japanese \furigana\ (e.g. \kabocha) and Chinese \ppinyin\ (e.g. \xpinyin*{南瓜})
+\end{itemize}
+
+
+
+\section*{Methodology}
+
+To achieve our goals, we will do the following:
+
+\begin{itemize}
+	\item install the \emph{\Noto\ Fonts} for the relevant languages
+	\item install \LaTeX
+	\item render documents containing texts in Chinese, Japanese, Korean, etc.\\
+		\phantom{MM}\dots in a way that works on Windows, Linux, and other systems
+	\item add \furigana\ to text in Japanese with the \texttt{ruby} package, as well as a \emph{custom macro}
+	\item add \ppinyin\ to text in Mandarin Chinese with the \xxpinyin package
+	\item perform the same tasks in \LibreOffice\ (mini-guide included), and compare it with our solution in \LaTeX
+\end{itemize}
+
+The rest of this article goes into more details about \emph{what} those tools are, \emph{how} to use them, and \emph{why}.
+
+
+
+\newpage
+
+\section*{What are \emph{ruby} and \emph{furigana}?}
+
+\emph{Ruby} characters are annotations usually placed on top of\footnote{or to the right, if the text is displayed vertically} Chinese, Japanese, or Korean characters\footnote{\rruby\ characters can technically be used in other languages too}, which are usually used to show the pronunciation of such characters\footnote{\rruby\ characters have other usages, but are mainly used to indicate pronunciation}. \\
+
+
+\CJKfontspec{Noto Sans CJK SC}
+
+When adding \rruby\ characters to texts in Standard Mandarin Chinese, \ppinyin\ (see below) are usually used as \rruby. \\
+
+
+Below is an example of \ppinyin\ used as \rruby:
+
+\begin{center}
+	\begin{pinyinscope}
+	雪花飄飄\ 北風蕭蕭\par
+	天地\ 一片蒼茫\par
+	\end{pinyinscope}
+\end{center}
+
+\bigskip
+
+\CJKfontspec{Noto Sans JP}
+
+In Japanese, \rruby\ characters are usually called \furigana.\\
+
+Below is the word ``\furigana" (振り仮名), with \furigana\ added to it:
+\begin{center}
+	\begin{tabular}{c c}
+		\furi{振/ふ,り/,仮/が,名/な}    \\
+		\furi{振/fu,り/ri,仮/ga,名/na} \\
+	\end{tabular}
+\end{center}
+
+
+\bigskip
+
+
+\emph{Ruby} characters may also be referred to as \emph{rubi}, and may be plurialised as: \emph{ruby}, \emph{rubi}, or \rubies\ (I tend to use the phrase ``\emph{ruby} characters" to avoid the confusion between singular and plural).
+
+
+
+
+
+\section*{What is \ppinyin?}
+
+\CJKfontspec{Noto Sans CJK SC}
+
+\ppinyin\ is the official romanization system for Standard Mandarin Chinese. \\
+
+The name ``\ppinyin" comes from \emph{``Hànyǔ Pīnyīn"} (汉语拼音), literally: \emph{``to spell the sound of the Han language"}. \\
+
+\ppinyin\ can be used on their own (e.g. ``\pinyin{han4yu3pin1yin1}") or as \rruby\ characters (e.g. \xpinyin*{汉语拼音}). \\
+
+\CJKfontspec{Noto Sans JP}
+
+
+\section*{About foreign loanwords}
+
+Words of Chinese or Japanese origins are invariable in English. For example, the plural of \emph{anime} or \emph{manga} is ``\emph{anime}", ``\emph{manga}". \\
+
+As such, the word ``\kanji" may refer to either one \kanji\ (i.e. Chinese character, also used in Japanese) or several \kanji. \\
+
+Foreign loanwords (therefore, invariable in plural) used in this article include: \kanji, \hiragana, \katakana, \furigana, \ppinyin.
+
+
+
+
+\section*{Conventions}
+
+
+Some commands in this article need to be executed with \emph{administrator} privileges (on Linux, that means \emph{root}) to perform operations such as: installing new software on the system, modifying some system configuration, etc. \\
+
+If you have \emph{administrator} privileges on your machine, please read on\ldots
+
+\note{
+In this article, we indicate that a Linux command needs to be executed with \emph{root} privileges by using: \\
+
+\cmd{sudo} \\
+
+However, please note that there are cases when the \cmd{sudo} command will not work; for example, if the current user does not appear in the list of \cmd{sudoers} (file \cmd{/etc/sudoers}). \\
+
+If that is your case, please use whichever method you normally use to run a command as \emph{root} (e.g. \emph{doas}, \emph{su}), while keeping in mind that being logged in as \emph{root} is extremely bad practice.
+}
+
+
+If you do NOT have \emph{administrator} privileges on your machine, please contact your administrator.
+

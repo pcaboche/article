@@ -1,0 +1,96 @@
+% Copyright 2022 Pierre S. Caboche. All rights reserved.
+
+\usepackage{mdframed}
+\mdfsetup{
+	%innertopmargin=10pt,
+	frametitleaboveskip=-\ht\strutbox,
+	frametitlealignment=\center
+}
+
+\newcommand{\note}[1]{
+	\mdfsetup{
+		middlelinewidth=2pt
+		, backgroundcolor=yellow!10
+	}
+	\begin{mdframed}#1\end{mdframed}
+	\mdfsetup{
+		backgroundcolor=white
+	}
+}
+
+\newcommand{\cmd}[1]{\texttt{#1}}
+
+
+
+
+%\hyphenation{phototypesetting}
+
+% Terms with custom rendering
+
+
+\newcommand{\kabocha}{\furi{南瓜/カボチャ}}
+\newcommand{\kabochaPieru}{\furi{南瓜\ 石/カボチャ\ ピエール}}
+
+\newcommand{\xeCJK}{\texttt{xeCJK}\index{xeCJK}}
+\newcommand{\xxpinyin}{\texttt{xpinyin}\index{xpinyin}}
+
+\newcommand{\kanji}{\emph{kanji}\index{kanji}}
+\newcommand{\kana}{\emph{kana}\index{kana}}
+\newcommand{\hiragana}{\emph{hiragana}\index{hiragana}}
+\newcommand{\katakana}{\emph{katakana}\index{katakana}}
+\newcommand{\furigana}{\emph{furigana}\index{furigana}}
+\newcommand{\halfwidth}{\emph{half-width}\index{half-width kana}}
+
+
+\newcommand{\onyomi}{\emph{on'yomi}\index{on'yomi}}
+\newcommand{\kunyomi}{\emph{kun'yomi}\index{kun'yomi}}
+
+\newcommand{\Noto}{Noto\index{Google Noto fonts}}
+\newcommand{\tofu}{tofu\index{tofu}}
+
+
+\newcommand{\ppinyin}{\emph{pinyin}\index{pinyin}}
+\newcommand{\rruby}{\emph{ruby}\index{ruby}}
+\newcommand{\rubies}{\emph{rubies}\index{ruby}}
+
+
+\newcommand{\linux}{linux\index{Linux}}
+\newcommand{\Linux}{Linux\index{Linux}}
+
+
+\newcommand{\LibreOffice}{\emph{LibreOffice}\index{LibreOffice}}
+\newcommand{\Microsoft}{\emph{Microsoft\textregistered}\index{Microsoft\textregistered}}
+\newcommand{\MicrosoftCorp}{\emph{Microsoft Corporation}\index{Microsoft\textregistered}}
+\newcommand{\Word}{\emph{Word\textregistered}\index{Word\textregistered}}
+\newcommand{\Windows}{Windows\textregistered\index{Windows\textregistered}}
+\newcommand{\Meiryo}{\emph{Meiryo}\index{Meiryo}}
+
+
+\newcommand{\Serif}{\emph{Serif}\index{serif}}
+\newcommand{\SansSerif}{\emph{Sans Serif}\index{sans-serif}}
+\newcommand{\Sansserif}{\emph{Sans-serif}\index{sans-serif}}
+\newcommand{\monospace}{monospace\index{monospaced}}
+\newcommand{\monospaced}{monospaced\index{monospaced}}
+
+
+\newcommand{\Portability}{Portability\index{portability}}
+
+
+\newcommand{\TikZ}{\texttt{TikZ}\index{TikZ}}
+
+
+
+\usepackage{hologo}
+
+\newcommand{\XeTeX}{\hologo{XeTeX}\index{XeTeX}}
+\newcommand{\XeLaTeX}{\hologo{XeLaTeX}\index{XeLaTeX}}
+\newcommand{\pdfTeX}{\hologo{pdfTeX}\index{pdfTeX}}
+\newcommand{\pdfLaTeX}{\hologo{pdfLaTeX}\index{pdfLaTeX}}
+\newcommand{\LuaTeX}{\hologo{LuaTeX}\index{LuaTeX}}
+\newcommand{\LuaLaTeX}{\hologo{LuaLaTeX}\index{LuaLaTeX}}
+\newcommand{\ConTeXt}{\hologo{ConTeXt}\index{ConTeXt}}
+\newcommand{\MiKTeX}{\hologo{MiKTeX}\index{MiKTeX}}
+
+\newcommand{\TeXstudio}{\emph{TeXstudio}\index{TeXstudio}}
+\newcommand{\TeXworks}{\emph{TeXworks}\index{TeXworks}}
+

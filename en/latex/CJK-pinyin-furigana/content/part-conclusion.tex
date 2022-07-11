@@ -1,0 +1,135 @@
+% Copyright 2022 Pierre S. Caboche. All rights reserved.
+
+\part{\LaTeX\ vs. \LibreOffice, \Word\dots} \label{msword}
+
+\renewcommand{\currentPart}{\LaTeX\ vs. \LibreOffice, \Word\dots}
+
+I started to use \LaTeX\ because of how easy it is to add \rruby\ characters. 
+After experimenting with \LibreOffice\ and \Word, I tried \LaTeX\ and was genuinely impressed by how much time it saved me for this task\dots \\
+
+To properly grasp how effective \LaTeX\ is at adding \rruby\ characters, we need to understand how the same process is done in \LibreOffice\ and \Word.
+
+
+\section*{\LibreOffice}
+
+\subsection*{Configuration}
+
+This is a quick guide to enabling \rruby\ character support in \LibreOffice.
+
+\subsubsection*{Language settings}
+
+\begin{itemize}
+	\item Go to \emph{Tools > Options\dots}
+	\item under \emph{Language settings > Languages}
+	\begin{itemize}
+		\item check the \emph{Asian} box
+		\item select a default language (e.g. \emph{Japanese})
+	\end{itemize}
+	\item Click \emph{OK}
+\end{itemize}
+
+This should enable the support for features like \emph{Asian Phonetic Guide}
+
+\subsubsection*{Edit the context menu}
+
+\begin{itemize}
+	\item Go to \emph{Tools > Customize\dots} \\
+	This allow you to edit the Context Menu (accessible when you right-click on something)
+	
+	\item Under \emph{Target} (to the right)
+	\begin{itemize}
+		\item Select \emph{Text} \\
+		This allows you to edit the Context Menu for when you right-click on some selected text
+	\end{itemize}
+
+	\item Under \emph{Search} (to the top-left)
+	\begin{itemize}
+		\item Search for \emph{``Asian Phonetic Guide"} \\
+		\emph{Asian Phonetic Guide} should appear in the list of \emph{Available Commands}
+		\item Move \emph{Asian Phonetic Guide} from \emph{Available Commands} (the menu on the left) to \emph{Assigned Commands} (the menu on the right)
+	\end{itemize}
+	\item Click \emph{OK}
+\end{itemize}
+
+From now on, \emph{Asian Phonetic Guide} should be available when you right click on some selected text.
+
+
+\subsection*{Adding \ppinyin\ with \LibreOffice}
+
+\begin{itemize}
+	\item Select some text
+	\item Right-click \\
+	If you've followed the configuration above, then \emph{``Asian Phonetic Guide\dots"} should appear in the menu
+	\item Select \emph{``Asian Phonetic Guide\dots"} \\
+	A menu called \emph{``Asian Phonetic Guide"} should appear
+\end{itemize}
+
+The \emph{``Asian Phonetic Guide"} menu allows you to specify the \rruby\ characters you want to add to the text. 
+You also need to specify the alignment, position, and style for the \rruby\ characters. \\
+
+
+\subsection*{A very slow process\dots} \label{slow-process}
+
+In \LibreOffice, you will need to repeat the above process for virtually \textbf{\emph{every}} character for which you want to add some \rruby\ annotation. \\
+	
+This is slow and tedious\dots \\
+	
+Not only that, but should you wish to change the size or alignment of the \rruby\ characters, then you will also have to repeat the process for  \textbf{\emph{every}} character in your document. \\
+
+
+
+\section*{\Word}
+
+The process is somewhat similar in \Microsoft\ \Word. \\
+
+\Microsoft\ \Word\ suffers from the same quirk as \LibreOffice, where you need to specify the \rruby\ (and style, size, alignment) for nearly \textbf{\emph{every}} character in your document\dots \\
+
+\Word\ has one advantage over \LibreOffice: for each selected character, \Word\ suggests a possible \rruby\dots
+\ but \LaTeX\ does even better (at least in Mandarin) by automatically adding \ppinyin\ to your text, thanks to the \xxpinyin\ package (and \LaTeX\ does it for free!) \\
+
+The fact that \LaTeX\ also produces beautiful documents is just the icing on the cake\dots
+
+
+\newpage
+
+\renewcommand{\currentPart}{Conclusion}
+
+\part{\currentPart}
+
+I started to use \LaTeX\ out of necessity, because I needed a way to write documents (for my personal use) which would contain a lot of Japanese \furigana\ (\rruby).
+After some experimentation, I found that adding \rruby\ characters was considerably more efficient in \LaTeX\ than in either \LibreOffice\ or \Word\ (see \emph{Part~\ref{msword}}). \\
+
+The process of using \LaTeX\ also turned out to be easier than I initially thought. \LaTeX\ produces very good-looking documents by default, which you can customise if you need to (like I did in this article and others\ldots) 
+
+But the main reason for me to use \LaTeX\ was the possibility to define custom commands which you can then \emph{re-use} at will, to produce documents with a consistent layout (this, in my opinion, is one of \LaTeX's biggest strengths). \\
+
+So this is, in a nutshell, how I started out with \LaTeX\ldots \\
+
+And everything was fine, until I tried to render my \LaTeX\ files on a different Operating System\ldots\ \\
+
+ 
+Indeed, the way I wrote my \LaTeX\ files prevented them from properly render on \Linux\ (which I'm now using more and more, including at home). 
+Solving this issue was the subject of \emph{Parts~\ref{fonts} and~\ref{latex}} (which apply not only to Japanese and Chinese, but any language that use a non-Latin writing script). \\
+
+At first I was focused on documents that feature texts in Japanese language, and how to add \furigana\ (Part~\ref{japanese}). Then I discovered the \texttt{xpinyin} package, which does much of the same but is tailored towards Standard Mandarin Chinese. I found it to be a related issue, and therefore decided to cover it as well (in Part~\ref{chinese}). \\
+
+Hopefully this document will have helped you discover what \LaTeX\ can do, and how to handle languages like Japanese, Chinese, or Korean (and other non-Latin writing scripts).
+
+
+\section*{What we learned}
+
+This article presented the following subjects:
+\begin{itemize}
+	\setlength\itemsep{0em}
+	\item fonts and non-latin writing systems
+	\item Noto fonts
+	\item \rruby\ characters, \furigana, \ppinyin
+	\item some aspects specific to the Japanese and Chinese languages
+	\item the \texttt{ruby} package
+	\item the \texttt{xpinyin} package
+	\item the use of custom macros (to add \furigana) 
+\end{itemize}
+
+\bigskip
+
+

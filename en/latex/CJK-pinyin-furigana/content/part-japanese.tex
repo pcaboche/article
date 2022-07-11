@@ -1,0 +1,208 @@
+% Copyright 2022 Pierre S. Caboche. All rights reserved.
+
+\part{Japanese texts in \LaTeX} \label{japanese}
+
+\renewcommand{\currentPart}{Japanese texts in \LaTeX}
+
+In the previous parts, we saw how to prepare our environment (including the type of fonts to use) to render CJK characters in \LaTeX. \\
+
+In the next two parts, we'll see how to add \emph{ruby} characters for Japanese (\furigana) and Chinese (\ppinyin).
+
+\section*{Furigana in Japanese}
+
+In Japanese, the same group of \emph{kanji} can have multiple pronunciations. \\
+
+The main reason for this is \emph{(warning: overly simplified version ahead\dots)} : Japan got its writing system from Chinese; the two languages are very different, there was not a 1-to-1 match between the two vocabularies, and the different \emph{kanji} did not arrive all at once but in successive waves spread over several centuries\dots \\
+
+Usually, a \kanji\ in Japanese will have one \kunyomi\footnote{\kunyomi: the original, indigenous Japanese pronunciation} pronunciation, and one or more \onyomi\footnote{\onyomi: a pronunciation derived from the Chinese} pronunciations. \citep{onyomi-kunyomi} \\
+
+While it is not uncommon for a \kanji\ to have 3 or 4 possible pronunciations, a few characters may have a lot more than that\dots\\ 
+
+To illustrate this phenomenon, here are some of the possible pronunciations for the character 日 (meaning ``sun" or ``day"). For clarity, I assigned a number to the different pronunciations\dots
+
+\newpage
+
+\begin{center}
+	The multiple Japanese pronunciations of ``日"
+	\centering
+	\begin{longtable}[c]{ c l c l }
+		 1	& \furi{日/nichi} & nichi & Day \\
+		 2	& \furi{日本/ni hon}, \furi{日本/nippon} & nihon, nippon & Japan \\
+		 3	& \furi{休みの日/yasumi no hi} & yasumi no hi & Day off \\
+		 4	& \furi{記念日/kinen bi}& kinenbi & Memorial day, commemoration day, \\
+			& & & anniversary \\
+		(1,4) & \furi{日曜日/nichi you bi}  & nichi youbi & Sunday \\
+		(1) & \furi{毎日/mai nichi}& mai nichi & Everyday \\
+		(3,4) & \furi{日々/hi bi}, \furi{日日/hi bi} & hibi & Day after day, the every day \\
+		 5	& \furi{同日/dou jitsu} & doujitsu & The same day \\ 
+		(5) & \furi{来日/rai jitsu} & rai jitsu & (At a) later date \\  
+		(1)	& \furi{一日/ichi nichi}, \furi{１日/ichi nichi} & ichi nichi & One day (duration) \\
+		& \furi{一日(中)/ichi nichi (juu)} & ichi nichi (juu) &  All day (long), throughout the day \\   
+		6	& \furi{一日/tsuitachi}, \furi{１日/tsuitachi} & tsuitachi & First day of the month \\
+		7	& \furi{一日/tsukitachi} \emph{(archaism)} & tsukitachi & The \nth{1} day of the month \\
+		8	& \furi{二日/futsuka}, \furi{２日/futsuka} & futsuka & The \nth{2} day of the month, 2 days \\
+		 	& \dots  &  \dots & \dots \\
+		(8)	& \furi{十日/touka}, \furi{１０日/touka}, & touka & The \nth{10} day of the month, 10 days \\
+			& & &  Also irregular: \furi{１４日/juu yokka}, \furi{２４日/ni juu yokka} \\
+		 9	& \furi{一昨日/ototoi} & ototoi & The day before yesterday \\ 
+		10	& \phantom{一}\furi{昨日/kinou} & kinou & Yesterday \\
+		11	& \phantom{一}\furi{今日/kyou} & kyou & Today \\
+		12	& \phantom{一}\furi{明日/ashita} & ashita & Tomorrow \\
+		13	& \phantom{一}\furi{明日/asu} & asu & Tomorrow, (in the) near future \\
+		14	& \furi{明後日/asatte} & asatte & The day after tomorrow \\
+	\end{longtable}
+	\begin{flushright}
+		Source: \cite{takoboto}
+	\end{flushright}
+\end{center}
+
+In this example, we counted no fewer than 14 sounds associated with the ``日" character (note: there might be more\dots), and multiple ways to pronounce 日本, 一日, 明日. \\
+
+\note{
+A particular set of \kanji\ may have many possible pronunciations based on context. It is not always possible to know with certitude which pronunciation was the intended one (even though one is usually more likely than others). \
+
+This is why the Japanese \emph{furigana} need to be specified manually\dots
+}
+
+\bigskip
+In the next part, we'll see that Mandarin Chinese is very different in that regard\dots
+
+\newpage
+
+\section*{Adding \emph{furigana} in \LaTeX} \label{rubi-config}
+
+
+
+First you'll need to use the \texttt{ruby} package:
+
+\begin{lstlisting}[language=tex]
+\usepackage{ruby}
+\end{lstlisting}
+
+\bigskip
+
+Then you can modify some configuration. Here is what I used for this document:
+
+\texttt{ruby-config.tex}
+\lstinputlisting[language=tex]{include/ruby-config.tex}
+
+\bigskip
+
+The \texttt{ruby} package will give you access to the \lstinline|\ruby| command, which you can summon like that:
+\begin{lstlisting}[language=tex]
+\ruby{text}{ruby-characters}
+\end{lstlisting}
+
+Here is an example: 
+
+\begin{lstlisting}[language=tex]
+\ruby{明日}{あした}
+\end{lstlisting}
+
+And here is the result: \\
+
+\ruby{明日}{あした}
+
+
+
+\section*{Simplifying the process}
+
+Using the \lstinline|\ruby| command is very easy to use, calling it for every character is very tedious (especially if you have a lot of text) so we'll define our own macro. \\
+
+
+We will use the \lstinline|\foreach| command from package  \lstinline|tikz| to make our life easier, and define a new command that we'll call \lstinline|\furi| (to \emph{furi}ously add \emph{furigana}\dots\ maybe): \\
+
+
+
+\texttt{furi.tex}  \label{furi} \index{$\backslash$furi \emph{(custom macro)}}
+\lstset{backgroundcolor=\color{cyan!10}}
+\lstinputlisting[language=tex]{"files/furi.tex"}
+\lstset{backgroundcolor=\color{white}}
+
+
+We'll see this command in action in our example but first, a word about \TikZ\dots\\
+
+\newpage
+
+
+\TikZ\ is a user-friendly syntax layer for PGF (Portable Graphic Format), a macro package to create graphic elements in \TeX. \citep{tikz} \\
+
+The name \TikZ\ is a recursive acronym which stands for \emph{``TikZ ist kein Zeichenprogramm"}, which is German for \emph{``TikZ is not a drawing tool"} \citep{wiki-tikz} (the original developer of \TikZ, Till Tantau, is from Germany, hence the name). \\
+We are using only a tiny subset of \TikZ\ (namely, the \lstinline|\foreach| command). \\
+
+Here are the steps to quickly add \emph{furigana} to some text: \\
+
+
+\newcommand{\stress}[1]{\underline{\textbf{#1}}}
+
+First, copy the following template:
+\begin{mdframed}
+\texttt{\textbackslash furi\{/,/\}
+}
+\end{mdframed}
+
+
+Then add your text in Japanese:
+\begin{mdframed}
+\texttt{\textbackslash furi\{\stress{栄光に向って走る\textbackslash\ あの列車に乗って行こう}/,/\}。。。
+}
+\end{mdframed}
+
+
+Cut the ``\lstinline|/,|" and paste it between each group of characters that may (or may not) require some \emph{furigana}:
+
+\begin{mdframed}
+\texttt{\textbackslash furi\{栄光\stress{/,}に\stress{/,}向\stress{/,}って\stress{/,}走\stress{/,}る\textbackslash\ \stress{/,}あの\stress{/,}列車\stress{/,}に\stress{/,}\\乗\stress{/,}って\stress{/,}行\stress{/,}こう/\}。。。
+}
+\end{mdframed}
+
+Add the \emph{furigana}:
+
+\begin{mdframed}
+\texttt{\textbackslash furi\{栄光/\stress{えいこう},に/,向/\stress{すか},って/,走/\stress{はし},る\textbackslash\  /,あの/,\\ 
+列車/\stress{れっしゃ},に/,乗/\stress{の},って/,行/\stress{ゆ},こう/\}。。。
+}
+\end{mdframed}
+
+And voilà! We're done! \\
+
+
+
+\bigskip
+
+
+\subsection*{Result}
+
+Here is what the \LaTeX\ code looks like:
+
+\begin{lstlisting}[language=tex]
+\furi{栄光/えいこう,に/,向/すか,って/,走/はし,る\ /,あの/,列車/れっしゃ,に/,乗/の,って/,行/ゆ,こう/}。。。
+\end{lstlisting}
+
+And here is what it prints:
+\begin{mdframed}
+\furi{栄光/えいこう,に/,向/すか,って/,走/はし,る\ /,あの/,列車/れっしゃ,に/,乗/の,って/,行/ゆ,こう/}。。。
+\end{mdframed}
+
+\bigskip
+
+\newpage
+
+\section*{Another example}
+
+Here is another example using our \lstinline|\furi| macro: \\
+
+\texttt{example-02-furigana.tex}
+\lstinputlisting[language=tex]{"files/example-02-furigana.tex"}
+
+\bigskip
+\bigskip
+
+And here is how it renders:\par
+\begin{mdframed}%[frametitle={\colorbox{white}{Text with furigana}}]
+\hphantom{.}\par
+\furi{明日/あした,があるさ/,明日/\textbf{あす},がある/}\par
+\furi{若/わか,い/,僕/ぼく,に/,は/わ,夢/ゆめ,がある/}\par
+\furi{いつかきっと、いつかきっと/}\par
+。。。\
+\end{mdframed}

@@ -1,0 +1,25 @@
+% This source code is under the BSD License
+% Copyright 2022 Pierre S. Caboche
+
+% Note: use XeLaTeX for rendering
+%!TEX encoding = UTF-8
+
+\documentclass{article}
+
+\usepackage{xeCJK}
+
+\usepackage{ruby,tikz}
+\newcommand{\furi}[1]{\foreach \kanji/\furigana in {#1}{\ruby{\kanji}{\furigana\vphantom{あ}}}}
+
+\renewcommand{\rubysize}{0.4}     % default:  0.4
+\newcommand{\defaultrubysep}{0ex} % default: -0.5ex
+\renewcommand{\rubysep}{\defaultrubysep}
+
+\setCJKmainfont{Noto Sans JP}
+
+\begin{document}
+	\furi{明日/あした,があるさ/,明日/\textbf{あす},がある/}\par
+	\furi{若/わか,い/,僕/ぼく,に/,は/わ,夢/ゆめ,がある/}\par
+	\furi{いつかきっと、いつかきっと/}\par
+	。。。
+\end{document}

@@ -1,0 +1,241 @@
+% Copyright 2022 Pierre S. Caboche. All rights reserved.
+
+\part{Fonts} \label{fonts}
+
+\renewcommand{\currentPart}{Fonts}
+
+
+In order to properly render \LaTeX\ documents containing CJK characters (Chinese, Japanese, Korean), you will need to use fonts capable of displaying such characters\footnote{the same is true for other writing systems, each requiring specialised fonts.}.
+
+Developing fonts that support CJK characters is very costly, and therefore such fonts may not be readily available across all Operating Systems. \\
+
+For example, when switching to Linux, I didn't have access to the \Meiryo\ font anymore because it is © \MicrosoftCorp. So I had to find some portable alternative\dots
+
+The \Noto\ font family \citep{noto-fonts} were designed to solve this problem. \\
+
+The \Noto\ fonts are free (under the ``SIL Open Font License") and were commissioned by Google. Their goal is to cover a wide range of languages and writing scripts (including Chinese, Japanese, and Korean). Not all CJK ideographs are covered (30,000 of the nearly 75,000 CJK unified ideographs), but the most commonly used characters seem to be represented. \citep{wiki-noto} \\
+
+If you were to install all the \Noto\ fonts in their entirety (i.e. for every language and script available), this would end up occupying more than 1.1 GB of disk space (as of time of writing).
+To reduce space, it is recommended to install only the fonts that you intend to use.
+
+
+\subsection*{Etymology}
+
+\note{
+	The name ``\Noto" stands for ``\textbf{no} more \textbf{to}fu". When a character cannot be rendered by a computer program, some of these programs (e.g. web browsers) show a substitute character instead (usually in the form of a small rectangle). \citep{wiki-noto} 
+}
+
+Those characters are sometimes colloquially referred to as ``\tofu", due to their resemblance with a block of tofu. Also, such substitute characters were quite likely to appear when trying to render texts from languages in regions like China, Japan, Korea\dots\footnote{if the slang had developed in another part of the world, then ``tofu" characters might be have known by some other name (and probably some other food-related item too). It isn't hard to imagine that in some parallel universe, these might be referred to as ``paneer" characters instead\dots
+}\\
+
+The goal of ``\Noto" is to eliminate those ``\tofu" characters (by properly rendering texts that use different writing systems).
+\\
+
+\subsection*{\Portability}
+
+By switching to the \Noto\ fonts, your documents will look different (when compared to using the proprietary fonts available by default on some Operating Systems) but you will gain in portability.
+
+Noto fonts are available at: \url{https://www.google.com/get/noto/} \\
+
+\newpage
+
+Later we'll see how to easily install the \Noto\ fonts on Linux, but first we'll need to determine which fonts are available, and which packages we'll need.
+
+\bigskip
+
+\subsection*{Noto fonts packages}
+
+Using the package manager for your \linux\ distribution (e.g. \cmd{dnf}, \cmd{apt}, \cmd{pacman}, etc.), we'll look for the packages containing the word \textbf{noto}.\\
+
+The list of matching results is very long (covering a large list of languages and scripts), so we'll filter even further (looking for terms like ``cjk" or ``japanese"). \\
+
+For example, in Fedora:
+\begin{lstlisting}[language=sh]
+$ dnf search noto | grep -i -E 'cjk|japanese'
+\end{lstlisting}
+
+\bigskip
+Searching for just ``japanese" will give us the following:
+\begin{lstlisting}[language=prolog,keywordstyle=\color{red},otherkeywords={Japanese}]
+$ dnf search noto | grep -i 'japanese'
+google-noto-sans-cjk-jp-fonts.noarch : Japanese Multilingual Sans OTF font files for google-noto-cjk-fonts
+google-noto-sans-jp-fonts.noarch : Japanese Region-specific Sans OTF font files for google-noto-cjk-fonts
+google-noto-sans-mono-cjk-jp-fonts.noarch : Japanese Multilingual Sans Mono OTF font files for google-noto-cjk-fonts
+google-noto-serif-cjk-jp-fonts.noarch : Japanese Multilingual Serif OTF font files for google-noto-cjk-fonts
+google-noto-serif-jp-fonts.noarch : Japanese Region-specific Serif OTF font files for google-noto-cjk-fonts
+\end{lstlisting}
+
+\bigskip
+Here is some explanation regarding the package names\dots
+
+
+\subsection*{Typefaces}
+
+When talking about CJK fonts, the terms \emph{\Serif} and \emph{\Sansserif} have the following meaning:
+\begin{description}
+	\item[Serif] \mbox{}\\ (roman)\\ means that the font will show the brush strokes
+	\item[Sans serif] \mbox{}\\ (sans, sans-serif, gothic)\\
+	means that brush strokes are not present
+\end{description}
+
+\bigskip
+
+To better illustrate the difference, we'll create a \LaTeX\ document containing a few examples (at the moment we'll focus mainly on the document output. In later chapters we'll see the details of how the document works): \\
+
+\newpage
+
+\texttt{example-01-typefaces.tex}
+\lstinputlisting[language=tex]{"files/example-01-typefaces.tex"}
+
+\bigskip
+
+\texttt{sample-text.tex}
+\lstinputlisting[language=tex]{"files/sample-text.tex"}
+
+\bigskip
+
+
+This shows the differences between those typefaces\ldots
+
+\newpage
+
+\begin{mdframed}[frametitle={\colorbox{white}{Differences between \emph{Serif}, \emph{Sans-Serif}, and \emph{Monospace} }}]
+	
+	\begin{itemize}
+		\item
+			\textrm{
+				Serif \emph{(Roman)}: \index{serif}
+				\input{"files/sample-text.tex"}
+			}
+		\item 
+			\textsf{
+				Sans Serif \emph{(Gothic)}: \index{sans-serif} \input{"files/sample-text.tex"}
+			}		
+		\item 
+			\texttt{
+				Typewriter \emph{(\monospace)}: 
+				\input{"files/sample-text.tex"}
+			}
+	\end{itemize}
+\end{mdframed}
+
+\renewcommand{\familydefault}{\sfdefault}
+
+
+\newpage
+From the previous example, we can see that:
+
+\note{
+	\begin{itemize}
+		\item a font with \emph{Serif} will show the brush strokes, and therefore will give a better idea of how a \emph{kanji} is to be drawn
+		\item a \emph{Sans-serif} font, on the other hand, tends to be easier to read
+	\end{itemize}
+}
+
+\bigskip
+Characters in Japanese, Chinese, and Korean are of fixed width (\monospaced). \\
+
+Japanese also has \halfwidth\ \kana, i.e. \katakana\ characters which are half the width of regular \kana, and are used only in certain context where display is limited in size. \citep{wiki-halfwidth} \\
+
+
+Characters in Japanese, Chinese, and Korean cannot be put in italics, and are not subject to ``casing" (i.e. there is no distinction between lowercase and uppercase).
+
+\bigskip
+
+\subsection*{Writing systems}
+
+Earlier on, we saw that Fedora Linux provided packages with names like:
+\begin{lstlisting}[language=prolog,keywordstyle=\itshape\color{blue},otherkeywords={-cjk,-jp-}]
+google-noto-sans-cjk-jp-fonts.noarch
+google-noto-sans-jp-fonts.noarch
+google-noto-sans-mono-cjk-jp-fonts.noarch
+google-noto-serif-cjk-jp-fonts.noarch
+google-noto-serif-jp-fonts.noarch
+...
+\end{lstlisting}
+
+\medskip
+
+We already know that:
+\begin{description}  
+	\item[\emph{google-noto-} \dots\ \emph{-fonts}] \mbox{}\\
+	represent the \emph{Google Noto} font families
+	\item[\emph{sans-}, \emph{serif-}, \emph{mono-}] \mbox{}\\ are the different typefaces available
+\end{description}
+
+\bigskip
+
+The remaining part of the package name corresponds to the font target (in terms of language, script, use, etc.) \\
+
+\newpage
+
+Below are some examples:
+\begin{description}  
+	\item[\emph{jp}] \mbox{}\\
+	Japanese  
+	\item[\emph{kr}] \mbox{}\\
+	Korean
+	\item[\emph{sc}] \mbox{}\\
+	Simplified Chinese
+	\item[\emph{tc}] \mbox{}\\
+	Traditional Chinese
+	\item[\emph{hk}] \mbox{}\\
+	Traditional Chinese Region-specific
+	\item[\emph{cjk-jp}, \emph{cjk-kr}, \emph{cjk-sc}, \emph{cjk-tc}, \emph{cjk-hk}] \mbox{}\\
+	Multilingual (Chinese, Japanese, Korean) versions of the above
+	\item[\emph{myanmar}] \mbox{}\\
+	Myanmar
+	\item[\emph{myanmar-ui}] \mbox{}\\
+	Myanmar UI font (i.e. targeted towards apps and software user interfaces)
+	\item[\emph{myanmar-vf}] \mbox{}\\
+	Myanmar variable font
+	\item[\emph{myanmar-vf-ui}] \mbox{}\\
+	Myanmar UI variable font 
+	\item[\dots]
+\end{description}
+
+
+
+
+
+
+\newpage
+
+\section*{Installation}
+
+After going through the list of available packages, we need to choose the ones we'll need and install them. 
+
+\subsection*{Windows}
+
+For Windows, you need to:
+\begin{itemize}
+	\item go to the Noto Fonts website ( \url{https://www.google.com/get/noto/} )
+	\item select and download the fonts you need
+	\item install the fonts on your system
+\end{itemize}
+
+
+\subsection*{Linux}
+
+Installing new packages will require the \emph{super admin} privileges. \
+
+Example, in Fedora:
+\begin{lstlisting}[language=sh]
+sudo dnf install \
+	google-noto-sans-cjk-jp-fonts \
+	google-noto-serif-cjk-jp-fonts
+\end{lstlisting}
+
+In this example, we installed both \emph{Serif} and \emph{Sans-serif} typefaces of the CJK Japanese fonts. \\
+
+
+In Fedora, the \emph{Google \Noto} fonts will be installed in folders matching this pattern:
+\cmd{/usr/share/fonts/google-noto*}
+
+\bigskip
+
+\section*{Other fonts}
+
+In this article, we use \emph{\Noto\ Fonts} because they are free, portable, and cover a variety of writing systems. \\
+
+Other fonts of your choosing can be used in your documents. \XeTeX\ should be able to use any fonts installed in your Operating System. \\

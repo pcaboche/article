@@ -1,0 +1,32 @@
+% This source code is under the BSD License
+% Copyright 2022 Pierre S. Caboche
+
+% Note: use XeLaTeX for rendering
+%!TEX encoding = UTF-8
+
+\documentclass{article}
+
+\usepackage{xeCJK}
+\setCJKmainfont{Noto Serif JP}
+\setCJKsansfont{Noto Sans JP}
+\setCJKmonofont{Noto Sans Mono CJK JP}
+
+\begin{document}
+	\begin{itemize}
+		\item
+			\textrm{
+				Serif \emph{(Roman)}:
+				\input{"sample-text.tex"}
+			}
+		\item
+			\textsf{
+				Sans Serif \emph{(Gothic)}:
+				\input{"sample-text.tex"}
+			}
+		\item
+			\texttt{
+				Typewriter \emph{(monospace)}: 
+				\input{"sample-text.tex"}
+			}
+	\end{itemize}
+\end{document}

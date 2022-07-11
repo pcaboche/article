@@ -1,0 +1,34 @@
+% This source code is under the BSD License
+% Copyright 2022 Pierre S. Caboche
+
+% Note: use XeLaTeX for rendering
+%!TEX encoding = UTF-8
+
+\documentclass{article}
+
+\usepackage{xeCJK}
+\usepackage{xpinyin}
+\setCJKmainfont{Noto Sans CJK SC} % Simplified Chinese
+
+\begin{document}
+	\begin{itemize}
+		\item \xpinyin*{妈麻马骂吗} $\leftarrow$ the ``four tones" (+neutral tone) of Mandarin Chinese
+		\item \xpinyin*{快乐的音乐} $\leftarrow$ the \emph{pinyin} on the last character is wrong
+		\item \xpinyin*{快乐的音\xpinyin{乐}{yue4}} $\leftarrow$ this is correct (we specified the last \emph{pinyin} manually)
+	\end{itemize}
+
+	\bigskip
+
+	\begin{pinyinscope}
+You can also use the \texttt{pinyinscope} environment:\par
+\bigskip
+滚滚长江东逝水，浪花淘尽英雄。\par
+是非成败转头空，青山依旧在，几度夕阳红。\par
+白发渔樵江渚上，惯看秋月春风。\par
+一壶浊酒喜相逢，古今多少事，都付笑谈中。\par
+\bigskip
+是非成败转头空，青山依旧在，惯看秋月春风。\par
+一壶浊酒喜相逢，古今多少事，滚滚长江东逝水，浪花淘尽英雄。\par
+几度夕阳红。白发渔樵江渚上，都付笑谈中。。。。。。\par
+	\end{pinyinscope}	
+\end{document}

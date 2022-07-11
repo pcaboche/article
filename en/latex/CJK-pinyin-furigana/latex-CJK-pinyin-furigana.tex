@@ -1,0 +1,126 @@
+% Note: use XeLaTeX for rendering
+% !TEX encoding = UTF-8
+
+
+\documentclass[twoside]{article}
+
+
+%% Packages and their configuration
+\input{include/packages.tex}
+
+%% Custom macros
+\input{include/macros.tex}
+
+
+%%%% Other include files. 
+%%%% Their source code will also be featured in this document
+%%%% We use the 'lstlisting' package to display some the source code.
+
+%% Our function for adding furigana
+\input{files/furi}
+
+%% Configuration for "ruby" package (loaded by 'files/furi')
+\input{include/ruby-config}
+
+
+
+%opening
+\title{ \LaTeX: rendering texts in Japanese and Chinese \\
+(on Linux, Windows, and other~OSes)
+}
+\author{Pierre S. Caboche $\left(\ \furi{南瓜石/kabocha piēru}\ \right)$
+	\footnote{The name Caboche (meaning ``head" in French) sounds similar to the Japanese word for ``pumpkin" (``kabocha" - 南瓜), while the given name Pierre (ピエール, \emph{piēru}) means ``stone" in French, so I use the character for ``stone" (石\ - \emph{ishi}).}
+}
+
+%% Custom format to indicate revision date (when needed)
+%\date{
+%	July 11, 2022 \\
+%	\medskip 
+%	\footnotesize \emph{Revised: \today}
+%}
+
+
+\begin{document}
+
+\maketitle
+
+
+
+\begin{abstract}
+	This article tries to solve some common problems in \LaTeX\ when dealing with texts in Chinese, Japanese, and other languages that use a non-Latin writing system. \\
+	
+	The first problem we intend to solve is related to \emph{portability}: making sure that a \LaTeX\ document containing texts in Japanese, Chinese (or other languages) can still be rendered in \Windows, \Linux, or other systems (i.e. all our dependencies will have to be freely available for different OSes). 
+	
+	This is a prerequisite to the second problem we want to solve: adding \emph{ruby} characters, (e.g. \emph{furigana}, \emph{pinyin}) to texts in Japanese, Chinese (and other languages). \\
+	
+	However, this article needed to go beyond solving those two issues; and for a better understanding we also had to provide some background information about related subjects, including: the type of fonts we'll use (and where to find them), \LaTeX, \emph{ruby} characters, and even a few words about the Japanese and Chinese language. \\
+	
+	By the end of this article, we will see what it involves to add \emph{ruby} characters in \LibreOffice\ and \Microsoft\ \Word, and see how they compare to \LaTeX\ for this type of task.
+\end{abstract}
+
+\newpage
+
+
+%%% Intro
+
+\input{"content/part-intro.tex"}
+
+
+\newpage
+\section*{General Information}
+
+This document was first published at: \\
+\mbox{} \hfill \url{https://pcaboche.github.io} 
+
+\subsection*{Legal}
+\input{"READ_ME_(LEGAL).txt"}
+
+
+%%% TOC
+\newpage
+\renewcommand{\currentPart}{Table of Contents}
+
+\addtocontents{toc}{\setcounter{tocdepth}{3}}
+\setcounter{tocdepth}{3}
+\tableofcontents
+
+%%% Article body
+\newpage
+\input{"content/part-fonts.tex"}
+
+\newpage
+\input{"content/part-latex.tex"}
+
+\newpage
+\input{"content/part-japanese"}
+
+\newpage
+\input{"content/part-chinese"}
+
+\newpage
+\input{"content/part-conclusion"}
+
+
+%%% Bibliography
+\pagebreak
+
+
+\renewcommand{\formatPartTitle}{}
+
+%\renewcommand{\currentPart}{References}
+%\part{References}
+
+% Bibliography title can be customised (default: "\section*{\currentPart}")
+%\renewcommand{\bibsection}{\section*{\currentPart}}
+%\renewcommand{\bibsection}{}
+
+\bibliography{content/biblio-cjk}
+\bibliographystyle{apalike}
+
+
+\printindex
+
+% Label on the last page. Allows to easily get the page number
+\label{LastPage}
+
+\end{document}

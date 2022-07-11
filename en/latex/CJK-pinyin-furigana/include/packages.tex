@@ -1,0 +1,110 @@
+% Copyright 2022 Pierre S. Caboche. All rights reserved.
+
+%% Packages and configuration
+
+\usepackage{geometry}
+\geometry{
+	a4paper,
+	total={170mm,257mm},
+	left=35mm,
+	right=35mm,
+	top=30mm,
+	bottom=30mm,
+}
+
+
+\usepackage{fontspec}
+\setmainfont{DejaVu Serif} 
+\setsansfont{DejaVu Sans} 
+
+%% Use Sans-Serif by default
+\renewcommand{\familydefault}{\sfdefault}
+
+
+\usepackage{xeCJK}
+\setCJKmainfont{Noto Serif JP}
+\setCJKsansfont{Noto Sans JP}
+\setCJKmonofont{Noto Sans Mono CJK JP}
+
+\usepackage{xpinyin}
+
+
+%% bibliography
+\usepackage[authoryear]{natbib}
+
+%% index
+\usepackage{imakeidx}
+\makeindex
+
+
+\usepackage{xcolor}
+\usepackage{graphicx}
+
+
+\usepackage{titleps}
+\usepackage{xstring}
+\newcommand{\currentPart}{}
+
+\newcommand{\formatPartTitleDefault}{
+	\textbf{\IfStrEq{\thepart}{}{}{Part \thepart\ ---  }\currentPart}
+}
+
+\newcommand{\formatPartTitle}{\formatPartTitleDefault}
+
+\newcommand{\copyrightNotice}{\color{gray}{\emph{\textcopyright\ 2022 Pierre S. Caboche. All rights reserved.}}}
+
+\newpagestyle{main}{
+	\sethead
+	% even
+	[\formatPartTitle]
+	[]
+	[]
+	% odd
+	{}
+	{}
+	{\formatPartTitle}
+	
+	\setfoot
+	% even
+	[\textbf{\thepage\ \color{lightgray}{|}}]
+	[]
+	[\copyrightNotice]
+	% odd
+	{\copyrightNotice}
+	{}
+	{\textbf{\color{lightgray}{|} \color{black}{\thepage} }} 
+	
+	\headrule
+	%\footrule
+}
+\pagestyle{main}
+
+\widenhead[25pt][25pt]{25pt}{25pt}
+
+
+
+\usepackage{listings}
+\lstset{
+	basicstyle=\fontsize{9}{9}\selectfont\ttfamily
+	,frame=lines
+	,tabsize=2
+	,keywordstyle=\bfseries%\itshape,
+	,commentstyle=\itshape\color{teal}
+	,stringstyle=\color{magenta}
+	,breaklines=true,
+	,postbreak=\mbox{\textcolor{red}{$\hookrightarrow$}\space}
+}
+
+
+
+\usepackage{hyperref}
+\usepackage{longtable}
+\usepackage[super]{nth}
+
+
+
+\widowpenalties 1 10000
+\raggedbottom
+
+\setlength{\parindent}{0pt}
+

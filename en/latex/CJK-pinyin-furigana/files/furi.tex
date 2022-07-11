@@ -1,0 +1,5 @@
+% This source code is under the BSD License
+% Copyright 2022 Pierre S. Caboche
+
+\usepackage{ruby,tikz}
+\newcommand{\furi}[1]{\foreach \kanji/\furigana in {#1}{\ruby{\kanji}{\furigana\vphantom{あ}}}}

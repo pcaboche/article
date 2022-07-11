@@ -1,0 +1,145 @@
+% Copyright 2022 Pierre S. Caboche. All rights reserved.
+
+\part{Chinese texts in \LaTeX} \label{chinese}
+
+\renewcommand{\currentPart}{Chinese texts in \LaTeX}
+
+
+\CJKfontspec{Noto Sans CJK SC}
+
+In the previous parts, we saw the following:
+
+\begin{itemize}
+	\item how to install \LaTeX, for Windows and Linux
+	\item how to find portable fonts for different writing systems
+	\item how to use the CJK fonts in \XeLaTeX
+	\item how to add \emph{ruby} characters to text
+\end{itemize}
+
+In our example, we saw how to add \emph{furigana} to Japanese texts. This is the general technique, which can be used for adding \emph{ruby} characters to texts in any language or dialect. \\
+
+However, if your goal is to add the \emph{pinyin} pronunciation to text in Mandarin Chinese (Simplified or Traditional), then there is a \LaTeX\ package to do that: \texttt{xpinyin}.
+
+
+
+\section*{Automatically add \ppinyin}
+
+As we saw in the previous part, a \kanji\ in Japanese can have multiple pronunciations.
+In Chinese, however, things are different. With a few exceptions, most \kanji\ in Mandarin Chinese have only one possible pronunciation. \\
+
+Thanks to this (almost) 1-to-1 match, it is possible to know (with a high degree of confident) how a given \kanji\ should be pronounced in Mandarin Chinese. The \texttt{xpinyin} package was developed to automatically add the \ppinyin. \\
+
+As mentioned earlier, there are some exceptions\dots \\
+For example, the character 乐 may be pronounced ``\pinyin{le4}" as in \xpinyin*{快乐} (happy), or ``\pinyin{yue4}" as in \xpinyin*{音\xpinyin{乐}{yue4}} (music). 
+When that happens, it is possible to specify the pronunciation manually with the  \texttt{\textbackslash xpinyin} macro (examples below).
+
+
+\section*{The \texttt{xpinyin} package}
+
+To use the \texttt{xpinyin} package, add the following in your document preamble:
+\begin{lstlisting}
+\usepackage{xpinyin}
+\end{lstlisting}
+
+The \texttt{xpinyin} package allows to add \emph{pinyin} in your \LaTeX\ document. \\ 
+
+Here is a quick introduction to some of its features:
+
+\begin{description}
+	\item[\texttt{\textbackslash pinyin}] \mbox{}\\
+	It is used to output pinyin. For the convenience of input, ü can be replaced by v. \\
+	Examples:
+	\begin{tabular}{ l l }
+		\lstinline|\pinyin{lv2zi}|     & $\rightarrow$ \pinyin{lv2zi}\\
+		\lstinline|\pinyin{nv3hai2zi}| & $\rightarrow$ \pinyin{nv3hai2zi} \\	
+	\end{tabular}
+
+	\newpage
+	Below is an example of each of the ``four tones" (+neutral tone) of Mandarin Chinese:
+	
+	\begin{tabular}{ l l l }
+		  \lstinline|\pinyin{ma1}| $\rightarrow$ \pinyin{ma1} 
+		& \lstinline|\pinyin{ma2}| $\rightarrow$ \pinyin{ma2} 
+		& \lstinline|\pinyin{ma3}| $\rightarrow$ \pinyin{ma3} \\
+		
+		  \lstinline|\pinyin{ma4}| $\rightarrow$ \pinyin{ma4}
+		& \lstinline|\pinyin{ma} |  $\rightarrow$ \pinyin{ma}  \\
+	\end{tabular}
+	\bigskip
+	
+	\item[\texttt{\textbackslash xpinyin}] \mbox{}\\
+	\lstinline|\xpinyin| can be used to set pinyin. \\
+	This is useful within \texttt{\textbackslash xpinyin*} macro or \texttt{pinyinscope} environment. \\
+	Example: \\
+	\begin{tabular}{ l l }
+		\lstinline|\xpinyin{乐}{yue4}| & $\rightarrow$ \xpinyin{乐}{yue4}\\	
+	\end{tabular}
+	
+	\item[\texttt{\textbackslash xpinyin*}] \mbox{}\\
+	Automatic phonetic notation for Chinese characters
+	Example: \\
+	\begin{tabular}{ l l }
+		\lstinline|\xpinyin*{甄士隐梦幻识通灵}| 
+		& $\rightarrow$ \xpinyin*{甄士隐梦幻识通灵}
+		\\
+		
+		\lstinline|\xpinyin*{\xpinyin{重}{zhong4}要}| 
+		& $\rightarrow$ \xpinyin*{\xpinyin{重}{zhong4}要}
+		\\	
+	\end{tabular}
+	
+	\item[\texttt{pinyinscope}] \mbox{}\\
+	Automatic phonetic notation for Chinese characters in the \texttt{pinyinscope} environment (useful for long texts). \\
+	Syntax:
+\begin{lstlisting}
+\begin{pinyinscope}[⟨options⟩]
+	...
+\end{pinyinscope}
+\end{lstlisting}
+\end{description}
+
+
+
+
+For the rest of the documentation (in Chinese only), see: \cite{xpinyin} at\\
+\url{https://ctan.org/pkg/xpinyin}
+
+
+\bigskip
+\bigskip
+\subsection*{Example}
+
+Below is a complete example:\\
+
+\newpage
+
+
+\texttt{example-03-pinyin.tex}
+\lstinputlisting[language=tex]{"files/example-03-pinyin.tex"}
+
+\bigskip
+\bigskip
+And here is the result:
+
+\begin{mdframed}[frametitle={\colorbox{white}{Text with \emph{pinyin}}}]
+	\begin{itemize}  	
+		\item \xpinyin*{妈麻马骂吗} $\leftarrow$ the ``four tones" (+neutral tone) of Mandarin Chinese 
+		\item \xpinyin*{快乐的音乐} $\leftarrow$ the \emph{pinyin} on the last character is wrong
+		\item \xpinyin*{快乐的音\xpinyin{乐}{yue4}} $\leftarrow$ this is correct (we specified the last \emph{pinyin} manually)
+	\end{itemize}
+
+	\bigskip
+
+	\begin{pinyinscope}
+You can also use the \texttt{pinyinscope} environment:\par
+\bigskip
+滚滚长江东逝水，浪花淘尽英雄。\par
+是非成败转头空，青山依旧在，几度夕阳红。\par
+白发渔樵江渚上，惯看秋月春风。\par
+一壶浊酒喜相逢，古今多少事，都付笑谈中。\par
+\bigskip
+是非成败转头空，青山依旧在，惯看秋月春风。\par
+一壶浊酒喜相逢，古今多少事，滚滚长江东逝水，浪花淘尽英雄。\par
+几度夕阳红。白发渔樵江渚上，都付笑谈中。。。。。。\par
+	\end{pinyinscope}	
+\end{mdframed}
