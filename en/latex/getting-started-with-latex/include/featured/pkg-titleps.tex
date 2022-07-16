@@ -1,0 +1,34 @@
+%%% In the preamble
+
+\newcommand{\copyrightNotice}{\color{gray}{\emph{\textcopyright\ 2022 Pierre S. Caboche. All rights reserved.}}}
+
+\usepackage{titleps}
+\usepackage[table]{xcolor}
+
+\newpagestyle{main}{
+	\sethead
+	% even
+	[\thesection\ --- \sectiontitle]
+	[]
+	[]
+	% odd
+	{}
+	{}
+	{\thesection\ --- \sectiontitle}
+	
+	\setfoot
+	% even
+	[\textbf{\thepage\ \color{lightgray}{|}}]
+	[]
+	[\copyrightNotice]
+	% odd
+	{\copyrightNotice}
+	{}
+	{\textbf{\color{lightgray}{|} \color{black}{\thepage} }} 
+	
+	\headrule
+	%\footrule
+}
+\pagestyle{main}
+
+\widenhead[25pt][25pt]{25pt}{25pt}

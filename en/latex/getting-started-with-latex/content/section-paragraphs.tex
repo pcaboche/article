@@ -1,0 +1,433 @@
+%%%%
+%% Copyright 2022 Pierre S. Caboche
+%% All rights reserved
+%%%%
+
+
+\newpage
+
+\section{Paragraphs, footnotes}
+
+In this section, we will learn how to make paragraphs, sub-paragraphs, etc. \\
+
+The best way to explain how it works is to show the \LaTeX\ code, and show you how it renders. \\
+
+
+
+This is the \LaTeX\ code:
+
+\lstinputlisting[language=tex]{content/sample-paragraphs.tex}
+
+\bigskip
+
+
+
+\dots and this is the output. Please note that the code explains how paragraphs work. I needed some sample text, but instead of using a generic \LoremIpsum, I figured that this section could be self-describing\dots
+
+\bigskip
+
+\begin{mdframed}
+	\input{content/sample-paragraphs.tex}
+\end{mdframed}
+
+
+\bigskip
+\bigskip
+
+
+\subsection{Footnotes} \label{footnote}
+
+In the previous code sample, we saw an example of a \texttt{footnote}. \\
+
+In \LaTeX, it's very easy to add a footnote with the \lstinline[]|\footnote| command:
+\begin{lstlisting}[language=tex]
+This is some text\footnote{and this is the footnote}.
+\end{lstlisting}
+\medskip
+
+Footnotes will appear at the foot of the page (see: example\footnote{this is an example of a footnote. As you can see, it is able to hold a lot more information than a margin note
+}), 
+or at the bottom of components like a \texttt{mdframed} box. \\
+
+As mentioned earlier, footnotes can be useful when you want to add some information but it would be too long to put in parentheses without disturbing the flow of ideas.\\
+
+\bigskip
+
+So the following can be used to add additional information:
+\begin{itemize}
+	\item parentheses: used for short explanations, closely related to the subject
+	\item footnotes: used for additional information that is either too long to be in parentheses, or not closely related to the subject
+	\item margin notes (section \ref{margin-notes}): to bring the reader's attention on a particular subject
+\end{itemize}
+
+\newpage
+
+
+\subsection{Margin notes and paragraphs} \label{margin-notes}
+
+\LaTeX\ also allows to put notes in the margins, thanks to \emph{margin paragraph} and \emph{margin notes}.
+\\
+
+\idxCmd{marginpar}
+\input{content/sample-marginpar.tex}
+
+\medskip
+
+To add a \emph{margin note}, you will need \quotePkg{marginnote} package, 
+which provides the \quotePkg{marginnote} command:
+\lstinputlisting[language=tex]{include/featured/pkg-marginnote.tex}
+\medskip
+
+\idxCmd{marginnote}
+\input{content/sample-marginnote.tex}
+
+\bigskip
+
+Notice how in both cases, we put the \quotePkg{marginpar} or \quotePkg{marginnote} command immediately after the first word in the paragraph. This is to make sure the margin paragraph/note will be aligned vertically with the first word of the paragraph. \\
+
+Also keep in mind that in a two-sided document (section~\ref{two-sided}), a margin paragraph will be on the \emph{outer} margin (i.e. left margin for even-numbered pages, right margin for odd-numbered pages). If the document is one-sided, margin paragraphs will appear in the right margin. \\
+
+
+A \marginpar{marginpar vs. \\ footnote}
+margin paragraph (or note) stands out from the rest of the text. 
+They can be used to bring the reader's attention on a particular paragraph. However, \emph{it is better to keep them short}. \\
+
+In contrast, a footnote (\emph{section \ref{footnote}}) can be much longer, and is used to provide additional information without breaking the flow of the discussion.
+\newpage
+
+
+
+\subsection{Putting text in a frame} \label{mdframed}
+
+Previously, we've seen how margin notes and margin paragraphs could be used to bring attention to certain parts of your document. \\
+
+Now we will learn how to make some ideas stand out, by putting them in a big box, thanks to the \quotePkg{mdframed} package:
+\lstinputlisting[language=tex]{include/featured/pkg-mdframed.tex}
+
+\bigskip
+
+The \quotePkg{mdframed} package defines, amongst other things, the \quoteEnv{mdframed} environment. Here is a very simple example :
+\lstinputlisting[language=tex]{include/featured/example-frame-1.tex}
+
+You can notice how an environment is delimited by \texttt{\textbackslash begin\{\emph{envname}\}} and \\
+\texttt{\textbackslash end\{\emph{envname}\}}. \\
+
+And here is the result of the code above:
+\input{include/featured/example-frame-1.tex}
+
+
+\bigskip
+
+
+
+This is a very simple frame, but we can modify its appearance with the \quoteCmd{mdfsetup} command.
+
+One thing to know about the \quoteCmd{mdfsetup} command, is that is modifies the properties of \emph{every} \quoteEnv{mdframed} that comes after it. This is a problem if you want to modify the attributes of only \emph{one} frame. \\
+
+
+To get around this issue, we will create an \emph{environment}. \\
+We will name it ``\texttt{vegas}". Why? because \emph{``what happens in \emph{\texttt{vegas}} stays in \emph{\texttt{vegas}}"} (and what happens in an environment stays in that environment"). \\
+
+So here is our ``\texttt{vegas}" environment:
+\lstinputlisting[language=tex]{include/featured/example-frame-vegas-env.tex}
+\input{include/featured/example-frame-vegas-env.tex}
+
+For the purpose of this example, we declared this environment with one optional parameter: the title of the frame, which defaults to ``!!! Welcome to Vegas !!!". \\
+
+Now it's time to use this environment:
+\lstinputlisting[language=tex]{include/featured/example-frame-vegas.tex}
+
+And here is what it looks like: \\
+\input{include/featured/example-frame-vegas.tex}
+
+\bigskip
+
+Wow, so many colours! \\
+
+
+\bigskip
+
+Now, let's create another frame:
+\lstinputlisting[language=tex]{include/featured/example-frame-2.tex}
+
+And here is the result:
+\input{include/featured/example-frame-2.tex}
+
+
+As you can see, our very flamboyant ``\texttt{vegas}" environment did not have any influence over to the new frame. The \quoteCmd{mdfsetup} command only affected the environment where it was used (i.e. ``\texttt{vegas}"), and had no effect outside of it. \\
+
+\bigskip
+
+
+Again, we can define a new environment, call \quoteCmd{mdfsetup} inside of it, and the effect of \quoteCmd{mdfsetup} will not be seen outside of the environment:
+\lstinputlisting[language=tex]{include/featured/example-frame-blue-env.tex}
+\input{include/featured/example-frame-blue-env.tex}
+
+
+\lstinputlisting[language=tex]{include/featured/example-frame-blue.tex}
+
+
+Result:
+\input{include/featured/example-frame-blue.tex}
+
+
+\bigskip
+
+In our two previous environments (``\texttt{vegas}" and ``\texttt{blueframe}"), we passed the frame title as a parameter (whether optional or mandatory). However, if we don't need to add a title, there is a simpler way to define frame environment, thanks to the \quoteCmd{newmdenv} command. \\
+
+
+Below is the definition for ``\texttt{note}", an environment which I used to add some important notes throughout this document, in the form of a frame with a slightly yellow background:
+\lstinputlisting[language=tex]{include/featured/note-env.tex}
+
+Here is how to call it:
+\lstinputlisting[language=tex]{include/featured/example-frame-note.tex}
+Here is the result:
+\input{include/featured/example-frame-note.tex}
+
+
+\bigskip
+
+As you can see, all the options that we would normally pass to the \quoteCmd{mdfsetup} command are passed in the optional parameter (in square brackets \texttt{[]}) of \quoteCmd{newmdenv}. \\
+The name of the environment is passed as the mandatory argument (in curly brackets \texttt{\{\}}) of \quoteCmd{newmdenv}.
+
+\bigskip
+
+Another way to modify the appearance of a \quoteEnv{mdframed} is to define a new style with the \quoteCmd{mdfdefinestyle} command, then use that style by specifying the \texttt{style} attribute in the \quoteEnv{mdframed} options:
+
+\lstinputlisting[language=tex]{include/featured/example-frame-pinky-env.tex}
+And the result:
+\input{include/featured/example-frame-pinky-env.tex}
+
+\bigskip
+
+
+This concludes our presentation of \quotePkg{mdframed}. \\
+
+If you want to know more about this package (with many other examples), please refer to its official documentation: 
+\begin{center}
+\url{https://www.ctan.org/pkg/mdframed}
+\end{center}
+
+
+\newpage
+
+\subsection{Other types of boxes}
+
+There exists other kinds of boxes, to draw boxes around text:
+\begin{itemize}
+	\setlength{\itemsep}{-0.5em}
+	
+	\item \quoteCmd{parbox}
+	\item \quoteCmd{mbox}
+	\item \quoteCmd{makebox}
+	\item \quoteCmd{fbox}
+	\item \quoteCmd{framebox}
+	\item \quotePkg{fancybox} (package)
+\end{itemize}
+
+\bigskip
+
+For more information, please see:
+\begin{center}
+	\url{https://en.m.wikibooks.org/wiki/LaTeX/Boxes}
+\end{center}
+
+\bigskip
+
+
+
+\section{Comments} \label{comments}
+
+
+In \LaTeX, a comment starts with: \% \\
+
+
+Everything after the ``\%" till the end of the line will be ignored. If you want to actually print a ``\%" in \LaTeX, you'll need to escape it with a backslash: \textbackslash \% \\
+
+Unlike in other computer languages, there are no multiline comments in \LaTeX, only single-line comments.
+\\
+
+
+Fortunately, an editor like TeXStudio can make the process of adding/removing comments a lot easier, thanks to the \texttt{Ctrl+T} shortcut (for \emph{``Toggle Comment"}).
+
+\begin{mdframed}
+\medskip
+	To toggle comments in TeXStudio:
+	\begin{itemize}
+		\item Select the lines you want to add comments to (or remove comments from)
+		\item Press \texttt{Ctrl+T}
+		
+		This will either add or remove the comments from those lines
+	\end{itemize}
+\medskip
+\end{mdframed}
+
+
+
+Comments are extremely useful in \LaTeX! In fact\dots 
+
+\begin{note}
+When you think about it, comments are one of the most powerful features in \LaTeX. \\
+
+Indeed, comments allow you to keep multiple drafts of the same paragraphs, which you can then enable/disable with a single \texttt{Ctrl+T} in \TeXstudio. This way, you never have to throw away any idea! (just comment them out, so they don't show up in the document).
+\end{note}
+
+
+
+Comments have a number of applications:
+
+\begin{description}
+	\item[\emph{Describing}] \mbox{}\\
+	The most obvious use of a comment is to describe what some \LaTeX\ code is doing (e.g. describe the packages that you are using and what you are using them for)
+	
+	\item[\emph{Taking notes}] \mbox{}\\
+	For example, if you already have your document's plan laid out (i.e. you've already defined the structure in terms of: parts, sections, sub-sections\ldots), you can leave comments to list the main ideas to put in those sections later (as some kind of \emph{TODO} list)
+	
+	Furthermore, if several people are working on a document you can leave notes to other contributors in the form of comments (and if you work alone, you can always leave notes to yourself)
+	
+	\item[\emph{Drafting ideas}] \mbox{}\\
+	This is probably the most important use of comments (this represents about 99\% of the cases when I use comments in \LaTeX)
+	
+	Sometimes you're writing things but are not completely satisfied with the wording. In \LaTeX, it's very easy to put a sentence in comments, rewrite it, and repeat the process until you're satisfied (while not having to discard what you wrote, and not having those earlier versions appear in your document).
+\end{description}
+
+
+In many of those cases, you don't want your comments to be removed by accident (i.e. any case other than \emph{Drafting ideas}). To avoid that, simple use more than one ` \lstinline|%| ' for your comment. \\
+
+This way, one \texttt{Ctrl+T} will not be enough to remove the comment\ldots
+\begin{lstlisting}[language=tex]
+%%% Packages and configuration
+\end{lstlisting}
+
+
+\bigskip
+
+
+\section{Collaboration, version management}
+
+The main focus of \LaTeX\ is document generation. As such, it does not provide dedicated collaboration and version management tools. \\
+
+However, \LaTeX\ is a markup language. This means that, collaboration and management of \LaTeX\ files can be handled with the same tools as any other source files; so you can use your favourite version management tools with \LaTeX\ (e.g. GIT, SVN\dots) \\
+
+In section ``\longref{comments}", we've seen how \LaTeX\ comments can be used for note-taking, drafting entire paragraphs, etc. A version-control management system can help you keep a history of such items.
+
+
+\newpage
+
+\part{Managing breaks}
+
+In part \ref{your-first-document}, we talked about how to how to write paragraphs, how to organise your documents in sections, etc. \\
+
+Sometimes, however, a paragraph or section break does not land in a place that is convenient for us, as it disrupts the flow of the article, For example, a section may start at the bottom of a page, a figure may end up on a different page from the text that references it (I always find this confusing to read when that happens), etc. 
+
+To avoid that, you might want to make some manual adjustments to the document layout. This is the subject of this part\dots
+
+\section{Non-breaking spaces}
+
+In \LaTeX, you can create a non-breaking space by using a tilda: $\sim$ \\
+
+Non-breaking spaces are used to keep certain terms together, without automatic line breaks being inserted in the middle. \\
+
+This is useful, for example, to keep numbers and their units together:
+
+\begin{lstlisting}[language=tex]
+	The maximum theoretical speed of SATA-3 is 6~Gb/s, or 750~MB/s.
+\end{lstlisting}
+
+\medskip
+
+Whenever possible, \LaTeX\ will keep those terms together. \\
+
+In the previous example, the ``6" should not be separated from its ``Gb/s" unit, and the ``750" should not be separated from the ``MB/s".
+
+\bigskip
+
+
+\section{Phantom text} \label{phantom}
+
+Since we are on the subject of adding breaks and spaces, here are the commands to add some empty space based on the width/height of a given text:
+
+\begin{description}
+	\item{\quoteCmd{phantom}\texttt{\{text\}}} \mbox{} \\ 
+		Creates some space, of the same width and height as the \texttt{text} passed as parameter
+		(a combination of \quoteCmd{hphantom} and \quoteCmd{vphantom})
+		
+	\item{\quoteCmd{hphantom}\texttt{\{text\}}} \mbox{} \\ 
+		Creates some horizontal space, of the same width as the \texttt{text} passed as parameter
+	\item{\quoteCmd{vphantom}\texttt{\{text\}}} \mbox{} \\ 
+		Creates some vertical space, of the same height as the \texttt{text} passed as parameter
+\end{description}
+
+\newpage
+
+Below is an example of how to put an \quoteCmd{underline} under some \quoteCmd{phantom} text:
+\begin{lstlisting}[language=tex]
+I really think that \underline{\phantom{\LaTeX}} is great!
+\end{lstlisting}
+
+And here is the result:
+\begin{mdframed}
+I really think that \underline{\phantom{\LaTeX}} is great!
+\end{mdframed}
+
+\bigskip
+
+\section{Skips and breaks}
+
+
+\subsection{Adding vertical spaces}
+
+Sometimes you might need to add some extra vertical space between paragraphs (or other elements). These are called ``skip". \\
+
+Skips come in different sizes: \\
+
+\begin{tabular}{l l}
+	\quoteCmd{smallskip} & a small skip \\
+	\quoteCmd{medskip}   & a medium skip \\
+	\quoteCmd{bigskip}   & a big skip \\
+\end{tabular}
+
+\bigskip
+
+
+\subsection{Page breaks}
+
+You can start a new page with the \quoteCmd{newpage} command. \\
+
+You can also start a new page with \quoteCmd{pagebreak}, in which case the content of the old page will be spread out vertically. \\
+
+Having several \quoteCmd{newpage} (or \quoteCmd{pagebreak}) will not create empty pages. To insert empty page(s), see section \ref{blank-page}\dots
+
+\bigskip
+
+
+\subsection{Inserting a blank page} \label{blank-page}
+
+
+While writing about \quoteCmd{newpage} and \quoteCmd{pagebreak}, I wondered \emph{``how to insert a blank page in a \LaTeX\ document?"} \\
+
+After a minute of searching, I found the following solution, which I then wrapped in a custom macro with an optional parameter (section \ref{macro-optional-parameter}):
+
+
+\lstinputlisting[language=tex]{include/featured/cmd-insertBlankPage.tex}
+
+
+The macro will insert a blank page, with a custom message (passed as an optional parameter) written in the center of the page. If the message is not specified, it will default to ``This page intentionally left blank." \\
+
+This macro uses the \quoteCmd{thispagestyle} command, which sets the style for the current page only. By setting it to \texttt{empty}, we remove the header and footer temporarily. Therefore only the message will appear on the center of the page. \\
+
+Here are some examples of how to call our custom macro:
+\input{include/featured/cmd-insertBlankPage-example.tex}
+
+\bigskip
+
+We will be calling the following:
+\begin{lstlisting}
+\insertBlankPage
+\end{lstlisting}
+
+See next page for the result\dots
+\insertBlankPage
+
+
+

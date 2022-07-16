@@ -1,0 +1,35 @@
+This is the first line of our first paragraph (after all, we have to start somewhere\ldots)
+This is on a new line (in the \LaTeX\ code), but it is still part of the same paragraph (in the generated document); so it is possible to add comments without disrupting the flow of the paragraph. For example\dots\ 
+% This is a comment...
+% Everything after the % until the end of the line is a comment, and will be ignored
+this was added after the comment. As you can see, this is still part of the same paragraph; the comment didn't appear, and the flow of text was not disrupted.
+
+
+By leaving (at least) one empty line between this and the previous block of text, we start a new sub-paragraph. Sub-paragraphs are very useful if you want to introduce a new topic in continuation with the previous point, but not a completely new idea that would warrant a new paragraph.
+
+If you want to create a new paragraph, you need to terminate the current paragraph with a pair of backslashes ( \texttt{\textbackslash\textbackslash} ) and then leave at least one empty line between this and the next block of text.
+\\
+
+
+This is the start of a new paragraph. Now let's see what happens when we add a pair of backslashes ( \texttt{\textbackslash\textbackslash} ) but do not leave an empty line with the next block of text\dots 
+\\
+This is a new sub-paragraph; but unlike the others, this one is not indented (please, bear in mind: in some cases, that can make it difficult to see that this is a sub-paragraph at all).
+\\
+
+So far we've seen that a new paragraph can be used to introduce a new idea, while a new sub-paragraph can be used to introduce a new point pertaining to the same idea. The layout of the text (indentation, line breaks) will help us differentiate the different ideas/points.
+\\
+
+\medskip
+
+And if you need a bigger break between paragraphs, you can use \texttt{\textbackslash medskip} or \texttt{\textbackslash bigskip} (medium or big skip, respectively). Use sparingly, though.
+
+\begin{center}
+	\textreferencemark\textreferencemark\ 
+	Now, a word about footnotes\dots\ 
+	\textreferencemark\textreferencemark
+\end{center}
+
+Sometimes when talking about a particular subject, you might feel the need to add some related information. Your first instinct would be to put such information in parentheses (but the problem with parentheses is that they appear in the middle of a text, and break the flow of the discussion. So you usually want to keep them both short and relevant. This is a counter-example, to illustrate what happens when the content in parentheses is too long: we tend to lose focus and forget what we were talking about). \\
+
+One way to avoid being side-tracked by tangent ideas is to use \emph{footnotes}. As the name implies, footnotes are notes that appear at the foot of the page (or, in this case, at the end of a \texttt{mdframed} box) and referred to by number, like this\footnote{this is an example of a footnote. A footnote will not disrupt the flow of the discussion, so they can be used to add some comment or extra information that would be too long to put in parentheses
+}.\\

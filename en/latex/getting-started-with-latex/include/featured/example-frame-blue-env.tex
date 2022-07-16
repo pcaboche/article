@@ -1,0 +1,12 @@
+\newenvironment{blueframe}[1]{
+\mdfsetup{
+	frametitle={
+		\tikz
+		\node[rectangle,fill=blue!20]
+		{#1};
+	},
+	linecolor=blue!20,
+	linewidth=2pt
+}
+\begin{mdframed}}
+{\end{mdframed}}

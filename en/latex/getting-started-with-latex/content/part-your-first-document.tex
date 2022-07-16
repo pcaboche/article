@@ -1,0 +1,361 @@
+
+%%%%
+%% Copyright 2022 Pierre S. Caboche
+%% All rights reserved
+%%%%
+
+\part{Your first document} \label{your-first-document}
+
+
+In this article, we will start with an empty document (created from a built-in template), and then slowly add features to it\dots \\
+
+At first, we will focus on the features necessary to add \emph{content} to our document (organising the document, add notes, table of contents, references, cross-references, bibliography, etc), in other words: everything that is important to present inter-connected ideas in a coherent manner. \\
+
+We'll learn how to customise the style later (and if you've been given a template to follow, then you'll not even need to modify the style\dots)
+
+
+\section{Starting with a template}
+
+In \TeXstudio, go to ``File >> New From Template\dots", select ``Article" in the list of ``Builtin" template, and finally click ``OK". \\
+
+What we get is the following file:
+\lstinputlisting[language=tex]{files/empty-article.tex}
+
+Now in \TeXstudio, click on the ``Build \& View" button. This should generate the document without error\dots
+
+\begin{note}
+Congratulations! If the document displayed, then you have a working \LaTeX\ environment!\\
+
+With the installation done, we can now concentrate on learning \LaTeX\ itself. (note: you might still need to install additional packages when required)
+\end{note}
+
+\bigskip
+
+Let's take a look at that file\dots \\
+
+A \LaTeX\ file has two main parts:
+\begin{itemize}
+	\item the \emph{preamble} (everything before \lstinline[language=tex]|\begin{document}| ), which the template calls \emph{``opening"}
+		
+	\item the document's \emph{body} (\lstinline[language=tex]|\begin{document}| and all of its content)
+\end{itemize}
+
+\medskip
+
+The \emph{preamble} is where we invoke all the packages necessary to generate our documents, as well as configure those packages. Some \LaTeX\ commands can only be called in the \emph{preamble} (they will throw an error if called in the \emph{body}); this is especially the case with configuration commands). \\
+
+The \emph{body} is where our document's content goes. \\
+
+\medskip
+
+The \quoteCmd{documentclass} command specifies which document class (template) our document follows. We chose the class \texttt{article}, but there are others built-in in \LaTeX\ (\texttt{letter}, \texttt{beamer}, \texttt{book}, \texttt{memoir}\dots). 
+
+The square brackets \texttt{[]} is where we specify options to our document class, for example \texttt{twoside} %to indicate that each page is to be printed on two sides, and then bound together 
+(section \ref{two-sided}). \\
+
+In the \emph{preamble} of our template, you can notice the following commands: \quoteCmd{title} and \quoteCmd{author}. As the name implies, their goal is to declare the document's title and author (section  \ref{set-title-author}).
+
+Then in the \emph{body}, the command \quoteCmd{maketitle} generate the document's title (including author, as well as date). It is possible to  customise the date (section \ref{customise-date}). \\
+
+We'll examine the rest of the template in the following sections:
+\begin{itemize}
+	\item \lstinline[language=tex]|\begin{abstract}|: section \ref{write-abstract}
+	\item \lstinline[language=tex]|\section{}|: section \ref{parts-sections}
+\end{itemize}
+
+\bigskip
+
+\subsection{Set the title and author} \label{set-title-author}
+
+The first thing we'll do to that template document, is specify the title and author, which is really straightforward:
+\begin{lstlisting}[language=tex]
+\title{Article title}
+\author{Your Name here}
+\end{lstlisting}
+
+\idxCmd{title}
+\idxCmd{author}
+
+Next we will modify the document's date\dots 
+
+\subsection{Customise the date}  \label{customise-date}
+
+By default, \quoteCmd{maketitle} will print out the date the document has been last generated (the result of calling \quoteCmd{today}), but we might want to change this for different reasons\dots \\
+
+One reason could be that we want to specify a publication date, and not change afterwards.
+
+Another reason would be to add a revision date, on top of the publication date that is set in stone. We are going to do the latter. \\
+
+Here is how we do it, using the \quoteCmd{date} command:
+\lstinputlisting[language=tex]{include/featured/pkg-custom-date.tex}
+
+
+
+
+\newpage
+
+\subsection{Write an abstract} \label{write-abstract}
+
+In our ``Article" document template, you will notice the following block:
+
+\begin{lstlisting}[language=tex]
+\begin{abstract}
+	
+\end{abstract}
+\end{lstlisting}
+
+\idxEnv{abstract}
+
+As the name implies, this is where you need to write the abstract for your article. \index{abstract} \\
+
+\bigskip
+
+An abstract is the summary of a research paper (whether published or not). The goals of an abstract is to:
+\begin{itemize}
+	\item introduce the content of the paper
+	\item present some of the ideas developed in the paper
+	\item help remember the key points
+\end{itemize}
+
+\medskip
+
+An abstract is usually short (one paragraph, 6-7 sentences, 150-200 words). \\
+
+
+\medskip
+
+
+If you don't know what to put in an abstract, then a good tip I was given years ago was to
+write one or two sentences for each of the following subjects:
+
+\begin{center}
+\textbf{B}ackground, \textbf{P}urpose, \textbf{M}ethodology, \textbf{R}esults, \textbf{C}onclusion 
+\end{center}
+
+Usually: 1 sentence per subject, and an extra sentence each for Methodology and Conclusion. \\
+
+
+So that's what the ``abstract" is\dots\ I know, this has nothing to do with \LaTeX, but people might be wondering about the purpose of this block. \\
+\medskip
+
+Note that I don't always follow those rules for my articles. Specifically, my abstracts tend to be longer and describe the paper in more details.
+
+\bigskip
+
+
+\section{Organising your files} \label{getting-organised}
+
+
+\subsection{File hierarchy}
+
+Unlike other text editors (e.g. LibreOffice), a \LaTeX\ document can be made up of multiple files.
+
+On top of that, \LaTeX\ will create a number of other intermediate files (with extensions such as: \texttt{.aux}, \texttt{.bbl}, \texttt{.blg}, \texttt{.idx}, \texttt{.ilg}, \texttt{.ind}, \texttt{.lof}, \texttt{.log}, \texttt{.log}, \texttt{.out}, \texttt{.toc}, and even a \texttt{.gz} archive), as well as the final \texttt{.pdf} file. \\
+
+All these files will be found in the same folder (in addition to \emph{our} own files, which will define the content of our document). So we need to organise this folder. \\
+
+Our goal is to have only one \texttt{.tex} file at the root of our folder hierarchy, and all other files grouped in different folders. \\
+
+Here is the main hierarchy that I used for this document\footnote{folders may contain sub-folders}:
+\begin{description}
+	\item[\texttt{include/}] \mbox{} \\
+	folder contains our external dependencies, configurations, and custom macros.
+	In particular:
+	\begin{description}
+		\item[\texttt{packages.tex}] \mbox{} \\
+		file containing all our dependencies and their configuration
+		\item[\texttt{macros.tex}] \mbox{} \\
+		file containing our custom macros.
+	\end{description}
+
+	\item[\texttt{content/}] \mbox{} \\
+	folder containing all the \texttt{.tex} files that form the content of our article,
+	divided in parts / chapters / sections, etc.
+	
+	We also use this folder to store bibliography files (\texttt{.bib}), see Section \ref{add-biblio} \\
+	
+	I also strongly suggest that you organise your files in a way that makes it easy to see if they belong to a part / chapter / section or other. One way to achieve this is by adopting some naming conventions for your files. \\
+	
+	For example:
+	\begin{description}
+	\item[] \mbox{} \\
+		\texttt{part-(...).tex\\
+		chapter-(...).tex\\
+		section-(...).tex}
+	\end{description}
+
+
+	\item[\texttt{files/}] \mbox{} \\
+	folder containing other files necessary for generating the document (e.g. images, source code files\dots)
+\end{description}
+
+\begin{note}
+You are free to use whichever file structure you want. However, in this article we will be using the structure described above, and will refer to each folder or file by their name in that hierarchy.
+\end{note}
+
+
+\bigskip
+
+
+For your \LaTeX\ documents, I suggest that you organise your files sooner rather than later: \\
+
+Starting from a template, you may start adding the different parts, sections, sub-sections 
+(section \ref{parts-sections}) to lay out the structure of your document. 
+Then you may add a Table of Content (section \ref{add-toc}) to better see that structure.
+
+Finally, in the different sections you may add some notes in the form of comments (see ``\longref{comments}") to know which ideas will go into which section. \\
+
+At that point, you may still have most of your ideas in just one \LaTeX\ file. \\
+
+However, when you start writing the actual content of your document (not just adding sections names and comments), that's when you need to make different files (in the \texttt{content/} folder).
+
+
+\newpage
+
+\subsection{Using \texttt{\textbackslash input}}
+
+The \quoteCmd{input} command is used to load the content of a file, \emph{verbatim}, into the current document, where the \quoteCmd{input} command has been called.
+
+\begin{lstlisting}[language=tex]
+%% Importing our custom macros
+\input{include/macros.tex}
+
+  ...
+
+%% Adding some content to our document
+\input{content/part-style-indexes.tex}
+\end{lstlisting}
+
+\bigskip
+
+This way, the content of our document can be broken down into smaller, more manageable files, but they will appear as one big file to the \LaTeX\ compiler. As a result of this behaviour\dots
+
+\begin{note}
+The path specified as parameter to the \quoteCmd{input} command 
+is always relative our main \texttt{.tex} document at the \emph{base} of our folder hierarchy.
+\end{note}
+
+For example, if from a \texttt{.tex} document in our \texttt{content/} folder we include another \texttt{.tex} file, its path must be relative to the \emph{base} of our folder hierarchy, where our main \texttt{.tex} document is located.
+
+\begin{note}
+This is also true for other \LaTeX\ command that accept a file path as a parameter, like \quoteCmd{includegraphics} (page \pageref{includegraphics}), or \quoteCmd{lstinputlisting} (page \pageref{lstinputlisting}).
+\end{note}
+
+\bigskip
+
+The \quoteCmd{input} command is not to be confused with the \quoteCmd{usepackage} command\dots\
+(see next section) \\
+
+
+\subsection{Calling \texttt{\textbackslash usepackage}}
+The \quoteCmd{usepackage} command is used to load one or more \LaTeX\ packages, sometimes with some parameters. \\
+
+For example:
+\begin{lstlisting}[language=tex]
+%%% In the preamble
+	
+%% Loading one package
+\usepackage{xstring}
+
+%% Loading several packages
+\usepackage{titleps, xcolor}
+
+%% Loading one package, with some option
+\usepackage[super]{nth}
+\usepackage[authoryear]{natbib}
+\end{lstlisting}
+
+Note that \quoteCmd{usepackage} can only be called in the preamble (not in the body of the document).
+
+\newpage
+\section{Parts, Sections, etc.} \label{parts-sections}
+
+A document of class \texttt{article} (like this one), is divided into: parts, sections, subsections. 
+The document class \texttt{book} also adds the ``chapter" subdivision: \\
+
+\quoteCmd{part}
+
+\quoteCmd{chapter} (\texttt{book} only)
+
+\quoteCmd{section}
+
+\quoteCmd{subsection} \\
+
+
+For example:
+\begin{lstlisting}
+\part{Your first document}
+   % ... introduce the part ...
+   
+\section{Starting with a template}
+   % ... content of the section ...
+
+\subsection{Set the title and author}
+   % ... content of the subsection ...
+\end{lstlisting} 
+
+\bigskip
+
+The previous commands will define the different subdivisions that need to be \emph{numbered}.
+Such subdivisions will not only be assigned a number, but they will also appear in the Table of Contents if you add one (see Section \ref{add-toc}). \\
+
+Also worth noting: the \quoteCmd{part} command does not reset the numbering of the chapters / sections it contains (i.e. you could have Sections 1, 2, 3 in part I; Sections 4, 5, 6, 7 in part II, etc.)
+
+\bigskip
+
+If you don't want to number a subdivision, use the \emph{starred} version of the previous commands, i.e.:
+
+\quoteCmd{part*}
+
+\quoteCmd{chapter*} (\texttt{book} only)
+
+\quoteCmd{section*}
+
+\quoteCmd{subsection*} \\
+
+
+\begin{note}
+Non-numbered subdivisions will not appear in the Table of Contents.
+\end{note}
+
+
+\newpage
+
+\section{Adding a Table of Contents (TOC)} \label{add-toc}
+
+Adding a table of contents is very easy. \\
+
+Just call \quoteCmd{tableofcontents} where you want your Table of Contents to be (only one per document) :
+\begin{lstlisting}[language=tex]
+\tableofcontents
+\end{lstlisting}
+
+
+
+\subsection{Customising the Table of Contents} \label{customising-toc}
+
+It is also possible to customise the Table of Contents. \\
+
+Here is what I used for this article:
+\lstinputlisting[language=tex]{include/featured/customise-toc.tex}
+
+\bigskip
+
+\begin{note} 
+Note: if you modify those parameters, you might need to generate your document several times for the changes to take effect.
+\end{note}
+
+\bigskip
+
+More customisation options can be found at \citep{customize-toc} : \\
+
+\hfill
+\url{https://texblog.org/2011/09/09/10-ways-to-customize-tocloflot/}
+
+
+\bigskip	
+
+
+\input{content/section-paragraphs.tex}
+
+

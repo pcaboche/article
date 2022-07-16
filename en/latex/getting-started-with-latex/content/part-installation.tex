@@ -1,0 +1,68 @@
+%%%%
+%% Copyright 2022 Pierre S. Caboche
+%% All rights reserved
+%%%%
+
+\part{Installation}
+
+
+\section*{Setting up a \LaTeX\ environment}
+
+The official \LaTeX\ Project website %\citep{latex-project} 
+provides some information about \LaTeX\ (including how to install \LaTeX). \\
+
+Link: \url{https://www.latex-project.org} \\
+
+That being said, here is some information to get you started\dots
+
+
+\subsection*{Windows}
+
+On Windows, I would recommend using \MiKTeX, which includes (among other things):
+
+\begin{itemize}
+	\item an \emph{``integrated package manager"}, which will help you download the missing \TeX\ packages, as you need them. This allows you to keep \emph{``just enough \TeX"} on your computer for your work \citep{miktex-project}
+	\item \TeXworks, a \emph{``simple \TeX\ front-end program (working environment)"} \citep{texworks}
+\end{itemize}
+
+When it comes to \TeX\ editors, I have a preference for \TeXstudio, which we've introduced in \emph{Part \longref{texstudio}} \\
+
+
+
+So on Windows, I would usually install the following:
+\begin{itemize}
+	\item \MiKTeX:   \url{https://miktex.org}
+	\item \TeXstudio: \url{https://www.texstudio.org} 
+\end{itemize}
+
+
+\subsection*{Linux}
+
+Under Linux, I tend to install \texttt{texlive}  
+(as most Linux distribution provide it through their official repositories, %\citep{texlive})
+ as well as an editor for \TeX\ (usually \TeXstudio).
+
+\begin{description}
+	\item[texlive] \mbox{} \\ 
+	\emph{Required} \\
+	\TeX\ formatting system
+	
+	\item[texstudio] \mbox{} \\
+	\emph{Optional, but highly recommended} \\
+	A feature-rich editor for \LaTeX\ documents \\
+\end{description}
+
+
+To install these packages in Fedora (requires \emph{super user} privileges):
+\begin{lstlisting}[language=sh]
+	$ sudo dnf install texlive texstudio
+\end{lstlisting}
+
+\bigskip
+
+Additional \TeX\ packages need to be installed separately. \\
+
+Such packages normally have a name that starts with "\texttt{texlive-}" \\
+( e.g. \texttt{texlive-mdframed} )
+
+\bigskip

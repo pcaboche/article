@@ -1,0 +1,57 @@
+%%%%
+%% Copyright 2022 Pierre S. Caboche
+%% All rights reserved
+%%%%
+
+\part{Text styles, indexes}
+
+In this part, we'll talk about custom text styles and adding indexes.  
+This will be useful when we learn how to write our first macros, in section ``\longref{first-custom-macro}".
+
+\section{\emph{Emphasis}, italics, bold\dots} \label{text-style}
+
+A recurring question from people new to \LaTeX\ is: \emph{``how do I put text in \textbf{bold} face?"} when the underlying question really is \emph{``how can I \emph{emphasise} some important idea?"} \\
+
+In \LaTeX, there is a command specifically used for \emph{emphasis}: \quoteCmd{emph}
+
+The difference is, by default in \LaTeX, \emph{emphasis} is not made using \textbf{bold face}, but using \textit{italics} instead.
+
+Also, \emph{if you were to \emph{emphasise} some text inside of another \emph{emphasis}, then the inner \emph{emphasis} will appear \emph{upright} (and not in italics), as if the two \emph{emphases} had cancelled each other\dots} \\
+
+So we advise you to \quoteCmd{emph} for emphasis in \LaTeX. \\
+
+However, if you really \emph{must} specifically put your text in bold, italics, underline, etc., then here are some commands for that: \\
+
+\begin{tabular}{l l l l}
+	\quoteCmd{emph}\texttt{\{text\}}      & \emph{text}      & \emph{emphasis}          \\
+	\quoteCmd{textit}\texttt{\{text\}}    & \textit{text}    & \textit{italics}         \\
+	\quoteCmd{textbf}\texttt{\{text\}}    & \textbf{text}    & \textbf{bold face}       \\
+	\quoteCmd{texttt}\texttt{\{text\}}    & \texttt{text}    & \texttt{monospaced font} & \footnotesize (as configured in section \ref{changing-the-fonts}) \\
+	\quoteCmd{underline}\texttt{\{text\}} & \underline{text} & \underline{underlined}   \\
+\end{tabular}
+
+
+\section{Adding an index} \label{add-index}
+
+First, we need to use the \quotePkg{imakeidx} package and call the \quoteCmd{makeindex} command:
+
+\lstinputlisting[language=tex]{include/featured/pkg-imakeidx.tex} 
+
+Then we need to use the \quoteCmd{index} command, to add an index on the relevant word:
+
+\begin{lstlisting}[language=tex]
+Some text here, mentioning a keyword to be indexed. \index{keyword}
+\end{lstlisting}
+
+
+Finally, we need to print the index with \quoteCmd{printindex} :
+
+\begin{lstlisting}[language=tex]
+\printindex
+\end{lstlisting}
+
+The difficult part is to specify an index whenever certain words are mentioned.
+For this purpose, we can use macros to make our task easier\ldots \\
+
+To see what an index looks like, go to page \pageref{our-index} (for this is where you will find the index for this document).
+

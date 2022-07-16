@@ -1,0 +1,65 @@
+%%%%
+%% Copyright 2022 Pierre S. Caboche
+%% All rights reserved
+%%%%
+
+\part{Lists}
+
+\section{List overview}
+
+This part will give you an overview (with examples) of the different types of list in \LaTeX.
+
+\subsection{\texttt{itemize} and \texttt{enumerate}}
+
+The \quoteEnv{itemize} environment creates bullet points. \\
+The \quoteEnv{enumerate} environment creates enumerated lists.\\
+Below are some examples where we mix \quoteEnv{itemize} and \quoteEnv{enumerate}:
+
+
+\newcommand{\codeAndRes}[2][language=tex]{
+\lstinputlisting[#1]{#2}
+& 
+\input{#2}
+}
+
+	
+	
+	\begin{tabular}{p{6cm} | p{6cm}}
+	  \multicolumn{1}{c|}{Code}
+	& \multicolumn{1}{c}{Result}
+	\\
+	
+	\codeAndRes{include/featured/example-lists-1.tex} \\
+	\codeAndRes{include/featured/example-lists-2.tex} \\
+	\end{tabular}
+
+
+
+\subsection{\texttt{description}}
+
+
+
+The \quoteEnv{description} environment allows to describe terms: \\
+
+\begin{tabular}{p{6cm} | p{6cm}}
+	\multicolumn{1}{c|}{Code}
+	& \multicolumn{1}{c}{Result}
+	\\
+	
+	\begin{lstlisting}[language=tex]
+	\begin{description}
+		\item[label 1] description 1
+		\item[label 2] description 2
+		\item[label 3] \mbox{} \\
+		description 3
+	\end{description}
+	\end{lstlisting}
+	&
+	\begin{description}
+		\item[label 1] description 1
+		\item[label 2] description 2
+		\item[label 3] \mbox{} \newline
+		description 3
+	\end{description}
+	
+\end{tabular}

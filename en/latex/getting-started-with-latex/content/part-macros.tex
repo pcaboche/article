@@ -1,0 +1,557 @@
+%%%%
+%% Copyright 2022 Pierre S. Caboche
+%% All rights reserved
+%%%%
+
+\part{Introduction to Macros} \label{macros}
+
+Some quick notes, before we start:
+
+\begin{note}
+	I usually make the following distinction:
+	\begin{itemize}
+		\item I call \emph{``command"} the commands that are provided by \TeX\ or a \LaTeX\ package
+		\item I call \emph{``macro"} the commands that are defined by the user, and are not part of a package
+	\end{itemize}
+\end{note}
+
+Also, I use the word ``parameter" instead of ``argument". Indeed, talking about \emph{``long vs. short arguments"} or \emph{``optional argument"} sounded a bit strange. Unlike my ex, I don't like arguments\dots
+
+\section{Some commands we used}
+
+So far, we've used a few \LaTeX\ commands without explaining what they are used for.
+Some of those commands take no parameters, while others take at least one parameter (and maybe an optional parameter). \\
+
+Let's take a look at those commands that are called without parameters, starting with \quoteCmd{dots}.
+
+\subsection{Calling a command with no parameters} \label{calling-macros-without-parameters}
+
+The \quoteCmd{dots} command prints 3 little dots\dots \\
+In \emph{text} mode, \quoteCmd{dots} outputs the same as \quoteCmd{ldots} or \quoteCmd{textellipsis}  (while in \emph{math} mode, \quoteCmd{dots} tries to determine whether to use \quoteCmd{ldots} or \quoteCmd{cdots} based on context). 
+
+Now let's try to use it\dots
+\begin{table}[h]
+	\centering
+	\caption{Command \texttt{\textbackslash dots}}
+	\medskip
+
+	\begin{tabular}{c l l}
+	%	\# 
+		& \multicolumn{1}{c}{\LaTeX\ code} & \multicolumn{1}{c}{Output} \\
+		\texttt{1} &
+		\lstinline[language=tex]|Three little dots\dots then some text.| 
+		                       & Three little dots\dots then some text. \\
+	    \texttt{2} &
+	    \lstinline[language=tex]|Three little dots\dots\ then some text.| 
+	                           & Three little dots\dots\ then some text. \\
+	\end{tabular}
+\end{table}
+
+
+In example 1 we see that, in the output, there is no space between ``dots\dots" and ``then". In the code, there needs to be a space; otherwise \LaTeX\ will try to find a command called ``\texttt{dotsthen}" which doesn't exist.
+
+In example 2, we escaped the space (``\texttt{\textbackslash\ }'') and the space appeared in the output. \\
+
+Here are some more examples, this time with \quoteCmd{textbackslash} (which, as the name implies, prints a backslash)\dots
+
+\newpage
+
+\begin{table}[h]
+	\centering
+	\caption{Command \texttt{\textbackslash textbackslash}}
+	\medskip
+	
+	\begin{tabular}{c l c l}
+		%	\# 
+		& \multicolumn{1}{c}{\LaTeX\ code} & \multicolumn{2}{c}{Output} \\
+		\texttt{3} &
+		\lstinline[language=tex]|\textbackslash dots| 
+		                     & & \textbackslash dots \\
+		\texttt{4} &
+		\lstinline[language=tex]|\textbackslashdots| 
+		& &  \\
+
+		\texttt{5} &
+		\lstinline[language=tex]|\textbackslash\textbackslash| 
+		                     & & \textbackslash\textbackslash \\
+		\texttt{6} &
+		\lstinline[language=tex]|\textbackslash \textbackslash| 
+		                     & & \textbackslash \textbackslash \\
+		\texttt{7} &
+		\lstinline[language=tex]|\textbackslash\ \textbackslash| 
+		                     & & \textbackslash\ \textbackslash \\
+	\end{tabular}
+\end{table}
+
+Example 3 wrote ``\textbackslash dots".
+
+Example 4 threw an error:
+``\texttt{Undefined control sequence. \textbackslash textbackslashdots}"
+
+Example 5 wrote a pair of backslashes ( \textbackslash\textbackslash\ ).
+
+So did example 6.
+
+Example 7 wrote ``\textbackslash\ \textbackslash", with a space between the backslashes. \\
+
+In summary, if there needs to be a space after the output of a command \emph{with no parameter}, then that space needs to be escaped in the code
+(``\texttt{\textbackslash\ }''). \\
+
+
+Commands that are called with parameters do not have this issue, as illustrated here:
+\begin{center}
+	\begin{tabular}{ l l }
+		\lstinline[language=tex]|\textbackslash\textbf{re}newcommand|
+		                       & \textbackslash\textbf{re}newcommand
+	\end{tabular}
+\end{center}
+
+
+
+\begin{table}[h]
+	\centering
+	\caption{Other commands with no parameters}
+	\medskip
+
+	\begin{tabular}{ l l }
+	\quoteCmd{LaTeX}   & Prints the word ``\LaTeX", using ``confused casing"\\
+	\quoteCmd{medskip} & Leaves a medium vertical space. \\
+	\quoteCmd{bigskip} & Leaves a big vertical space. \\
+	\end{tabular}
+\end{table}
+
+
+\subsection{Calling commands with parameters}
+
+We've seen several examples of commands accepting parameters throughout this article. \\
+
+We will go into more details as we learn how to define (and call!) our own macros in ``\longref{first-custom-macro}"\dots 
+
+
+\newpage
+
+\section{Your first custom macros!} \label{first-custom-macro}
+
+
+\subsection{Macros without parameters} \label{macros-without-parameters}
+
+\begin{description}
+	\item[\quoteCmd{newcommand}\texttt{\{\textbackslash \emph{cmd}\}\{\emph{definition}\}}] \mbox{} \\
+	Defines a new command. \\
+	Will throw an error if the command already exists.
+		
+	\item[\quoteCmd{renewcommand}\texttt{\{\textbackslash cmd\}\{definition\}}] \mbox{} \\
+	Redefines a command. \\
+	Will throw an error if the command does not exist.
+\end{description}
+
+
+Historically, \lstinline|\def\cmd{definition}| was used to define or redefine commands.
+
+
+\begin{note}
+\emph{DO NOT} use \quoteCmd{def} nowadays, as it does not check if the command already exists or not. Use \quoteCmd{newcommand} and \quoteCmd{renewcommand} instead.
+\end{note}
+
+If the command already exists, you \emph{WANT} \quoteCmd{newcommand} to throw an error (as you are likely to replace a command used by some package, resulting in errors).
+Conversely, if the command does not exist, you \emph{WANT} \quoteCmd{renewcommand} to throw an error (you might have mistyped the name, so the command is not replaced at all).
+\\
+
+
+
+
+When a word appears often in a document, it is usually a good idea to create a macro specifically for that word, especially if we are in either of these cases:
+
+\begin{itemize}
+	\item the word requires a specific formatting (e.g. emphasis, monospaced fonts, bold\dots), which must be consistent throughout the document.
+	
+	Formatting includes adding things such as:
+	\begin{itemize}
+		\item \quoteCmd{texttrademark}  ( \texttrademark\  ) for Trademarks
+		\item \quoteCmd{textregistered} ( \textregistered\ ) for Registered Trademarks
+	\end{itemize}
+
+	\item the word needs to be indexed, i.e. every page where the word appears needs to be listed in the index (see: ``\longref{add-index}")
+\end{itemize}
+
+In doing so, it is easy to change every occurrence of a word simply by modifying the corresponding macro. \\
+
+\bigskip
+
+Below are some examples of macros, which we can call whenever we need to refer to the terms they represent:
+
+\begin{itemize}
+	\item as a first example, we will write a macro to print and add an index on recurring terms like: ``\TeXstudio" or ``\WYSIWYG"
+	\item our next example will display a specific with a consistent format, in that case some ``brand name" with a trademark or registered trademark (note: we will also include the trademarks when indexing the names).
+	
+	Earlier in this article I talked about the (now defunct) company \Iomega, makers of the \Zip\ drive (now an obsolete product). So let's use that as an example.
+\end{itemize}
+
+
+Here is how defined some macros to format and index those recurring terms:
+\lstinputlisting[language=tex]{include/featured/example-macros-0-param.tex}
+
+
+
+
+\begin{note}
+As explained in ``\longref{getting-organised}", out of convenience we put many of our user-defined macros in the same source file, located at: \\ \texttt{include/macros.tex} \\
+
+This makes it easy to find the list of all our macros, recurring terms, and how they are displayed throughout the document.
+\end{note}
+
+Of course, as our list of macros gets bigger, it is possible to create more source files and group our macros by category\footnote{for this article, each code sample that needed to be featured got its own separate source file. This way it's easy to load the source file with \quoteCmd{input}, and show its code with \quoteCmd{lstinputlisting}.} \\
+
+
+
+\subsection{Macros with parameters}  \label{macros-with-parameters}
+
+In section \ref{macros-without-parameters}, we saw how to define macros without parameters, why we would want to create such macros, and how to call them (section \ref{calling-macros-without-parameters}). \\
+
+In this section, we will see how to create macros that take parameters. These are useful when you repeat the same tasks, but with different parameters. \\
+
+For that, we will go step by step\dots \\
+
+
+\begin{description}
+	\item[\quoteCmd{newcommand}\texttt{\{\textbackslash \emph{cmd}\}[\emph{nbArgs}]\{\emph{definition}\}}] \mbox{} \\
+	Defines a new command. \\
+	Will throw an error if the command already exists.
+	
+	\texttt{\emph{nbArgs}} is the total number of parameters (maximum: 9) \\
+	In \texttt{\emph{definition}}, the parameters' values are represented by the variables \texttt{\#1} to \texttt{\#9}.
+	
+\end{description}
+
+
+\bigskip
+
+
+As an example, we will create a macro that will take 1 parameter: a label name (as seen in ``\longref{cross-references}"), and then display both the \quoteCmd{ref} and \quoteCmd{nameref} of that label.
+
+We will call this macro \texttt{\textbackslash longref} :
+
+
+
+\lstinputlisting[language=tex]{include/featured/example-macros-1-param.tex}
+
+With this macro, a simple call like \lstinline[language=tex]|``\longref{cross-references}"|
+will display: ``\longref{cross-references}" \\
+
+
+
+\bigskip
+
+As you might have noticed, we used \quoteCmd{newcommand*} (with a star) instead of d \quoteCmd{newcommand} (without a star) to define our macro. The difference is explained in the next section\dots
+
+
+\bigskip
+
+
+\subsection{Long vs short parameters}
+
+In \LaTeX, most of the macros we write do not need to accept paragraphs, only short amount of text or some small values.
+
+This is the difference between ``short" parameters (i.e. do not accept paragraphs), and ``long" parameters (i.e. can accept paragraphs). \\
+
+When using \quoteCmd{newcommand*} (with a star) a check is added, to make sure the macro can only accept short parameters .
+
+
+\begin{description}
+	\item[\quoteCmd{newcommand}\texttt{\{\textbackslash \emph{cmd}\}[\emph{nbArgs}]\{\emph{definition}\}}] \mbox{} \\
+	Defines a new command. \\
+	Will throw an error if the command already exists.   \\
+	\emph{Parameters can contain paragraphs.}
+	
+	\item[\quoteCmd{newcommand*}\texttt{\{\textbackslash \emph{cmd}\}[\emph{nbArgs}]\{\emph{definition}\}}] \mbox{} \\
+	Defines a new command.  \\
+	Will throw an error if the command already exists. \\
+	\emph{Will throw an error if \emph{any} of the parameters contains a paragraph.}
+\end{description}
+
+
+
+
+
+\subsection{Macros with one optional parameter} \label{macro-optional-parameter}
+
+
+\begin{note}
+It is possible to define macros that accept multiple optional parameters by \emph{``chaining"} several macros that each take one optional parameter (basically, \emph{``currying"}). 
+
+However, this technique is complicated, and the order of the optional parameters is fixed (so if you specify an optional parameter, you'll also need to specify the optional parameters that came before it, which defies the purpose of optional parameters). \\
+
+Another approach is to have only one optional parameter containing \emph{key-values}. This approach is used by a number of \LaTeX\ packages. However, it is rather complex to explain, and is out of the scope of this article. \\
+
+Just be aware that these techniques exist, and they rely on declaring macros with \emph{one} optional parameter.
+\end{note}
+
+To create a macro with a single optional parameter, we need the following constructs:
+
+
+
+\begin{description}
+	\setlength{\itemsep}{-0.5em}
+	
+	\item[\quoteCmd{newcommand}\texttt{\{\textbackslash \emph{cmd}\}[\emph{nbArgs}][\emph{optionDefault}]\{\emph{definition}\}}] \mbox{}
+	\item[\quoteCmd{newcommand*}\texttt{\{\textbackslash \emph{cmd}\}[\emph{nbArgs}][\emph{optionDefault}]\{\emph{definition}\}}] \mbox{} \\
+\end{description}
+
+
+Specifying \texttt{\emph{optionDefault}} means that:
+
+\begin{itemize}
+	\item the command has an optional parameter
+	\item its value is represented by \texttt{\#1} (hence \texttt{\#2} to \texttt{\#9} are the values of mandatory parameters)
+	\item \texttt{\emph{optionDefault}} is the default value for \texttt{\#1}. \\
+	\texttt{\#1} will take the value \texttt{\emph{optionDefault}} if the optional parameter is \emph{not set} (i.e. not specified at all). If you call the command with an empty parameter (\texttt{[]}), then \texttt{\#1} will be empty (i.e. not set to \texttt{\emph{optionDefault}})
+\end{itemize}
+
+\bigskip
+
+As a result:
+\begin{itemize}
+	\item \LaTeX\ allows to declare commands with \emph{one} optional parameter (but you can chain commands together)
+	
+	\item specifying \texttt{\emph{optionDefault}} doesn't mean that \texttt{\#1} will never be empty. 
+	
+	You can call the macro with \texttt{[]} as the optional parameter, in which case \texttt{\#1}~will be empty. If this is not what you expect, you might need to check whether \texttt{\#1} is empty (or consider making the parameter mandatory).
+	
+	\item if you need more than one optional parameters, you will need to use more advanced techniques, like using \emph{key-values} for the optional parameter
+\end{itemize}
+
+
+
+\begin{note}
+Explaining how to test a value, or handle \emph{key-values} parameters in \LaTeX\ is out of the scope of this article.
+
+However, it is important to know about that the option parameter exists, how it's called, and know its limitations.
+\end{note}
+
+\bigskip
+
+Many \LaTeX\ commands make use of the optional parameter (usually as a set of \emph{key-values}). \\
+
+Examples found in this article include: 
+\quoteCmd{documentclass}, \quoteCmd{usepackage}, \quoteCmd{lstinline}, \quoteCmd{lstinputlisting}, \quoteCmd{newcommand}, \quoteCmd{renewcommand}\dots \\
+
+
+When calling a command with an optional parameter, the optional parameter is specified in square brackets \texttt{[ ]} . \\
+
+For example:
+\begin{lstlisting}[language=tex]
+\usepackage[super]{nth}
+\usepackage[authoryear]{natbib}
+
+...
+\lstinline[language=tex]|some code here|
+\lstinputlisting[language=tex]{path/to/file}
+\end{lstlisting}
+
+
+\bigskip
+
+In section ``\longref{blank-page}", we've seen an example of a macro that takes \emph{one} optional parameter (not a \emph{key-value}):
+\lstinputlisting[language=tex]{include/featured/cmd-insertBlankPage.tex}
+
+Here are some examples of calls, and their effect:
+\input{include/featured/cmd-insertBlankPage-example.tex}
+
+This example illustrates the effect of the optional parameter:
+\begin{itemize}
+	\item no square bracket $\rightarrow$ \texttt{\#1} is set to the value of \texttt{optionDefault}
+	\item square bracket present $\rightarrow$ \texttt{\#1} is set to the value inside the square bracket, which can be an empty string.
+\end{itemize}
+
+
+\newpage
+
+\subsection{Redefine macros}
+
+
+Redefining commands is done through \quoteCmd{renewcommand}:
+
+\begin{description}
+	\setlength{\itemsep}{-0.5em}
+	
+	\item[\quoteCmd{renewcommand}\texttt{\{\textbackslash cmd\}\{definition\}}]
+	\item[\quoteCmd{renewcommand*}\texttt{\{\textbackslash cmd\}\{definition\}}] \mbox{} \\
+	Redefines a command. \\
+	Will throw an error if the command does not exist.
+\end{description}
+
+
+These commands do the same as their \quoteCmd{renewcommand} counterparts, except that they will \emph{throw an error if the command does already not exist}. \\
+
+We have seen a few examples of \quoteCmd{renewcommand} being used. \\
+
+Indeed, several packages allow for \emph{some} degree of customisation by letting you redefine some of the commands that they use. \\
+
+This is notably the case in:
+\begin{itemize}
+	\item ``\longref{customising-toc}"
+	\item ``\longref{customise-biblio-title}"
+\end{itemize}
+
+
+
+
+\bigskip
+
+
+Another possible use for \quoteCmd{renewcommand} would be to show how knowledge evolves as you progress through your document. \\
+
+Let's say for example that we are writing a book to teach Japanese from a beginner's level\dots \\
+
+At first, the beginner has no knowledge of \emph{hiragana} and \emph{katakana}, so we will add some \emph{furigana}: little characters that can be used to indicate the pronunciation. For this, we will use the \quotePkg{ruby} package. \\
+
+As the reader progresses through the book, they will get acquainted with more and more characters, and we will progressively remove those pronunciation guides.
+
+So at the beginning, we will define commands that represent our current state of knowledge (where we need some pronunciation guides for \emph{every} character). \\
+
+To print the word for ``hello" (\emph{konnichiwa}), we will need the following commands:
+\begin{lstlisting}[language=tex]
+\newcommand{\KO}{\ruby{こ}{ko}}
+\newcommand{\N}{\ruby{ん}{n}}
+\newcommand{\NI}{\ruby{に}{ni}}
+\newcommand{\CHI}{\ruby{ち}{chi}}
+\newcommand{\WApart}{\ruby{は}{wa}}
+\end{lstlisting}
+
+\newcommand{\KO}{\ruby{こ}{ko}}
+\newcommand{\N}{\ruby{ん}{n}}
+\newcommand{\NI}{\ruby{に}{ni}}
+\newcommand{\CHI}{\ruby{ち}{chi}}
+\newcommand{\WApart}{\ruby{は}{wa}}
+
+Then we use those commands:
+\begin{lstlisting}[language=tex]
+\KO\N\NI\CHI\WApart。
+\end{lstlisting}
+
+\dots and it will print: \KO\N\NI\CHI\WApart。\\
+
+As you can notice, every character has a \emph{furigana} (pronunciation guide) on top\dots \\
+
+Later in the book, we will teach some new characters, and expect the student to remember them; so we will remove the pronunciation guides. \\
+
+For example, after we've introduced the lessons about \NI\ and \CHI, we'll remove the pronunciation guides for these two characters, by redefining the corresponding commands:
+\begin{lstlisting}[language=tex]
+\renewcommand{\NI}{に}
+\renewcommand{\CHI}{ち}
+\end{lstlisting}
+
+\renewcommand{\NI}{に}
+\renewcommand{\CHI}{ち}
+
+From then on, ``\lstinline[language=tex]|\KO\N\NI\CHI\WApart。|" will render as: 
+\KO\N\NI\CHI\WApart。 \\
+
+As expected, the \emph{furigana} have been removed from \NI\ and \CHI.
+
+\bigskip
+
+We can do the same (but in reverse), to show how many characters have been covered as we progress: we would make a character table that highlights which characters have been studied yet, and show this table several times throughout the book (we'll inport the same file at different places in the book, thanks to the \quoteCmd{input} command).
+
+As we go through the book, more and more characters will become highlighted, therefore showing the overall progression. \\
+
+\bigskip
+
+This is just an example, and there are better implementations for our commands showing Japanese characters (which fall out of the scope of this article). \\
+
+
+\begin{note}
+The key takeaway is that the \quoteCmd{renewcommand} command (combined with \quoteCmd{input}) can be used to illustrate our progression through the document (e.g. list of topics that have been covered).
+\end{note}
+
+
+\newpage
+
+\subsection{Summary}
+
+\begin{description}
+	\setlength{\itemsep}{-0.5em}
+	
+	\item[\quoteCmd{newcommand}\texttt{\{\textbackslash \emph{cmd}\}\{\emph{definition}\}}]
+	\item[\quoteCmd{newcommand*}\texttt{\{\textbackslash \emph{cmd}\}\{\emph{definition}\}}]
+	\item[\quoteCmd{newcommand}\texttt{\{\textbackslash \emph{cmd}\}[\emph{nbArgs}]\{\emph{definition}\}}]
+	\item[\quoteCmd{newcommand*}\texttt{\{\textbackslash \emph{cmd}\}[\emph{nbArgs}]\{\emph{definition}\}}]
+	\item[\quoteCmd{newcommand}\texttt{\{\textbackslash \emph{cmd}\}[\emph{nbArgs}][\emph{optionDefault}]\{\emph{definition}\}}]	\item[\quoteCmd{newcommand*}\texttt{\{\textbackslash \emph{cmd}\}[\emph{nbArgs}][\emph{optionDefault}]\{\emph{definition}\}}]
+	
+	\item[\quoteCmd{renewcommand}\texttt{\{\textbackslash \emph{cmd}\}\{\emph{definition}\}}]
+	\item[\quoteCmd{renewcommand*}\texttt{\{\textbackslash \emph{cmd}\}\{\emph{definition}\}}]
+	\item[\quoteCmd{renewcommand}\texttt{\{\textbackslash \emph{cmd}\}[\emph{nbArgs}]\{\emph{definition}\}}]
+	\item[\quoteCmd{renewcommand*}\texttt{\{\textbackslash \emph{cmd}\}[\emph{nbArgs}]\{\emph{definition}\}}]
+	\item[\quoteCmd{renewcommand}\texttt{\{\textbackslash \emph{cmd}\}[\emph{nbArgs}][\emph{optionDefault}]\{\emph{definition}\}}]	\item[\quoteCmd{renewcommand*}\texttt{\{\textbackslash \emph{cmd}\}[\emph{nbArgs}][\emph{optionDefault}]\{\emph{definition}\}}] \mbox{} \\
+		
+	\item[\phantom{aa}\texttt{newcommand}] \mbox{} \\
+		Defines a new command.  \\
+		Will throw an error if the command already exists. \\
+	\item[\phantom{aa}\texttt{renewcommand}] \mbox{} \\
+		Redefines a new command.  \\
+		Will throw an error if the command does NOT already exist. \\
+	\item[\phantom{aa}\texttt{*}] \mbox{} \\
+		Makes command accept only \emph{short} parameter.
+		The command will throw an error if any of the parameters contains a paragraph. \\
+	\item[\phantom{aa}\texttt{\textbackslash \emph{cmd}}] \mbox{} \\
+		The command name (\texttt{\textbackslash} is required) \\
+	\item[\phantom{aa}\texttt{[\emph{nbArgs}]}] \mbox{} \\
+		\emph{Optional} (default: 0) \\
+		Specifies the number of parameters to the command (including optional parameter) \\
+	\item[\phantom{aa}\texttt{[\emph{optionDefault}]}] \mbox{} \\
+		\emph{Optional} \\
+		If specified, the command accepts an optional parameter, with \texttt{\emph{optionDefault}} as its default value.\\
+	\item[\phantom{aa}\texttt{\emph{definition}}] \mbox{} \\
+		The command definition	
+\end{description}
+
+
+\newpage
+
+\section{Environment}
+
+In ``\longref{mdframed}", we created an environment and showed that what happens within that environment was \emph{isolated} from the rest of the document.
+
+This is in contrast to commands. A command may change some values, and those changes may affect the rest of the document. \\
+
+That is the main difference between a command and an environment. \\
+Other differences have to do with the way an environment is declared and called. \\
+
+We have seen a couple environments already (\texttt{abstract}, \texttt{mdframed}), and will see a few more by the end of this document (\texttt{itemize}, \texttt{enumerate}, \texttt{description}, \texttt{table}, \texttt{longtable}, \texttt{tabular}\ldots)
+
+An environment starts with \texttt{\textbackslash begin\{\emph{envname}\}} and ends with \texttt{\textbackslash end\{\emph{envname}\}}. Everything in-between those two tags constitutes the content of the environment:
+\lstinputlisting[language=tex]{include/featured/example-frame-1.tex}
+
+\bigskip
+
+
+When declaring an environment (with the \quoteCmd{newenvironment} command), you need to specify what to do at the \emph{beginning} and at the \emph{end} of the environment (with the content being processed in-between):
+\lstinputlisting[language=tex]{include/featured/example-frame-blue-env.tex}
+
+\bigskip
+
+
+
+The rest (parameters, optional parameter, default value\dots) is very similar to macros (section \ref{first-custom-macro}). Below are the different commands to define (and redefine) an environment:
+
+\begin{description}
+	\setlength{\itemsep}{-0.5em}
+	
+	\item[\quoteCmd{newenvironment}\texttt{\{\emph{envname}\}\{\emph{begdef}\}\{\emph{enddef}\}}]	\item[\quoteCmd{newenvironment*}\texttt{\{\emph{envname}\}\{\emph{begdef}\}\{\emph{enddef}\}}]
+	\item[\quoteCmd{newenvironment}\texttt{\{\emph{envname}\}[\emph{nbArgs}]\{\emph{begdef}\}\{\emph{enddef}\}}]	\item[\quoteCmd{newenvironment*}\texttt{\{\emph{envname}\}[\emph{nbArgs}]\{\emph{begdef}\}\{\emph{enddef}\}}]
+	\item[\quoteCmd{newenvironment}\texttt{\{\emph{envname}\}[\emph{nbArgs}][\emph{optionDefault}]\{\emph{begdef}\}\{\emph{enddef}\}}]	\item[\quoteCmd{newenvironment*}\texttt{\{\emph{envname}\}[\emph{nbArgs}][\emph{optionDefault}]\{\emph{begdef}\}\{\emph{enddef}\}}]
+	
+	
+	\item[\quoteCmd{renewenvironment}\texttt{\{\emph{envname}\}\{\emph{begdef}\}\{\emph{enddef}\}}]	\item[\quoteCmd{renewenvironment*}\texttt{\{\emph{envname}\}\{\emph{begdef}\}\{\emph{enddef}\}}]
+	\item[\quoteCmd{renewenvironment}\texttt{\{\emph{envname}\}[\emph{nbArgs}]\{\emph{begdef}\}\{\emph{enddef}\}}]	\item[\quoteCmd{renewenvironment*}\texttt{\{\emph{envname}\}[\emph{nbArgs}]\{\emph{begdef}\}\{\emph{enddef}\}}]
+	\item[\quoteCmd{renewenvironment}\texttt{\{\emph{envname}\}[\emph{nbArgs}][\emph{optionDefault}]\{\emph{begdef}\}\{\emph{enddef}\}}]	\item[\quoteCmd{renewenvironment*}\texttt{\{\emph{envname}\}[\emph{nbArgs}][\emph{optionDefault}]\{\emph{begdef}\}\{\emph{enddef}\}}]
+\end{description}
+
+
+
+\subsection{Numbered environment}
+
+To create a numbered environment, we need to define and use counters, as explained in section ``\longref{custom-counters}". \\
+
+See also:\\
+\url{https://www.overleaf.com/learn/latex/Environments#Defining_a_new_environment#Numbered_environments}

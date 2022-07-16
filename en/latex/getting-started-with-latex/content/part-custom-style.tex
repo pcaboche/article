@@ -1,0 +1,183 @@
+%%%%
+%% Copyright 2022 Pierre S. Caboche
+%% All rights reserved
+%%%%
+
+\part{Customising the style}
+
+So far we've focused mainly the features to help you write the \emph{content} of the document (e.g. organising the \LaTeX\ files, writing paragraphs, adding notes, a Table of Contents, managing an index, cross-references, a bibliography\dots) and writing macros to help you with repetitive tasks. \\
+
+All these are very important to write ideas that flow naturally while being inter-connected with each other. So we've focalised on writing those ideas, and trusted \LaTeX\ to produce good-looking documents for us, using its default style. \\
+
+In this part, we'll finally learn how to add all the bells and whistles, and tweak the appearance of our document to our liking\dots
+
+
+
+\section{Making the document two-sided} \label{two-sided}
+
+Making a document two-sided is useful if that document is destined to be printed, and its pages are meant bound together. \\
+
+This means that the style needs to change between even and odd pages: the inner margin (closer to the binding) needs to be wider, margin notes (section~\ref{margin-notes}) need to be switched between left and right (to remain in the outer margin), etc. \\
+
+To make a document two-sided, you need to specify the option \texttt{twoside} in \quoteCmd{documentclass}:
+\begin{lstlisting}[language=tex]
+\documentclass[twoside]{article}
+\end{lstlisting}
+
+
+\section{Changing the margins}
+
+Changing the margins is done with the \quotePkg{geometry} package:
+
+\lstinputlisting[language=tex]{include/featured/change-margins.tex} 
+
+With the \quoteCmd{geometry} command, we specify things like the paper size (\texttt{a4paper}), as well as the \texttt{top} and \texttt{bottom} margins (which are self-explanatory).
+
+Similarly, we could also specify the \texttt{left} and \texttt{right} margins, but instead we set the \texttt{inner} and \texttt{outer} margins. \\
+
+In the case of a two-sided document (section \ref{two-sided}) used for printing and binding, \texttt{inner} refers to the margin closer to the binding, while \texttt{outer} refers to the margin that is away from it. If the document is meant to be printed and bound, then the \texttt{inner} margin should be slightly bigger than the \texttt{outer} one (to leave enough room for the binding). \\
+
+In the case of a one-sided document (i.e. not meant for printing and binding), \texttt{inner} and \texttt{outer} simply refer to \texttt{left} and \texttt{right} margins respectively. \\
+
+As we have modified the margin sizes, then we must also adjust the \\
+\texttt{marginparwidth} size, otherwise the ``\nameref{margin-notes}" (section~\ref{margin-notes}) might not fit in the margin anymore.
+
+If you're not using margin notes or margin paragraphs, there is no need to specify \texttt{marginparwidth}. Otherwise, \texttt{marginparwidth} should be smaller than the value for the \texttt{outer} margin. \\
+
+
+
+\section{Changing the fonts} \label{changing-the-fonts}
+
+
+Changing the fonts for our document is done with the \quotePkg{fontspec} package:
+
+\lstinputlisting[language=tex]{include/featured/change-fonts.tex}
+
+\medskip
+
+Here, we select one font per typeface:
+\begin{description}
+	\item[\textrm{Roman}]  \mbox{}\\ 
+		\emph{a.k.a \textrm{Serif}}  \\
+		A font that contains \emph{serif}, the small lines or strokes at the end of larger strokes or characters.
+		You can set the \emph{Serif} font using \\ \quoteCmd{setromanfont}
+		
+	\item[\textsf{Sans}] \mbox{}\\ 
+		\emph{a.k.a \textsf{Sans-Serif, Gothic}}  \\
+		A font that contains \emph{no} serif.
+		You can set the \emph{Sans-Serif} font using \\ 
+		\quoteCmd{setsansfont}
+	
+	\item[\texttt{Monospaced}]  \mbox{}\\ 
+		\emph{a.k.a \texttt{Typewriter}} \\
+		A font in which all characters are of equal horizontal space. 
+		This is important for showing computer code, input files, CSV files, etc. (any application where we need to easily count characters, and see how each character would align in a grid). 
+		You can set the \emph{Monospaced} font using \\ 
+		\quoteCmd{setmonofont}
+		
+\end{description}
+
+Finally, we set the main font for the document with the  \quoteCmd{setmainfont} command. \\
+
+Fonts with \emph{serif} look aesthetically pleasing on printed documents, while \emph{sans serif} fonts tend to be easier to read on screens\footnote{most modern printers have a print resolution in excess of 600 Dots-Per-Inch; for comparison, an iPhone 13 has a screen density of 460 Pixel-Per-Inch}.
+\\
+
+
+This is why I prefer to use \emph{sans serif} fonts for documents like this one, meant to be read on-line rather than being printed. \\
+
+
+In most \LaTeX\ document classes, the default style usually uses a \emph{serif} font as the main font, specifically because \emph{serif} fonts look better in print. \\
+
+For this reason, calling the \quoteCmd{setromanfont} command will also reset the main font for the document.
+
+That's why it is advisable to call \quoteCmd{setmainfont} only \emph{after} \quoteCmd{setromanfont}. \\
+
+In our example, we set both the \emph{serif} and \emph{sans-serif} fonts, but keep the default \emph{monospaced} provided by \LaTeX. \\
+ 
+
+
+
+\section{Customising headers and footers} \label{headers-footers}
+
+To define our headers and footers, we will use the \quotePkg{titleps} package, which I find much easier to use than \quotePkg{fancyhdr}. \\
+
+For this section, we will take a look at how headers and footers were defined for this article, and analyse the example:
+
+\lstinputlisting[language=tex]{include/featured/pkg-titleps.tex}
+
+\bigskip
+
+The configuration of headers and footers is done in the preamble of the document. The first thing we do is use the \quotePkg{titleps} package. \\
+
+Then we use the \quotePkg{xcolor} package because we want to use the colour \texttt{lightgray} in our footer (note: we will need the \texttt{[table]} option in section \emph{\longref{tabular-features}}) . \\
+
+Then we define the \emph{page style} ``main" with the \quoteCmd{newpagestyle} command. \\
+
+In \quoteCmd{newpagestyle}, we define our headers and setters, using \quoteCmd{sethead} and \quoteCmd{setfoot}. These commands have the following signature:
+
+\begin{description}
+	\setlength{\itemsep}{-0.5em}
+	
+	\item[\quoteCmd{sethead}\texttt{[\emph{evenLeft}][\emph{evenCenter}][\emph{evenRight}]\{\emph{left}\}\{\emph{center}\}\{\emph{right}\}}]
+	\item[\quoteCmd{setfoot}\texttt{[\emph{evenLeft}][\emph{evenCenter}][\emph{evenRight}]\{\emph{left}\}\{\emph{center}\}\{\emph{right}\}}] \mbox{} \\ 
+	\mbox{} \\ 
+	These 2 commands each have:
+	\begin{itemize}
+		\setlength{\itemsep}{-0.2em}
+		\item 3 mandatory parameters: \texttt{\emph{left}}, \texttt{\emph{center}}, \texttt{\emph{right}}
+		\item 3 optional parameters: \texttt{\emph{evenLeft}}, \texttt{\emph{evenCenter}}, \texttt{\emph{evenRight}}
+	\end{itemize}
+\end{description}
+
+Headers and footers are both divided in 3 parts: \texttt{\emph{left}}, \texttt{\emph{center}}, and \texttt{\emph{right}}.
+The mandatory parameters apply to both \emph{one-sided} and \emph{two-sided} documents (section \ref{two-sided}):
+\begin{itemize}
+	\item if the document is \emph{one-sided}, then \texttt{\emph{left}}, \texttt{\emph{center}}, and \texttt{\emph{right}} define the text to be displayed on the \texttt{\emph{left}}/\texttt{\emph{center}}/\texttt{\emph{right}} part of the header/footer \emph{for all pages}
+	
+	\item if the document is \emph{two-sided}, then:
+	\begin{itemize}
+		\item \texttt{\emph{left}}, \texttt{\emph{center}}, and \texttt{\emph{right}} only apply to \emph{odd} pages
+		\item \texttt{\emph{evenLeft}}, \texttt{\emph{evenCenter}}, and \texttt{\emph{evenRight}} only apply to \emph{even} pages
+	\end{itemize}
+\end{itemize}
+
+
+
+\bigskip
+
+In our headers/footers, we use the following commands: \\
+
+\begin{tabular}{l l}
+	\quoteCmd{thesection}   & prints the section number \\
+	\quoteCmd{sectiontitle} & prints the section title \\ 
+	\quoteCmd{thepage}      & prints the page number \\
+\end{tabular}
+
+The commands \quoteCmd{headrule} and \quoteCmd{footrule} add a rule, respectively: below the headline (\quoteCmd{headrule}), and above the footline (\quoteCmd{footrule}).
+
+\bigskip
+
+Now that the ``main" \emph{page style} defined, we set the \emph{page style} to ``main" using the \quoteCmd{pagestyle} command. \\
+
+Finally, we use the \quoteCmd{widenhead} to make the headlines/footlines wider. Here is the syntax:
+\begin{description}
+	\setlength{\itemsep}{-0.5em}
+	\item[\quoteCmd{widenhead}\texttt{[\emph{evenLeft}][\emph{evenRight}]\{\emph{left}\}\{\emph{right}\}}]
+\end{description}
+
+\bigskip
+
+We could have simplified our header/footer definitions by using \quoteCmd{sethead*}, \quoteCmd{setfoot*}, and \quoteCmd{widenhead*} instead of \quoteCmd{sethead}, \quoteCmd{setfoot}, and \quoteCmd{widenhead}.
+
+The \emph{starred} version of these commands do not take the optional parameters; instead, for \emph{even} pages, they use the same values as \texttt{\emph{left}}, \texttt{\emph{center}}, and \texttt{\emph{right}}, but flipped:
+
+\begin{description}
+	\setlength{\itemsep}{-0.5em}
+	
+	\item[\quoteCmd{sethead*}\texttt{\{\emph{left/evenRight}\}\{\emph{center}\}\{\emph{right/evenLeft}\}}]
+	\item[\quoteCmd{setfoot*}\texttt{\{\emph{left/evenRight}\}\{\emph{center}\}\{\emph{right/evenLeft}\}}]
+	\item[\quoteCmd{widenhead*}\texttt{\{\emph{left/evenRight}\}\{\emph{right/evenLeft}\}}]
+\end{description}
+
+
+I used the \emph{non-starred} version of these commands because they better illustrate how to define headers and footers (and the distinction better \emph{even} and \emph{odd} pages in the case of \emph{two-sided} documents).

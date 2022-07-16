@@ -1,0 +1,10 @@
+\newcommand{\insertBlankPage}[1][This page intentionally left blank.]{
+\newpage
+\thispagestyle{empty} % remove header and footer for current page
+\vspace*{\fill}
+\begin{center}
+#1
+\end{center}
+\vspace*{\fill}
+\newpage
+}

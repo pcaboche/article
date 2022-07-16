@@ -1,0 +1,60 @@
+%%%%
+%% Copyright 2022 Pierre S. Caboche
+%% All rights reserved
+%%%%
+
+\part{Extras}
+
+In this part, we list some techniques, as well as some very useful packages (which I actually used in this document) that didn't get to have their own chapter\dots
+
+
+\section{Other useful packages}
+
+\subsection{Adding web links with \texttt{hyperref}}
+
+The \quotePkg{hyperref} package defines the \quoteCmd{url} command, which allows to add links to web pages. \\
+
+Here is how to import the package:
+\lstinputlisting[language=tex]{include/featured/pkg-hyperref.tex}
+
+\bigskip
+
+The \quoteCmd{url} command is very straightforward:
+\lstinputlisting[language=tex]{include/featured/example-url.tex}
+
+Result: \\
+\input{include/featured/example-url.tex}
+
+
+\bigskip
+
+
+\subsection{Ordinal numbers with \texttt{nth}}
+
+The \quotePkg{nth} package is very useful to print ordinal numbers in English (\nth{1}, \nth{2}, \nth{3}, \nth{4}\dots)\\
+
+Here is how to import the package, with the ordinal mark set to be \emph{superscripted}:
+\lstinputlisting[language=tex]{include/featured/pkg-nth.tex}
+
+Here are some examples:
+\lstinputlisting[language=tex]{include/featured/example-nth.tex}
+
+And here is the result: \\
+\input{include/featured/example-nth.tex}\\
+
+
+Without \quoteCmd{nth}, you would have to use the \quoteCmd{textsuperscript} command. \\
+
+
+
+\newpage
+
+With languages other than English, you would have to use the \quoteCmd{textsuperscript} command (when applicable). For example in French: \\
+\input{include/featured/example-nth-french.tex}
+\lstinputlisting[language=tex]{include/featured/example-nth-french.tex}
+
+As you can see, this is more complicated in French. \\
+
+Not only do you have to cater for masculine/feminine/plural, but there are other rules. For example, ``\nth{2}" normally translates to << deuxième >> if there are more than two elements, but translates to << second(e) >> if there are more than two elements. \\
+
+This goes to show that the \quotePkg{nth} package may not have an equivalent in other languages.

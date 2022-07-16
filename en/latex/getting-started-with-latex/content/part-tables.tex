@@ -1,0 +1,335 @@
+%%%%
+%% Copyright 2022 Pierre S. Caboche
+%% All rights reserved
+%%%%
+
+\part{Tables}
+
+In this part, we are going to give a quick introduction to ``tables" in \LaTeX. \\
+
+There are many packages which allow to makes tables, each with different sets of options and features. This is a vast subject. \\
+
+Please refer to the packages' respective documentation for more information.
+
+
+\section{\texttt{tabular}}
+
+The \quoteEnv{tabular} environment is used to create tables and other kinds of grids. \\
+
+Here is an example:
+\begin{table}[h]
+	\caption{Tic, Tac,Toe}
+	\medskip
+	\centering
+\input{include/featured/example-tabular-tic-tac-toe.tex}
+\end{table}
+
+Now let's take a look at the code for that grid:
+\lstinputlisting[language=tex]{include/featured/example-tabular-tic-tac-toe.tex}
+
+\bigskip
+
+In the \quoteEnv{tabular} environment, we specify the alignment and separators for the cells (\texttt{\{c | c | c\}}).
+
+Here are \emph{some} values for the alignment (list non-exhaustive): \\
+\begin{center}
+	\begin{tabular}{l l}
+		\texttt{l} & align left \\
+		\texttt{c} & center \\
+		\texttt{r} & align right \\
+		\texttt{p\{\textit{width}\}} & makes the cells a \quoteCmd{parbox} of a certain \texttt{\textit{width}} \\
+		\texttt{|} & a vertical line, to separate columns  \\
+		\texttt{||} & a double vertical line, to separate columns \\
+	\end{tabular}
+\end{center}
+
+\bigskip
+An horizontal line is drawn with the \quoteCmd{hline} command. \\
+
+Finally, we need to specify the content of the grid: \\
+Each cell is separated by an \texttt{\&}, and each row is terminated by a \lstinline|\\|. \\
+
+These are the basics for using a \quoteEnv{tabular}.
+
+\bigskip
+\bigskip
+
+
+
+\subsection{Tabular features} \label{tabular-features}
+
+Now we'll look at a more complex example that shows some of the features of the \quoteEnv{tabular} environment\dots\ 
+Besides \quotePkg{tabular}, this example also requires the \quotePkg{xcolor} package. \\
+\begin{table}[h]
+	\caption{A more complex tabular}
+	\medskip
+	\centering
+\input{include/featured/example-tabular-complex.tex}
+	\label{table:complex}
+\end{table}
+
+
+In table \ref{table:complex}, we assigned a letter to each row, and we number each column. This makes it easier to understand certain commands (i.e. \quoteCmd{cline}, which takes column numbers as a parameter). \\
+
+Now let's take a look at the code:
+\lstinputlisting[language=tex]{include/featured/example-tabular-complex.tex}
+
+\bigskip
+
+
+	
+In the \quoteEnv{tabular} environment, we define our column list and their alignment.  \\
+
+Column separators are specified with a \texttt{|} in the list of columns. Notice how on row G the vertical lines are broken (including the right border). This is because we didn't specify enough \texttt{\&}. If the cell is not specified (even as an empty cell), then the column separators won't appear. \\
+
+The \quoteCmd{hline} command draws a line that spreads the whole width of the table. \\
+
+For finer control, we use the \quoteCmd{cline} command. For example, \lstinline[language=tex]|\cline{3-6}| draws a line from column 3 to column 6 (both included). \\
+
+
+We notice a number of cells that occupy more than one column.
+This is done using the \quoteCmd{multicolumn} command. \\
+
+For example in C3-6, we do:
+\begin{lstlisting}[language=tex]
+\multicolumn{4}{|c|}{4 cols}
+\end{lstlisting}
+This creates a cell that spans 4 columns, with its content centered and cell separators on both sides (\texttt{|c|}).
+
+\begin{note}
+	Note that a \quoteCmd{multicolumn} may also ``span" only 1 column:
+	\begin{center}
+		\texttt{\textbackslash multicolumn\{1\}\{c\}\{text\}}
+	\end{center}
+	This is mainly used to change the alignment or the borders for that particular cell (e.g. make the cell content \emph{centered} in an otherwise \emph{left}-aligned column), in table headers for instance.
+\end{note}
+
+Now that we spanned a cell over multiple columns, we're going to do the same over multiple rows. For that, we will need the \quotePkg{multirow} package:
+\lstinputlisting[language=tex]{include/featured/pkg-multirow.tex}
+
+This package provides us with the \quoteCmd{multirow} command \\
+
+We will also need to rotate the content of the cell to make it vertical. This is done using the \quoteCmd{rotatebox}, which is part of the \quotePkg{graphics} package (note: this might already be loaded if you are using a package like \quotePkg{pgfplots}, see section~\ref{plots}).
+\lstinputlisting[language=tex]{include/featured/pkg-graphics.tex}
+
+In D3, we define a cell that spans 4 rows, and rotate the text 90\textdegree\ counterclockwise:
+
+\begin{lstlisting}[language=tex]
+\multirow{4}{*}{\rotatebox{90}{text}}
+\end{lstlisting}
+
+Next in E5 (and other places), we define a cell that spans multiple columns \emph{and} multiple rows:
+\begin{lstlisting}[language=tex]
+\multicolumn{3}{c}{\multirow{2}{*}{text}}
+\end{lstlisting}
+
+As we'll see, \quoteCmd{multirow} is harder to work with than \quoteCmd{multicolumn}\dots
+
+\bigskip
+
+Next, we change the colour of a cell by using the \quoteCmd{cellcolor} command.
+To use \quoteCmd{cellcolor}, we will need to call the \quotePkg{xcolor} package with the \texttt{table} option:
+\begin{lstlisting}[language=tex]
+%%% In the preamble
+\usepackage[table]{xcolor}
+\end{lstlisting}
+
+We paint cell H10 with the colour \texttt{blue!25} (i.e. ``blue, 25\% saturation") by doing this:
+\begin{lstlisting}[language=tex]
+\cellcolor{blue!25}
+\end{lstlisting}
+
+Then we try to colour cells that span multiple columns/rows, with various degree of success\dots \\
+
+\quoteCmd{cellcolor} works very well with \quoteCmd{multicolumn}, but not \quoteCmd{multirow}:
+\begin{itemize}
+	\item as you can see in cell E5-F7, only the first row (E5-7) gets painted
+	\item in E10-F12, we try to paint the second row (F10-12), but then the text gets ``eaten" away
+	\item in I5-J7, we painted the first row (I5-7), then made a  \quoteCmd{multirow} on the second line (J5-7) with a \emph{negative} number of rows (so the text gets printed \emph{over} the previous row). It's a really ugly workaround, though\dots
+\end{itemize}
+
+\bigskip
+
+So as you can see, working with \quoteCmd{multirow} (and some other advanced features) is not always easy. \\
+
+
+\begin{note}
+As with many things in \LaTeX, it's often best to keep your tables simple, and focus on what's important: deliver clear and impactful ideas without relying on complicated features.
+\end{note}
+
+
+\bigskip
+
+
+\subsection{Paragraphs a inside table}
+
+In the next sample, we will create a table with cells that can accept paragraphs as their content:
+
+\begin{table}[h]
+	\caption{Paragraphs inside a tabular}
+	\label{table:with-paragraphs}
+	\centering
+	\input{include/featured/example-tabular-paragraphs.tex}
+\end{table}
+
+
+Here is the code:
+\lstinputlisting[language=tex]{include/featured/example-tabular-paragraphs.tex}
+
+\bigskip
+
+As you can see in table \ref{table:with-paragraphs}:
+
+\begin{itemize}
+	\item in the column definition, we use \texttt{p\{\textit{width}\}} (e.g. \texttt{p\{3cm\}}). \\
+	This forces you to specify the column's width, but allows you to put long texts in your table. 
+	
+	\item to add a new line, use the \quoteCmd{newline} command (\lstinline|\\| will not work)
+	
+	\item we didn't need a \quoteCmd{multirow} for cell C3, so colouring it was easy (unlike in table \ref{table:complex}, where we had to use some workarounds).
+	
+	\item for cells B2-C2, where we tried to display some text rotated at 90 degrees, We used a \quoteCmd{multirow}. \\
+	Noticed however that the number of rows it spans had to be tweaked manually (it's not 2, it's 12). Colouring it is also complicated (as always with \quoteCmd{multirow})
+\end{itemize}
+
+
+\section{\texttt{longtable}}
+
+A \quoteEnv{longtable} is used for tables which might stretch over several pages. \\
+
+To use a \quoteEnv{longtable}, you first need to load the \quotePkg{longtable} environment:
+\lstinputlisting[language=tex]{include/featured/pkg-longtable.tex}
+
+\bigskip
+
+In a \quoteEnv{longtable} environment you may define the following:
+
+\begin{itemize}
+	\item the \emph{preamble}, which comprises:
+	\begin{itemize}
+		\item \emph{caption} and \emph{label} \\
+		These are used for cross-references (section \ref{cross-references}), and to show the long table in the list of tables (section \ref{list-of-tables})
+		
+		\item the \emph{first head} \\
+		This is the header which appears at the beginning of the table. \\
+		Ends with: \quoteCmd{endfirsthead}
+		
+		\item the \emph{head} \\
+		This is the header which appears at the top of the table for every page after the first.
+		If the \emph{first head} is not defined, then the \emph{head} will also appear at the beginning of the table. \\
+		Ends with: \quoteCmd{endhead}
+	
+		\item the \emph{foot} \\
+		This is the footer that appears at the bottom of the table for every page after the first.
+		If the \emph{last foot} is not defined, then the \emph{foot} will also appear at the end of the table. \\
+		Ends with: \quoteCmd{endfoot}
+		
+		\item the \emph{last foot} \\
+		This is the footer that appears at the end of the table. \\
+		Ends with: \quoteCmd{endlastfoot}
+		
+	\end{itemize}
+	\item the \emph{content} \\
+	The table's \emph{content} of the table is found after the \emph{preamble} \\
+\end{itemize}
+
+
+In terms of usage\dots
+\begin{itemize}	
+	\item \emph{first head} \\
+	Can be used to show the column names
+	
+	\item \emph{head} \\
+	Can be used to indicate \emph{``\dots continued from previous page."} \\
+	Can also be used to show the column names (on top of every page)
+
+	\item \emph{foot} \\
+	Can be used to indicate \emph{``Continued on next page\dots"}
+
+	\item \emph{last foot} \\
+	Closes the table (e.g. print a \quoteCmd{hline} if the table has borders) \\
+\end{itemize}
+
+
+
+The code below shows how to define a \quoteEnv{longtable}:
+\begin{lstlisting}[language=tex]
+\begin{longtable}{|l|l|l|}
+	\caption{A long table.} 
+	\label{table:longtable-example} \\
+	
+	%%% first head (at the beginning of the table)
+	\hline
+	\multicolumn{1}{|c|}{Column 1} &
+	\multicolumn{1}{c|}{Column 2} &
+	\multicolumn{1}{c|}{Column 3}
+	\\
+	\hline
+	\endfirsthead
+	
+	%%% head (repeated on every page)
+	\hline
+	\multicolumn{3}{|l|}{\dots continued from previous page.} 
+	\\
+	\multicolumn{1}{|c}{Column 1} &
+	\multicolumn{1}{c}{Column 2} &
+	\multicolumn{1}{c|}{Column 3}
+	\\
+	\hline
+	\endhead
+	
+	%%% foot (repeated on every page)
+	\hline
+	\multicolumn{3}{|r|}{Continued on next page\dots} \\
+	\hline
+	\endfoot
+	
+	%%% last foot (at the end of the table)
+	\hline
+	\endlastfoot
+	
+	%%% content...
+	
+	Data 1 & Data 2 & Data 3 \\
+	Data 4 & Data 5 & Data 6 \\
+	...
+	
+\end{longtable}
+
+\end{lstlisting}
+
+
+
+
+\section{Other table packages}
+
+There are other packages allowing to create tables, each with different options:
+\begin{center}
+	\begin{tabular}{l l}
+		\quoteEnv{nicematrix} & \url{https://www.ctan.org/pkg/nicematrix} \\
+		\quoteEnv{array} & \url{https://www.ctan.org/pkg/array} \\
+		\quoteEnv{tabularx} & \url{https://www.ctan.org/pkg/tabularx} \\
+		\multicolumn{1}{c}{\dots} & \multicolumn{1}{c}{\dots} \\
+	\end{tabular}
+\end{center}
+
+
+
+\section{\texttt{table}} \label{table-env}
+
+The \quoteEnv{table} environment is used to reference a table (section  \ref{cross-references}), add a caption, and add the table to the list of tables (section \ref{list-of-tables}). \\
+
+Here is an example:
+\lstinputlisting[language=tex]{include/featured/example-table.tex}
+
+And here is the result:
+\input{include/featured/example-table.tex}
+
+
+
+\section{List of tables} \label{list-of-tables}
+
+We can easily add a list of tables (preferably at the end of the document) with the \quoteCmd{listoftables} command:
+\begin{lstlisting}[language=tex]
+\listoftables
+\end{lstlisting}

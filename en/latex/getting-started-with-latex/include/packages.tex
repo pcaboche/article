@@ -1,0 +1,34 @@
+%%% Packages and configuration
+
+\input{include/featured/pkg-titleps.tex}
+
+\input{include/featured/change-margins.tex}
+\input{include/featured/change-fonts.tex}
+
+\input{include/featured/pkg-custom-date.tex}
+\input{include/featured/pkg-marginnote.tex}
+\input{include/featured/pkg-mdframed.tex}
+\input{include/featured/pkg-imakeidx.tex}
+\input{include/featured/pkg-listings.tex}
+\input{include/featured/pkg-multirow.tex}
+\input{include/featured/pkg-longtable.tex}
+\input{include/featured/pkg-pgfplots.tex}
+\input{include/featured/pkg-hyperref.tex}
+\input{include/featured/pkg-nth.tex}
+
+
+%% Already imported by pgfplots (used only in one example)
+%% \input{include/featured/pkg-graphics.tex}
+
+
+\usepackage{natbib}
+
+
+\usepackage{xeCJK, ruby}
+\setCJKmainfont{Noto Sans JP}
+
+\renewcommand{\rubysize}{0.4}
+% default : 0.4
+\newcommand{\defaultrubysep}{0 ex} % default : -0.5ex
+\renewcommand{\rubysep}{\defaultrubysep}
+

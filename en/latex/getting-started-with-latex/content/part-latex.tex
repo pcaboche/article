@@ -1,0 +1,207 @@
+%%%%
+%% Copyright 2022 Pierre S. Caboche
+%% All rights reserved
+%%%%
+
+\part{\LaTeX}
+
+In this part, we will explain what \LaTeX\ is, when to use \LaTeX\ (and why), and compare it with other software.
+
+\section{What is \LaTeX?}
+
+\LaTeX\ is a software system for document preparation. \\
+Instead of using formatted text like in a \WYSIWYG\ ("What You See Is What You Get") word processors (such as LibreOffice Writer), the user writes \LaTeX\ code (in plain text) which then can be processed to generate a document. \\
+
+This approach has many advantages. For example, \LaTeX\ allows to define programmable macros to help with recurring tasks (formatting and others); \LaTeX\ provides thousands of packages that cover a variety of domains; and because \LaTeX\ code is written in plain text, it can be managed just like any other source code (so you can use tools like GIT or SVN for collaboration and version control). \\
+
+For all these reasons, \LaTeX\ is widely used in academia, and in many fields like: mathematics, computer science, engineering, physics, chemistry, etc. \LaTeX\ is also used for the preparation and publication of books. \\
+
+Compared to \WYSIWYG\ word processors, \LaTeX\ may have a steeper learning curve but it can also do much more, and can greatly improve productivity in certain cases (e.g. technical articles, which require consistency in styling, the handling of multiple references, etc.). \\
+This article will help you get started with \LaTeX, covering a number of subjects needed to write a paper like this. \\
+
+As a rule, this document is self-describing, i.e.: this document was written in \LaTeX, and every technique used to produce this document is explained somewhere in this document.
+
+
+\subsection{Differences between \TeX, \LaTeX, and others}
+
+The original \TeX\ was created in the late 1970s by Donald Knuth, who needed a new typesetting program. 
+
+\emph{At that time, Knuth was revising the second volume of his book \emph{``The Art of Computer Programming"},  got the galleys from his publisher, and was very disappointed in the result. The quality was so far below that of the first edition that he couldn't stand it. Around the same time, he saw a new book that had been produced digitally, and thought he could produce a digital typesetting system. So he started to learn about typography, type design, and the rules for typesetting math} \citep{tug}\footnote{I highly recommend you look at \cite{tug} if you want to learn more about the history of \TeX}, and thus started his work on \TeX.
+
+\begin{note}
+The idea behind \TeX\ was \emph{``to allow anybody to produce high-quality books with minimal effort, and to provide a system that would give exactly the same results on all computers, at any point in time"} \citep{wiki-tex}
+\end{note}
+
+
+
+The commands in \TeX\ were basic, but allowed the creation of macros to extend the list of commands. \\
+
+In the early 1980s, Leslie Lamport created \LaTeX, a typesetting program written in the \TeX\ macro language. \citep{wiki-latex} 
+As such, \LaTeX\ provides a large set of macros for \TeX\ to interpret, and \TeX\ is in charge of formatting the output.
+
+
+\LaTeX\ packages are centralised in a repository called ``The Comprehensive \TeX\ Archive Network" (CTAN), \emph{``the central place for all kinds of material around \TeX"} %\citep{CTAN}.
+%
+\begin{note}
+	
+Broadly speaking, you can think of \LaTeX\ as: \emph{``\TeX, enhanced with a huge collection of macros: more than 6000 packages to date in \cite{CTAN}."}
+\end{note}
+
+
+In 1989, Knuth declared that \TeX\ was feature-complete, and only bug fixes would be made \citep{tex-vs-latex}. Since then, new typesetting programs based on \TeX\ appeared: \pdfTeX, \XeTeX, \LuaTeX\dots\\
+
+When those typesetting programs are used in conjunction with the \LaTeX\ macros, we talk of:  \pdfLaTeX, \XeLaTeX, \LuaLaTeX\dots \\
+
+The advantage of \XeTeX\ (and therefore \XeLaTeX) is that:
+\begin{itemize}
+	\item \XeTeX\ supports UTF-8 by default
+	\item \XeTeX\ can make use of the fonts that are installed on your computer (not just the standard \LaTeX\ fonts)
+\end{itemize}
+
+We'll be using \XeLaTeX, so we can use the fonts that are installed on our system. \\
+
+
+
+
+\section{Why use \LaTeX?}
+
+In this part, we show some examples where \LaTeX\ is really beneficial. Conversely, we also discuss cases where better alternatives exist.
+
+Then we discuss how some recent technological improvements made the \LaTeX\ experience a lot more enjoyable than it was about a decade ago. \\
+
+All of this should help you understand \LaTeX\ better, so you can make an informed decision.
+
+
+\subsection{When is \LaTeX\ a good choice?}
+
+\LaTeX\ is a good choice in the following cases\dots
+
+\begin{description}
+	\item[When you have large documents] \mbox{} \\
+	If your document contains a lot of parts or chapters, you can break them down in files which are easier to manage, organise (i.e. changing the order of such chapters), and collaborate on (section \ref{getting-organised}).
+
+	\item[When you need to manage cross-references, bibliography, indexes\dots] \mbox{} \\
+	We'll explain how these work in sections ``\longref{cross-references}", ``\longref{add-biblio}", and ``\longref{add-index}".
+	
+	\item[When the style needs to be consistent throughout] \mbox{} \\
+	If some elements need to always be formatted in a certain way, write a macro for that. If later you need to change the style, modify the macro and the change will be reflected throughout the whole document.
+	
+	\item[When you find recurring patterns in your document] \mbox{} \\
+	Macros are great to avoid having to perform the same task multiple times: define a macro once, then call it whenever necessary (sometimes with different parameters). 
+	
+	In part ``\longref{macros}" we explain how macros work, and give a few usage examples.
+	
+	
+	\item[When you have a lot of mathematical formulas] \mbox{} \\
+	\LaTeX\ is really good for adding (and referencing) mathematical formulas! However, I will not cover this subject (I did not use any formulas in this article).
+		
+	\item[When you need to show a lot of source code] \mbox{} \\
+	One thing I \emph{did} use, however, is the ability to easily add code samples to a document (with some syntax highlighting for a variety of computer languages), whether it be small snippets of code, or entire source file.
+	
+	More details in part ``\longref{showing-code}".
+	
+	
+	\item[When you find a \LaTeX\ package that does exactly what you need] \mbox{} \\
+	This is a generalisation of the previous point, which uses a specialised package to print some source code from a variety of languages.
+	
+	With thousands of different packages, it is possible you may find one that suits your need exactly, and that package may save you a lot of time down the line. When that happens, the time spent learning how to use \LaTeX\ is only a small investment, which will be entirely recouped almost immediately.
+	
+	In this article, I aim at reducing the time spent finding your way around \LaTeX, and also introduce some of those useful packages, as well as a few techniques to gain in productivity.
+\end{description}
+
+
+
+\subsection{When is \LaTeX\ \emph{not} a good choice?}
+
+\begin{description}
+	\item[When your document is very simple] \mbox{} \\
+	For simple documents, LibreOffice is usually enough; no need to draw the ``big gun" \LaTeX.
+	
+	\item[When you need a lot of finely-tuned customisation] \mbox{} \\
+	Think about posters, or other (usually short) documents for which you need to move visual elements around a lot.
+	
+	For that, you may use something like LibreOffice Draw (or other software).
+	
+	\item[If you can't stand the double-entendre jokes about using \LaTeX] \mbox{} \\
+	I will not elaborate\dots\
+\end{description}
+
+
+
+\subsection{There's never been a better time to use \LaTeX!}
+
+Technology evolved tremendously since the turn of the century. Some of those changes made \LaTeX\ not only more usable, but actually quite pleasant to use\footnote{what was I saying earlier about double-entendres?}. \\
+
+In this section, we will look at some of the technological advancements, and see how these changes affected the overall \LaTeX\ experience (now vs. when I was still at university).
+
+\begin{description}
+	\item[Screens got bigger] \mbox{} \\
+	Throughout my studies, the computer screens I owned were usually 17 or 19-inch CRT monitors, with a resolution not exceeding 1280$\times$1024. Out of curiosity, I resized a modern \TeXstudio\ window to that resolution. Needless to say, the UI got really crammed. (lol)
+	
+	Since then, computer screens made a lot of progress, and now we can comfortably edit our documents: with the \LaTeX\ source code on one side of the screen, and the generated document on the other. No need to continuously switch between windows on a small screen.
+	
+	\item[Disk drives got larger (and faster)] \mbox{} \\
+	\LaTeX\ offers a large selection of packages for all kinds of uses. This also means that if you need many different packages, you will also need enough disk space to accommodate them (typically between 500~MB and 1~GB).
+	
+	Nowadays, disk space is less of an issue, but this is something to keep in mind.
+	
+	\item[CPUs got considerably faster] \mbox{} \\
+	A fast CPU is not really required for \LaTeX, but that certainly helps. \LaTeX\ is usually very demanding, except in certain cases (e.g. drawing complex plots that demand a lot of calculations; see section \ref{plots})
+	
+	A modern CPU performs those tasks with relative ease (albeit using only one of the many cores usually available) but a processor from a few decades ago might have struggled a bit\dots
+	
+	Fortunately, a large \LaTeX\ document is usually divided in several files (section \ref{getting-organised}), and it is always possible to temporarily comment out parts of the documents if they take too long to render.
+	
+	\item[Internet became more widely available] \mbox{} \\
+	This is probably the most important change for \LaTeX. You will usually need a good internet for two things: 1. downloading the additional packages that you need, and 2. search ``\emph{how to perform task \emph{T} in Latex?}" (usually shortened to \emph{Latex perform T}")
+	
+	Back when I was an exchange student, the place where I was living did not have internet, and doing some research required a bit of planning: I would need to make a list of the things I needed from the internet, walk to the University campus, download the files, put them on a \Iomega\ \Zip\ disk (remember those?), and then come back to the student room I was renting.
+	
+	Working on \LaTeX\ without internet connection would have been quite a bit of a challenge. There is no denying that \WYSIWYG\ editors offer a better offline experience (there are buttons everywhere, to perform all sorts of tasks), which might explain their early popularity.
+	
+	\LaTeX\ offers a completely different workflow. \LaTeX\ relies on commands to perform tasks. This not only can potentially make you massively more productive (if you find the right command for your need), but offers a range of features that go well beyond what any \WYSIWYG\ editor can offer (as we are not limited by what the UI has to offer; we can find some packages, or write our own macros). 
+	
+	The downside is, you need to find the information you need, which requires an internet connection. Even this document (which you can read offline, and should cover enough subjects to get you started with \LaTeX) sometimes requires you to look some the online resources for certain packages.
+\end{description}
+
+The technological landscape changed considerably in the past few decades. Prior to 2011, LibreOffice was not even a thing and its predecessor, OpenOffice, was what I used through most of university. \\
+
+\TeXstudio\ (my editor of choice for working on \LaTeX\ documents) was first released in 2009. At the time, bigger and wider screens (with a resolution of around 1440$\times$900 or 1920$\times$1200) were becoming more common, and we'll see how \TeXstudio\ takes advantage of that in part ``\longref{texstudio}". \\
+
+Working on \LaTeX\ files prior to 2009 (i.e. on a small screen, without \TeXstudio, and in some cases without internet readily available either) would have been a very different experience than what it is today! \\
+
+That's why I say there's never been a better time to use \LaTeX: it's become a really good experience! \\
+
+
+\subsection{\LaTeX\ compared to other software}
+
+In this section, we will compare \LaTeX\ with other software, by use-case. \\
+
+First, I would like to talk about Markdown\dots \\
+Just \marginpar{Taking notes, making documentation}
+like \LaTeX, Markdown is a markup language for creating formatted text, but Markdown is much simpler. The goal of Markdown is to generate documents that can be easily viewed on the web, while have a code that is easy to read. In some implementations, inline HTML tags can be supported, to add features that do not exist in Markdown.
+
+Markdown was designed for creating web pages (for blogging, documentation, readme files, etc.) but is also great for taking notes (it's easy to create sections, subsections, lists, rudimentary tables, etc.) 
+
+The \marginpar{Long \\ technical documents}
+issue is, you can only fit so much information into a web page before it becomes hard to read, then you need to split the information into several pages. This might be great for Search Engine Optimisation (i.e. a long article may be divided into several parts, each indexed individually), however this might not be ideal for longer documents like this one. That's where \LaTeX\ shines! \\
+
+
+Second \marginpar{\WYSIWYG\ vs. \\ \WYSIWYM}
+is LibreOffice Writer, the \WYSIWYG\ word processor that is free and available on a wide variety of platforms. It is good, very convenient, and you can export to PDF if you want your document to be read-only. LibreOffice Writer is what I'd use for small, personal files, where aesthetics don't matter. 
+
+\LaTeX\ takes a different approach. Instead of being \WYSIWYG\ (\emph{``What You See Is What You Get"}), \LaTeX\ is \WYSIWYM\ (\emph{``What You See Is What You \emph{Mean}"}): you describe the concepts (e.g. ``beginning of a section", ``terms to emphasise"\dots) and let \LaTeX\ deal with the presentation. This is not exactly a declarative approach, but it gets close to it. \\
+
+Then \marginpar{Making posters}
+there is the question of documents that require a lot of customisation (e.g. posters, flyers, brochures, etc), which is the Achilles heel of \LaTeX.
+
+For that, you would need some desktop publishing software. There are some free ones (e.g. LibreOffice Draw, Scribus), and some commercial ones (e.g. Microsoft Publisher, Adobe InDesign). \\
+
+
+And \marginpar{Online collaboration}
+finally, there is the elephant in the room: \Microsoft\ \Word. It allows several people to collaborate online on the same document in a \WYSIWYG\ way. For many businesses, this feature alone could justify the use of the Microsoft Office over other solutions.
+
+Collaboration in \LaTeX\ (or MarkDown) is achieved through version control software, i.e. \LaTeX\ code is managed just like any other source code.
+
+
+

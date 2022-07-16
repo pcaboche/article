@@ -1,0 +1,61 @@
+%%%%
+%% Copyright 2022 Pierre S. Caboche
+%% All rights reserved
+%%%%
+
+\part{Code samples}
+
+\section{Adding code samples} \label{showing-code}
+
+If you are writing an article or a thesis about computer science, chances are you will need to include some code samples in your document. \\
+
+In \LaTeX\ this is very easy, thanks to the \quotePkg{listings} package\ldots
+
+\begin{lstlisting}[language=tex]
+\usepackage{listings}
+\end{lstlisting}
+
+
+\bigskip
+
+There are different ways to add code samples to a document: 
+\begin{description}
+	\item[Inline,] using the \lstinline[language=tex]|\lstinline| command: \idxCmd{lstinline}
+	\begin{lstlisting}[language=tex]
+\lstinline[language=tex]| your code here...|
+\end{lstlisting}
+For example:
+\begin{lstlisting}[language=tex]
+Inline, using the \lstinline[language=tex]|\lstinline| command:
+	\end{lstlisting}
+
+	\item[As a block,] using the \quoteEnv{lstlisting} environment	\idxEnv{lstlisting}
+	\lstinputlisting[language=tex]{include/featured/example-listings.tex}	
+	
+	\item[From a source file,] using \lstinline|\lstinputlisting{}| \idxCmd{lstinputlisting} \label{lstinputlisting}
+	\begin{lstlisting}[language=tex]
+\lstinputlisting[language=tex]{path/to/source_file.ext}
+	\end{lstlisting}
+\end{description}
+
+As you might have noticed, those commands accept a list of optional parameters.
+We mainly use it the \lstinline|language| parameter to specify the programming language, as in: \lstinline|language=tex| . \\
+
+It is possible to configure how the code shall be displayed.
+For example, here is what I used for this document\footnote{
+	I mean, this is the \emph{actual} configuration that I used!
+	
+	In fact, most of the \LaTeX\ code featured in this document was also used to generate this document. To achieve this, I've put the code in a separate source files, which I then loaded with \quoteCmd{input} (for the commands to take effect). Then, whenever needed, I used the \quoteCmd{lstinputlisting} command to display the content of the source file in question.
+	
+	In other words, I used \LaTeX\ both to generate this document, as well as to show how this document was generated using \LaTeX. This is quite powerful!
+}
+:
+\lstinputlisting[language=tex]{include/featured/pkg-listings.tex}
+
+\medskip
+
+\newpage
+Note that, with \lstinline[language=tex]|breaklines=true|, the \quoteCmd{lstinline} command may break the text if at the end of a line (and when \lstinline[language=tex]|breaklines=false|, it might just write past the margin, which is not better). \\
+
+To avoid that, you might occasionally want to replace \quoteCmd{lstinline} with \quoteCmd{texttt} (although that requires more work, e.g. replacing every \lstinline|\| with \quoteCmd{textbackslash}
+and escaping other characters with a \lstinline|\| ).

@@ -1,0 +1,18 @@
+\newenvironment{vegas}[1][!!! Welcome to Vegas !!!]{
+	\mdfsetup{
+		frametitle={
+			\tikz
+			\node[rectangle,fill=yellow!60,draw=red, ultra thick]
+			{#1};
+		},
+		frametitleaboveskip=-\ht\strutbox,
+		frametitlealignment=\centering,
+		backgroundcolor=yellow!30,		
+		linewidth=4pt,
+		linecolor=red!70,
+		roundcorner=8pt,		
+		shadow=true,
+		shadowcolor=orange!40,
+	}
+	\begin{mdframed}}
+	{\end{mdframed}}

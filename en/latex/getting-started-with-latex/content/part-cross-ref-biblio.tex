@@ -1,0 +1,400 @@
+%%%%
+%% Copyright 2022 Pierre S. Caboche
+%% All rights reserved
+%%%%
+
+\part{Cross-references, bibliography}
+
+
+\section{Cross-references} \label{cross-references}
+
+Adding a cross-reference in \LaTeX\ is easy! \\
+
+First, you need to put a label next to the object you want to reference (e.g. section, table, figure\ldots) This is done with the \lstinline|\label| command:
+
+\begin{lstlisting}[language=tex]
+\section{Cross-references} \label{cross-references}
+\end{lstlisting}
+
+\medskip
+
+Of course, labels must be \emph{unique}! \\
+
+Don't worry though, \TeXstudio\ will highlight any label that has been defined more than once in a document. \\
+
+Labels are \emph{case-sensitive}, but they can be \emph{any} string of characters (including numbers, white spaces, punctuation, multibyte unicode characters\ldots) This is different from identifiers used in bibliography (section \ref{bibliography-file})
+
+For the sake of consistency, it can be a good idea to follow the same naming convention for all types of \texttt{id}, including labels (i.e. only alphanumeric characters, dashes, underscores). \\
+
+Now that we've defined a label, it's easy to reference it.\\
+
+The following shows some examples of how to use commands like \quoteCmd{ref}, \quoteCmd{nameref}, \quoteCmd{pageref} :
+\begin{lstlisting}[language=tex]
+Section \ref{cross-references} 
+is called \emph{``\nameref{cross-references}"} 
+and can be found on page \pageref{cross-references}.
+\end{lstlisting}
+
+
+$\ldots$and here is the result:
+\begin{mdframed}
+Section \ref{cross-references} 
+is called \emph{``\nameref{cross-references}"} 
+and can be found on page \pageref{cross-references}.
+\end{mdframed}
+
+
+\subsection{Things to avoid with references}
+
+In your document, avoid expressions such as \emph{``in the next section'}, \emph{``in the previous section'}\dots\ Instead, refer the that section (or other object) by reference. \\
+
+As explained in ``\longref{getting-organised}", we put the content of our document in separate files, which we then include using the \quoteCmd{input} command. \\
+
+By doing so, it becomes incredibly easy in \LaTeX\ to reorganise your document by changing the order in which we call \quoteCmd{input} on our different \texttt{.tex} files.
+This means that the ``next" or ``previous" section is now completely different. \\
+
+You will not have this problem by using a \quoteCmd{label} and associated reference commands.
+
+\bigskip
+
+
+\subsection{Tip: Finding references with \TeX studio}
+
+\TeXstudio\ offers some useful features to work with references:
+
+\begin{itemize}
+	\item if you right-click on the reference of a \quoteCmd{ref}, \quoteCmd{nameref}, \quoteCmd{pageref}\dots you have the option to ``Go to Definition"
+	
+	\item likewise, if you right-click on the reference of a \quoteCmd{label}, you have the option to ``Find usages"
+	
+	\item when tying ``\quoteCmd{ref}\texttt{\{}" (or ``\quoteCmd{nameref}\texttt{\{}",  ``\quoteCmd{pageref}\texttt{\{}"\dots), \TeXstudio\ will list the different \texttt{labels} available
+	
+	\item \TeXstudio\ will let you know if a \quoteCmd{label} has been declared more than once, or if a reference does not exist (by underlying the label id with a red or green squiggly line).
+	
+\end{itemize}
+
+
+
+\section{Tip: Counting pages}
+
+It is possible (with some caveats, as discussed below), to determine the total number of pages in \LaTeX: put a \quoteCmd{label} on the last page, and reference that label with \quoteCmd{pageref}. \\
+
+Here are the details:
+
+\begin{enumerate}
+	\item just before the
+	\lstinline|\end{document}|
+	at the end of our document, put an empty element (e.g. a \quoteCmd{hphantom}\footnote{see: ``\longref{phantom}"}, or an empty \quoteCmd{mbox}), followed by a \quoteCmd{label} \footnote{
+the reason why we put an empty element is, sometimes the index at the end of the document is more than one page long. We want an \emph{invisible} object to serve as an anchor on the \emph{last} page for our label.
+}:
+\begin{lstlisting}[language=tex]
+\mbox{}\label{LastPage}
+\end{document}
+\end{lstlisting}
+
+Note that if you insert a blank page (section \ref{blank-page}) at the end, and you want to include blank pages in the total page number (probably a bad idea, but it's possible\dots), you would need to make the label as part of the last page:
+\begin{lstlisting}[language=tex]
+\insertBlankPage[This page intentionally left blank.\label{LastPage}]
+\end{document}
+\end{lstlisting}
+	
+	\item now refer to this label with \quoteCmd{pageref} :
+\begin{lstlisting}[language=tex]
+This document contains \pageref{LastPage} pages.
+\end{lstlisting}
+
+
+\end{enumerate}
+
+And here is the result: ``This document contains \pageref{LastPage} pages." \\
+
+
+Note: this can only work if your page number starts at 1, and you don't change it with something like a \quoteCmd{setcounter}:
+\begin{lstlisting}[language=tex]
+\setcounter{page}{42}
+\end{lstlisting} 
+
+
+\newpage
+
+\section{Custom counters} \label{custom-counters}
+
+\LaTeX\ uses counters to keep a reference on all sorts of objects: parts, sections, subsections (section  \ref{parts-sections}), tables (section \ref{table-env}), figures (section \ref{figures}), etc. \\
+
+
+In \LaTeX\, it is also possible to create your own custom counter. \\
+
+For example, if we were to write a book to teach a foreign language, we would probably incorporate some conversation examples. Then we might want to assign a number to this conversation, so that we can easily refer to it later (e.g. \emph{``In conversation 2, Mr Smith used the \emph{subjunctive mood} to indicate it is important that Mr Novak \emph{be} present at the meeting on Monday."}) \\
+
+For that purpose, we can define a new counter named ``\texttt{conversation}", using the 
+\quoteCmd{newcounter} command:
+\begin{lstlisting}[language=tex]
+\newcounter{conversation}
+\end{lstlisting}
+
+
+If we want to reset the counter for every section (i.e. every time the ``\texttt{section}" counter is increased), then we will declare the ``\texttt{conversation}" counter like this:
+\begin{lstlisting}[language=tex]
+\newcounter{conversation}[section]
+\end{lstlisting}
+
+
+\newcounter{conversation}
+\refstepcounter{conversation}
+
+To increase the counter, we use the \quoteCmd{refstepcounter} command:
+\begin{lstlisting}[language=tex]
+\refstepcounter{conversation}
+\end{lstlisting}
+
+Finally we can output the current counter value with \quoteCmd{the\emph{countername}}. In our example, \texttt{\emph{countername}} will be equal to \texttt{conversation}:
+
+\begin{lstlisting}[language=tex]
+Conversation: \theconversation \label{conv:shopping}
+\end{lstlisting}
+
+\bigskip
+
+Note that in this code, we used the \quoteCmd{label} command to defined a label \\
+(\texttt{conv:shopping}). This label will take the value of the latest counter that was used (i.e. \texttt{\textbackslash theconversation}, the current value of counter \texttt{conversation}). \\
+
+Now we can use this as a reference, using the \quoteCmd{ref} command:
+\begin{lstlisting}[language=tex]
+In conversation \ref{conv:shopping}, Mr Smith used the subjunctive mood 
+to indicate ...
+\end{lstlisting}
+
+\bigskip
+
+For more information about counters, see: \\
+\url{https://www.overleaf.com/learn/latex/Counters} 
+
+\bigskip
+
+
+
+\section{Quotation marks}
+
+While we are on the subject of quoting and referencing, here is how to make quotation marks in \LaTeX:
+
+\begin{table}[h]
+	\caption{Quotation marks}
+	\centering
+	\medskip
+
+	\begin{tabular}{ c c c }
+		\lstinline| `Single quotes' | & $\rightarrow$ & `Single quotes' \\
+		\lstinline|``Double quotes" | & $\rightarrow$ & ``Double quotes" \\
+		\lstinline|``Double quotes''| & $\rightarrow$ & ``Double quotes'' \\
+	\end{tabular}
+\end{table}
+
+
+I often use double quotes when referring to sections by name.\\ 
+For example: \emph{``\nameref{cross-references}"}.
+
+\section{Quotes}
+
+The following document shows how to add quotes using packages like 
+\quotePkg{epigraph},
+\quotePkg{fancychapters},
+\quotePkg{quotchap},
+\quotePkg{dirtytalk}, or
+\quotePkg{csquotes}: \citep{typesetting-quotations}\\
+
+\hfill
+\url{https://www.overleaf.com/learn/latex/Typesetting_quotations}
+
+
+
+
+
+\section{Adding a bibliography} \label{add-biblio}
+
+In \emph{``\nameref{cross-references}"}, we've seen how to add references that point to different sections \emph{within} our document. Now we must also learn how to quote source \emph{outside} our document (e.g. books, articles, journal\ldots). This is the role of the bibliography. \\
+
+A few things to know about bibliography styles in \LaTeX:
+\begin{enumerate}
+	\item there exists different styles of bibliography
+	\item there also exists several bibliography packages in \LaTeX\ (\quotePkg{bibtex}, \quotePkg{biblatex}, \quotePkg{natbib})
+	\item each library provides different bibliography styles readily available
+	\begin{itemize}
+		\item therefore, your choice of library may be dictated by the types of bibliography styles they provide
+	\end{itemize}
+	\item those different libraries are not compatible with each other
+	\begin{itemize}
+		\item if you were to switch libraries, you might have to delete a few generated files, like the \texttt{.bbl} and \texttt{.aux} one, and then recompile the document
+	\end{itemize}
+\end{enumerate}
+
+\bigskip
+
+
+
+\subsection{Bibliography file} \label{bibliography-file}
+
+Whichever bibliography library you choose, you will need to specify at least one bibliography file (\texttt{.bib}) to store all your external references. \\
+
+Here is a short example:
+\begin{figure}[h]
+	\caption{bibliography.bib}
+	\centering
+	\lstinputlisting[language=tex]{content/bibliography.bib}
+\end{figure}
+
+As you can see, a reference has a type (\texttt{@book}), an \texttt{id}, and a list of ``fields" (\texttt{key = value,}).
+
+The \texttt{id} is important, as it allows to identify the reference to cite. Unlike with cross-references (section \ref{cross-references}), a bibliography \texttt{id} cannot contain things like spaces, punctuation, etc. (only alphanumeric characters, dashes -) \\
+
+In this example, the fields \texttt{language}, \texttt{date}, and \texttt{isbn} do note seem to be used by \quotePkg{natbib}. However, \quotePkg{natbib} allows to use \texttt{note} to add some information to the reference, so you can use that as a workaround.
+
+\quotePkg{biblatex} doesn't use \texttt{note}, but makes use of the other fields. \\ 
+
+
+\begin{note}
+A bibliography file may contain many references, but only the references that have been cited at least once will appear in the bibliography section of the document.
+\end{note}
+
+This means it is possible to share the same bibliography file with several \LaTeX\ documents (think of it as a centralised ``database" for all your external references).
+
+
+\subsection{Bibliography, APA-like style, with \texttt{natbib}} \label{apa-biblio}
+
+
+There exists different types of bibliography, but I have a preference for the Harvard APA style. 
+
+I find this style clearer. 
+Besides, this style seems to be used by a number of learning institutes (e.g. 
+the University of Portsmouth\footnote{see: \url{https://www.city.ac.uk/__data/assets/pdf_file/0017/77030/portsmouth_harvard_guide.pdf}}
+, the University of Adelaide\footnote{see: \url{http://maths.adelaide.edu.au/anthony.roberts/LaTeX/ltxxref.php}}
+\ldots)
+
+In this article, we will try to get as close as possible to the Harvard APA style of bibliography, using \LaTeX. \\
+
+
+For this, we will use the \quotePkg{natbib} package.
+
+
+\begin{note}
+To use \quotePkg{natbib}, make sure the bibliography tool is set to  \texttt{BibTeX}. \\
+	
+In \TeXstudio, go to ``Options" >> ``Configure TeXstudio"; then in the ``Build" menu, change ``Default Bibliography Tool" to ``BibTeX".
+\end{note}
+
+
+Call this in the preamble:
+\begin{lstlisting}[language=tex]
+\usepackage{natbib}
+\end{lstlisting}
+
+\bigskip
+
+
+Then, in the body of the document, call the following where you want the bibliography to be printed:
+
+\begin{lstlisting}[language=tex]
+\bibliographystyle{apalike}
+\bibliography{content/bibliography}
+\end{lstlisting}
+
+
+
+Note:
+
+\begin{note}
+When calling \quoteCmd{bibliography}, \emph{DO NOT} specify the \texttt{.bib} extension in the path. \\
+
+Also note that, similarly to the \quoteCmd{input} command, the path is relative to the \emph{root} document, not the current source file.
+\end{note}
+
+\medskip
+
+Only the references that have been cited at least once in the document will appear in the bibliography. So the next step will be to add some citation. \\
+
+
+There are many ways to cite a reference:
+
+\newcommand{\bibid}{\texttt{\{id\}}}
+
+\begin{table}[h] 
+	\caption{Citing}
+	\centering
+	\begin{tabular}{l l l l}
+		\\
+		& \multicolumn{1}{c}{\texttt{id:}}  & \multicolumn{1}{c}{\texttt{c}} & \multicolumn{1}{c}{\texttt{c-prog}}  \\
+		& \quoteCmd{citeauthor}\bibid\     & \citeauthor{c}     & \citeauthor{c-prog} \\
+		& \quoteCmd{citeyear}\bibid\       & \citeyear{c}       & \citeyear{c-prog} \\
+		& \quoteCmd{cite}\bibid\           & \cite{c}           & \cite{c-prog} \\		
+		
+		\texttt{(natbib)} & \quoteCmd{citefullauthor}\bibid\ & \citefullauthor{c} & \citefullauthor{c-prog} \\
+		\texttt{(natbib)} & \quoteCmd{citeyearpar}\bibid\    & \citeyearpar{c}    & \citeyearpar{c-prog} \\
+		\texttt{(natbib)} & \quoteCmd{citep}\bibid\          & \citep{c}          & \citep{c-prog} \\
+		\texttt{(natbib)} & \quoteCmd{citealt}\bibid\        & \citealt{c}        & \citealt{c-prog} \\
+		\texttt{(natbib)} & \quoteCmd{citealp}\bibid\        & \citealp{c}        & \citealp{c-prog} \\
+		\texttt{(natbib)} & \quoteCmd{citet}\bibid\          & \citet{c}          & \citet{c-prog} \\
+%		\texttt{(natbib)} & \quoteCmd{citenum}\bibid\        & \citenum{c}        & \citenum{c-prog} \\
+	\end{tabular}
+	\label{table:citing}
+\end{table} 
+
+
+As shown in table \ref{table:citing}, some commands are only defined in the \quotePkg{natbib} package. Trying to use them with \quotePkg{biblatex} will throw an error. \\
+
+
+
+\subsection{Customising the Bibliography title (\texttt{natbib})} \label{customise-biblio-title}
+
+The \quotePkg{natbib} package allows you to customise the bibliography title. \\
+
+This is done by redefining the \quoteCmd{bibsection} command:
+
+\lstinputlisting[language=tex]{include/featured/biblio-custom.tex}
+
+\begin{lstlisting}[language=tex]
+The Bibliography title can be customised
+\renewcommand{\bibsection}{\section*{External references}}
+\end{lstlisting}
+
+\bigskip
+
+This is a change from its default implementation, which would look like this:
+\begin{lstlisting}[language=tex]
+\renewcommand{\bibsection}{\section*{\currentPart}}
+\end{lstlisting}
+
+\newpage
+
+\subsection{Bibliography, using \texttt{biblatex}}
+
+The \texttt{biblatex} library provides the following styles out of the box: \texttt{alphabetic}, \texttt{authortitle}, \texttt{authoryear}, \texttt{draft}, \texttt{numeric}, \texttt{reading}, and \texttt{verbose}. \\
+
+Here is an important note if you want to use \texttt{biblatex} with \TeXstudio:
+
+
+\begin{note}
+To use \quotePkg{biblatex} in \TeXstudio, you will need to configure the bibliography tool to \texttt{biber}. \\
+
+Go to ``Options" >> ``Configure TeXstudio"; then in the ``Build" menu, change ``Default Bibliography Tool" to ``Biber".
+\end{note}
+
+\bigskip
+
+In the preamble:
+\begin{lstlisting}[language=tex]
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage[style=authoryear]{biblatex}
+
+%% Specify the path to the bibliography file
+\addbibresource{content/bibliography.bib}
+\end{lstlisting}
+
+Here, we specified the \texttt{style} to be \texttt{authoryear} but other styles exist, as shown in \cite{bibliography-styles} :
+
+\hfill \url{https://www.overleaf.com/learn/latex/Biblatex_bibliography_styles} \\
+
+Then in the document, print the bibliography with \quoteCmd{printbibliography}:
+
+\begin{lstlisting}[language=tex]
+\printbibliography
+\end{lstlisting}
