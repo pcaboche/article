@@ -1,0 +1,780 @@
+% Copyright 2022 Pierre S. Caboche. All rights reserved.
+
+\subsection{Words usage, across bands} \label{word-usage}
+
+So far we were trying to determine which words appear most often in Japanese songs. Now we can do it the other way round: take a word, and see how often this word is used by different bands (or songwriters). \\
+
+We can start with the more popular words, and then try with words that appear far less often:
+
+\begin{itemize}
+	\item most used words:
+	\begin{itemize}
+		\item most used words in the dataset (section~\ref{most-used-words-dataset})
+		
+		\item most used words by band/songwriter, for each band/songwriter (section~\ref{most-used-words-by-band})
+	\end{itemize}
+
+	\item lesser used words:
+	\begin{itemize}
+		\item using the list of \emph{``interesting terms"} from the \MLT\ feature (section \ref{mlt}) on a particular song (e.g. a popular song, a song you like or find the lyrics interesting) can help reveal the terms which make that song unique
+				
+		\item through personal experience. When listening to some song's lyrics, some terms may stand out for different reasons (e.g. uncommon terms, derogatory terms, etc.). 
+		
+		Thanks to Solr, we can determine how often these terms are used, by which bands, in which songs\dots\ (section \ref{derogatory-terms})
+	\end{itemize}
+\end{itemize}
+
+
+%To get the lesser used words, we would need to take some specific songs (starting with the popular ones, or your favourite songs), list which terms appear in them (using \faceting\ again, but filtering on a specific song), and find the terms that stand out (for not appearing in our lists of most used words). \\
+
+
+
+\newpage
+
+
+\subsubsection{``Dream" (夢)} \label{word-usage-dream}
+
+Question: \\
+\emph{``Which bands use the word ``dream" (夢 --- yume) the most ?"} \\
+
+
+\begin{tabular}{|l|l|}
+	\hline
+	& \\
+	q: & lyrics\_txt\_ja:"夢" \\
+	q.op: & OR \\
+	start, rows: & 0, 0 \\
+	facet: & true \\
+	facet.field: & band\_str \\
+	facet.mincount: & 0 \\
+	& \\
+	\hline
+\end{tabular}
+
+%\bigskip
+%\url{http://localhost:8983/solr/#/songs_jp/query?q=lyrics_txt_ja:%22%E5%A4%A2%22&q.op=OR&indent=true&facet=true&facet.field=band_str&facet.mincount=1&rows=0}
+
+\bigskip
+Results: \\
+
+"numFound": 
+\input{content/results/wordcounts/lex-夢-numFound.tex} \\
+
+Facets:
+
+\begin{longtable}{|l l|r|}
+	\hline
+	\multicolumn{1}{|c}{Band} & & 何曲\\
+	\hline
+	& & \\
+	\endfirsthead
+	
+	\hline
+	& & \\
+	\endhead
+	
+	\hline
+	\endfoot
+	
+	\input{content/results/wordcounts/lex-夢-wordcount.tex}
+	& & \\
+\end{longtable}
+
+
+\bigskip
+\bigskip
+\bigskip
+
+
+As we can see, the word for ``dream" appears in 160 songs by AKB48, out of the 376 songs for this band (section \ref{query-list-of-bands}). This means that around 42.5\% of all song by AKB48 contain the word ``dream".  \\
+
+There is no way to calculate this kind of ratio directly in Solr (or ElasticSearch). Even if there was a way to perform some sort of ``subquery", it would be prohibitively expensive. In the end it is better to perform several queries (for the numerator, and then the denominator). \\
+
+
+
+
+\newpage
+\wordstats{Heart}{心}{
+	心 --- \emph{kokoro} \\
+}
+
+
+\newpage
+\wordstats{Chest, Heart}{胸}{
+	胸 --- \emph{mune} \\
+		
+	This is the word for ``chest" (the body part) but can also be used for ``heart", with a less literal meaning than 心. \\
+}
+
+
+\newpage
+\wordstats{Love}{愛}{
+	愛 --- \emph{ai} \\
+}
+
+
+\newpage
+\wordstats{Romantic love}{恋}{
+	恋 --- \emph{koi} \\
+}
+
+
+
+\newpage
+\wordstats{Person}{人}{
+	人 --- \emph{hito} \\
+}
+
+\newpage
+\wordstats{Lover, sweetheart}{恋人}{
+	恋人 --- \emph{koibito} --- lover, sweetheart, boyfriend, girlfriend \\
+}
+
+
+\newpage
+\wordstats{(To be) liked}{好き}{
+	好き --- \emph{suki} (NA-adjective) \\
+}
+
+
+\newpage
+\wordstats{Kiss}{キス}{
+	キス --- \emph{kisu} \\
+}
+
+\newpage
+\wordstats{Feeling}{気持ち}{
+	気持ち --- \emph{kimochi} \\
+}
+
+
+
+
+\newpage
+\wordstats{Tears}{涙}{
+	涙 --- \emph{namida, nada} \\
+}
+
+\newpage
+\wordstats{Sky}{空}{
+	空 --- \emph{sora} \\
+}
+
+\newpage
+\wordstats{Wind}{風}{
+	風 --- \emph{kaze} \\
+}
+
+\newpage
+\wordstats{Rain}{雨}{
+	雨 --- \emph{ame} \\
+}
+
+\newpage
+\wordstats{Snow}{雪}{
+	雪 --- \emph{yuki} \\
+}
+
+\newpage
+\wordstats{Night}{夜}{
+	夜 --- \emph{yoru} \\
+}
+
+
+
+\newpage
+\wordstats{Time, hour, moment}{時}{
+	時  --- \emph{toki} \\
+}
+
+\newpage
+\wordstats{Moment, instant}{瞬間}{
+	瞬間  --- \emph{shunkan} \\
+}
+
+
+\newpage
+\wordstats{Always}{いつも}{
+	いつも --- \emph{itsumo} \\
+}
+
+
+\newpage
+\wordstats{Continuously}{ずっと}{
+	ずっと --- \emph{zutto} --- continuously in some state \\
+}
+
+
+
+\newpage
+\wordstats{Eternity}{永遠}{
+	永遠  --- \emph{eien} \\
+}
+
+\newpage
+\wordstats{Period, epoch, era}{時代}{
+	時代  --- \emph{jidai} \\
+}
+
+
+
+\newpage
+\wordstats{To laugh}{笑う}{
+	笑う --- \emph{warau} \\
+}
+
+\newpage
+\wordstats{To cry}{泣く}{
+	泣く --- \emph{naku} \\
+}
+
+\newpage
+\wordstats{Voice}{声}{
+	声 --- \emph{koe} \\
+}
+
+\newpage
+\wordstats{World}{世界}{
+	世界 --- \emph{sekai} \\
+}
+
+
+\newpage
+\wordstats{To end}{変わる}{
+	変わる　--- \emph{owaru} \\
+}
+
+
+\newpage
+\wordstats{Future}{未来}{
+	未来 --- \emph{mirai} \\
+}
+
+\newpage
+\wordstats{To think}{思う}{
+	思う --- \emph{omou} \\
+}
+
+\newpage
+\wordstats{To remember}{思い出す}{
+	思い出す --- \emph{omoidasu} \\
+}
+
+\newpage
+\wordstats{A memory}{思い出}{
+	思い出 --- \emph{omoide} \\
+}
+
+\newpage
+\wordstats{To forget}{忘れる}{
+	忘れる --- \emph{wasureru} \\
+}
+
+\newpage
+\wordstats{To disappear}{消える}{
+	消える --- \emph{kieru} \\
+}
+
+
+\newpage
+\wordstats{To believe, to trust}{信じる}{
+	信じる --- \emph{shinjiru} \\
+}
+
+
+\newpage
+\wordstats{Hope, Wish, Aspiration}{希望}{
+	希望 --- \emph{kibou} \\
+}
+
+
+\newpage
+\wordstats{Wish, Desire, Hope}{望み}{
+	望み --- \emph{nozomi} \\
+}
+
+
+
+\newpage
+\wordstats{God (kami)}{神}{
+	神 --- \emph{kami} \\
+}
+
+\newpage
+\wordstats{God (kami-sama)}{神様}{
+	神様 --- \emph{kami-sama} \\
+}
+
+\newpage
+\wordstats{Hand}{手}{
+	手 --- \emph{te} \\
+}
+
+\newpage
+\wordstats{Light}{光}{
+	光 --- \emph{hikari} \\
+}
+
+\newpage
+\wordstats{Fire}{火}{
+	火 --- \emph{hi} \\
+}
+
+
+\newpage
+\wordstats{Flower}{花}{
+	花 --- \emph{hana} \\
+}
+
+\newpage
+\wordstats{Fireworks}{花火}{
+	花火 --- \emph{hanabi} \\
+}
+
+\newpage
+\wordstats{Flower petal}{花びら}{
+	花びら --- \emph{hanabira} \\
+}
+
+\newpage
+\wordstats{Cherry blossom}{桜}{
+	桜 --- \emph{sakura} \\
+}
+
+\newpage
+\wordstats{Mountain}{山}{
+	山 --- \emph{yama} \\
+}
+
+\newpage
+\wordstats{Man}{男}{
+	男 --- \emph{otoko} \\
+}
+
+\newpage
+\wordstats{Woman}{女}{
+	女 --- \emph{onna} \\
+}
+
+\newpage
+\wordstats{Child}{子}{
+	子 --- \emph{ko} \\
+}
+
+\newpage
+\wordstats{Cute}{可愛い, かわいい, カワイイ}{
+	可愛い --- \emph{kawaii} \\
+}
+
+\newpage
+\wordstats{Innocent}{初}{
+	初, はつ, うい --- \emph{hatsu, ui} --- first, new
+	
+	うぶ, 初, 初心 --- \emph{ubu} (NA-adjective) --- innocent, naive, inexperienced \\
+	
+%	``Innocent" in the sense of: naive, unsophisticated, inexperienced. \\
+}
+
+\newpage
+\wordstats{To be born}{生まれる}{
+	生まれる --- \emph{umareru} \\
+}
+
+\newpage
+\wordstats{To live}{生きる}{
+	生きる --- \emph{ikiru} \\
+}
+
+
+\newpage
+\wordstats{(Human) life}{人生}{
+	人生 --- \emph{jinsei} \\
+}
+
+
+\newpage
+\wordstats{Life, lifeforce}{命}{
+	命 --- \emph{inochi} \\
+}
+
+\newpage
+\wordstats{Death}{死}{
+	死 --- \emph{shi} \\
+}
+
+\newpage
+\wordstats{To die}{死ぬ}{
+	死ぬ --- \emph{shinu} \\
+}
+
+\newpage
+\wordstats{To be separated}{離れる}{
+	離れる --- \emph{hanareru} \\
+}
+
+\newpage
+\wordstats{Alcohol}{酒}{
+	酒 --- \emph{sake} \\
+}
+
+\newpage
+\wordstats{Sadness}{悲しみ}{
+	悲しみ --- \emph{kanashimi} \\
+}
+
+\newpage
+\wordstats{Sad, miserable}{悲しい}{
+	悲しい --- \emph{kanashii} \\
+}
+
+\newpage
+\wordstats{Happiness}{幸せ}{
+	幸せ --- \emph{shiawase} \\
+}
+
+
+\newpage
+\wordstats{Joy, delight}{喜び}{
+	喜び --- \emph{Yorokobi} \\
+}
+
+
+\newpage
+\wordstats{Happy}{嬉しい}{
+	嬉しい --- \emph{ureshii} \\
+}
+
+
+\newpage
+\wordstats{Enjoyable, pleasant}{楽しい}{
+	楽しい --- \emph{tanoshii} \\
+}
+
+
+\newpage
+\wordstats{To enjoy (oneself)}{楽しむ}{
+	楽しむ --- \emph{tanoshimu} \\
+}
+
+
+\newpage
+\wordstats{Promise}{約束, やくそく}{
+	約束 --- \emph{yakusoku} \\
+}
+
+
+\newpage
+\wordstats{Train station}{駅}{
+	駅 --- \emph{eki} \\
+}
+
+
+\newpage
+\wordstats{Heaven}{天国}{
+	天国  --- \emph{tengoku} \\
+}
+
+
+\newpage
+\wordstats{Hell}{地獄}{
+	地獄  --- \emph{jigoku} \\
+}
+
+
+
+
+
+
+
+
+
+\newpage
+\wordstats{\emph{komorebi}}{木漏れ日}{	
+	\emph{``komorebi"} (木漏れ日) is a Japanese term, difficult to translate in English, which represents \emph{``the sunlight that is filtered through the trees".} \\
+	
+	Only a handful of artists make use of this uniquely Japanese term: \\
+}
+
+
+
+
+
+%%% Not enough songs in the dataset
+% Missing song from AKB48 (野菜シスターズ)
+
+%\newpage
+%\wordstats{Pumpkin}{カボチャ, 南瓜}{}
+%
+%List of songs:
+%
+%\begin{longtable}{|l l|p{6cm}|}
+%	\hline
+%	\multicolumn{2}{|c|}{band} & 
+%	\multicolumn{1}{|c|}{title}
+%	\\
+%	\hline
+%	& & \\
+%	\endhead
+%	
+%	\input{content/results/contains/contains-カボチャ, 南瓜.tex}
+%	
+%	& & \\
+%	\hline
+%\end{longtable}
+
+
+
+
+\newpage
+\subsubsection{Derogatory terms\dots （\ruby{軽蔑的}{けいべつてき}な\ruby{言葉}{ことば}。。。）} \label{derogatory-terms}
+
+
+
+In this section, we will search lyrics for a few bad words, see which bands use them, and how often.
+
+
+\begin{itemize}
+	\item The following search term is basically the \emph{S-word} (and sometimes the \emph{F-word}) of the Japanese language
+\end{itemize}
+
+
+\begin{tabular}{|l|l|}
+	\hline
+	& \\
+	q: & lyrics\_txt\_ja:"クソ", \\
+	& lyrics\_txt\_ja:"くそ", \\
+	& lyrics\_txt\_ja:"糞"     \\
+	q.op: & OR \\
+	rows: & 10 \\
+	facet: & true \\
+	facet.field: & band\_str \\
+	facet.mincount: & 1 \\
+	& \\
+	\hline
+\end{tabular}
+
+\bigskip
+Results: \\
+
+
+
+Facets:
+\begin{longtable}{|l l|r|}
+	\hline
+	& & \\
+	\endhead
+	
+	\hline
+	\endfoot
+	
+	\input{content/results/wordcounts/lex-クソ-wordcount.tex}
+	& & \\
+	
+\end{longtable}
+
+
+List of songs:
+
+\begin{longtable}{|l l|p{6cm}|}
+	\hline
+	\multicolumn{2}{|c|}{band} & 
+	\multicolumn{1}{|c|}{title}
+	\\
+	\hline
+	& & \\
+	\endhead
+	
+	
+	\input{content/results/contains/contains-クソ.tex}
+	
+	& & \\
+	\hline
+\end{longtable}
+
+
+\bigskip
+\bigskip
+\bigskip
+
+
+\begin{itemize}
+	\item The following search term is a derogatory word for \emph{``a stupid or otherwise undesirable person"}
+\end{itemize}
+
+
+
+
+\begin{tabular}{|l|l|}
+	\hline
+	& \\
+	q: & lyrics\_txt\_ja:"クソッタレ", \\
+	   & lyrics\_txt\_ja:"くそったれ", \\
+	   & lyrics\_txt\_ja:"糞たれ"     \\
+	q.op: & OR \\
+	rows: & 10 \\
+	facet: & true \\
+	facet.field: & band\_str \\
+	facet.mincount: & 1 \\
+	& \\
+	\hline
+\end{tabular}
+
+%\bigskip
+%\url{http://localhost:8983/solr/#/songs_jp/query?q=lyrics_txt_ja:%22%E3%82%AF%E3%82%BD%E3%83%83%E3%82%BF%E3%83%AC%22,%20lyrics_txt_ja:%22%E3%81%8F%E3%81%9D%E3%81%A3%E3%81%9F%E3%82%8C%22,%20lyrics_txt_ja:%22%E7%B3%9E%E3%81%9F%E3%82%8C%22&q.op=OR&indent=true&facet=true&facet.field=band_str&facet.mincount=1}
+
+\bigskip
+Results: \\
+
+
+
+Facets:
+\begin{longtable}{|l l|r|}
+	\hline
+	& & \\
+	\endhead
+	
+	\hline
+	\endfoot
+	
+	\input{content/results/wordcounts/lex-クソッタレ-wordcount.tex}
+	& & \\
+\end{longtable}
+
+
+List of songs:
+
+
+\begin{longtable}{|l l|l|}
+	\hline
+	\multicolumn{2}{|c|}{band} & 
+	\multicolumn{1}{|c|}{title}
+	\\
+	\hline
+	& & \\
+	\endhead
+	
+	\input{content/results/contains/contains-クソッタレ.tex}
+	& & \\
+	\hline
+\end{longtable}
+
+
+%
+%\begin{longtable}{|l|l|}
+%	\hline
+%	\multicolumn{1}{|c|}{band} & 
+%	\multicolumn{1}{|c|}{title}
+%	\\
+%	\hline
+%	& \\
+%	
+%	
+%	THE BLUE HEARTS & 僕はここに立っているよ \emph{(I'm standing here)} \\
+%	THE BLUE HEARTS & 終わらない歌 \hfill \emph{(A Never-ending Song)} \\
+%	THE BLUE HEARTS & 少年の詩 \hfill \emph{(Teenage Boy Poem)} \\
+%	人間椅子 (Ningen isu) & 地獄への招待状 \hfill \emph{(Invitation to Hell)} \\
+%	人間椅子 (Ningen isu) & 地獄 \hfill \emph{(Hell)} \\
+%	& \\
+%	
+%	
+%	\hline
+%\end{longtable}
+
+
+
+
+\newpage
+\subsection{Pronouns usage}
+
+Japanese has a variety of pronouns, especially for ``I" and ``we". \\
+
+Some pronouns are used more often by males (male term), some are used more often by females (female term), some can be used by either genders. 
+Pronouns have different levels of politeness (formal, very formal, casual, or downright derogatory).
+Some pronouns are used in very specific contexts (e.g. 我々, わたくしたち). \\
+
+Studying the pronouns usage can give us an idea of the level of language used in the songs.
+
+
+
+\wordstats{you}{君}{
+	\emph{``kimi"} --- ``you", male term, familiar language \\
+	
+	This is the most used pronoun in the whole dataset, and usually\footnote{the ranking changes as we add new songs to the dataset} in the top 3 most used words, together with 人 (\emph{hito} -- person), and　今 (\emph{ima} -- now). \\
+}
+
+
+\wordstats{you}{あなた}{
+	\emph{``anata"} --- ``you" \\
+	
+	May also mean ``dear", ``honey" (especially in \emph{enka} songs). \\
+}
+
+
+\wordstats{you (derogatory)}{お前, おまえ}{
+	\emph{``omae"} --- ``you", male term, derogatory (used to be honorific) \\
+}
+
+
+
+\wordstats{you (derogatory)}{てめえ}{
+	\emph{``temee"} --- ``you", derogatory. \\
+	
+	This term was added for completeness, but yields no results: \\
+}
+
+%\wordstats{you}{あなたがた, あなた方, 貴方方, 貴方々}{}
+
+
+
+\wordstats{I}{私, わたし}{
+	\emph{``watashi"} --- ``I" \\
+}
+
+\wordstats{I}{あたし}{
+	\emph{``atashi"} --- ``I", female term \\
+}
+
+\wordstats{I}{僕, ぼく, ボク}{
+	\emph{``boku"} --- ``I", male term \\
+}
+
+\wordstats{I}{俺,おれ,オレ}{
+	\emph{``ore"} --- ``I", male term, rough or arrogant \\
+}
+
+\wordstats{I}{我, われ, ワレ}{
+	\emph{``ware"} --- ``I" \\
+}
+
+\wordstats{I}{わたくし}{
+	\emph{``watakushi"} --- ``I", very formal (or snob) \\
+}
+
+\wordstats{we}{私たち, 私達, わたしたち}{
+	\emph{``watashitachi"} --- ``we", plural of 私 \\
+}
+
+\wordstats{we}{僕ら, ぼくら, ボクラ}{
+	\emph{``bokura"} --- ``we", plural of 僕 (male term) \\
+}
+
+\wordstats{we}{俺たち, 俺達, おれたち, オレタチ}{
+	\emph{``oretachi"} --- ``we", plural of 俺 (male term, rough or arrogant) \\
+}
+
+\wordstats{we}{我々, 我我, われわれ}{
+	\emph{``wareware"} --- a collective ``we" to represent a group of people (as in \emph{``we the people\dots"}) \\
+}
+
+\wordstats{we}{わたくしたち}{
+	\emph{``watakushitachi"} --- ``we", plural of わたくしたち (very formal or snob) \\
+}
+
+
+
+
+
+
+
+
+\label{analysing-lyrics-end}

@@ -1,0 +1,21 @@
+version: '3.7'
+
+services:
+  elasticsearch:
+    build: es_kuro/.
+    environment:
+      - "discovery.type=single-node"
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    expose:
+      - "9200"
+    ports:
+      - "9200:9200"
+
+  kibana:
+    image: kibana:7.17.5
+    environment:
+      - "elasticsearch.hosts=[ 'http://es_kuro:9200' ]"
+    links:
+      - "elasticsearch"
+    ports:
+      - "5601:5601"

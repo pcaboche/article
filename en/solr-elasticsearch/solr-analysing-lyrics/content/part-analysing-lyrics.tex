@@ -1,0 +1,796 @@
+% Copyright 2022 Pierre S. Caboche. All rights reserved.
+
+\renewcommand{\currentPart}{Analysing lyrics}
+\part{Analysing lyrics}   \label{analysing-lyrics}
+
+
+
+
+\section{The dataset}
+
+To create the dataset, I searched online for the lyrics from a variety of bands. \\
+
+I tried to include popular bands, as well as a few personal favourites. I also tried to include bands from a variety of genres (Pop, Rock, Metal, Punk, \emph{Enka}\dots). \\
+
+Having such a diversity would hopefully yield interesting results, as the bubbly vocabulary used by a Pop band might differ (at least in theory) from the sombre undertones of a metal band, or the melancholic verses of \emph{enka} songs. \\
+
+Below are some of the bands I included for the study\dots \\
+
+
+\subsection{Punk-Rock}
+
+\subsubsection{THE BLUE HEARTS} \label{{THE BLUE HEARTS}}
+
+THE BLUE HEARTS is one of my favourite bands, and what inspired me to write this paper (I was looking for the lyrics to some of their songs, and was interested in the writing style of the different band members). \\
+
+\bigskip
+
+THE BLUE HEARTS was a Japanese punk rock band active from 1985 to 1995. The band is very famous in Japan, and their songs have been featured in a lot of media (movies, series, video games, anime\dots) \\
+
+THE BLUE HEARTS was mainly comprised of the following members:
+\begin{itemize}
+	\item Kōmoto Hiroto --- 甲本 ヒロト --- vocals, harmonica
+	\item Mashima Masatoshi --- 真島 昌利 --- guitar, backing vocals
+	\item Kawaguchi Junnosuke --- 河口 純之助 --- bass, backing vocals
+	\item Kajiwara Tetsuya --- 梶原 徹也 --- drums
+	\item Shirai Mikio --- 白井 幹夫 --- keyboards (support member)
+\end{itemize}
+
+\bigskip
+
+The lyrics for THE BLUE HEARTS are credited to three of the band's members (Kōmoto, Mashima, and Kawaguchi). \\
+
+Below is a selection of their songs, by author:
+
+\begin{itemize}
+	\item Kōmoto Hiroto --- 甲本 ヒロト
+	\begin{itemize}
+		\item \href{https://www.youtube.com/watch?v=RYC71PAuIKE}{リンダ リンダ} [Linda Linda]
+		\item \href{https://www.youtube.com/watch?v=5yslQYshIAI}{ラブレター} [Love Letter]
+		\item \href{https://www.youtube.com/watch?v=-p0Yqcx53O8}{情熱の薔薇} [Rose of Passion]
+		\item \href{https://www.youtube.com/watch?v=t0rffmN7c6w}{歩く花} [The Walking Flower]
+		\item \href{https://www.youtube.com/watch?v=BT-8_TFxohI}{キスしてほしい} [I want you to kiss me]
+		\item \href{https://www.youtube.com/watch?v=xnQYtogdxyg}{夕暮れ} [Evening]
+		\item 月の爆撃機 [Moon Bomber]
+		\item 人にやさしく [Be kind to People]
+		\item 1985
+		\item 星をください [Give me a Star]
+		\item M・O・N・K・E・Y
+		\item 少年の詩 [Teenage Boy Poem]
+		\item パーティー [PARTY]
+	\end{itemize}
+	
+	\item Mashima Masatoshi --- 真島 昌利	
+	\begin{itemize}
+		\item \href{https://www.youtube.com/watch?v=BSkLe-EOq5U}{TRAIN-TRAIN}
+		\item \href{https://www.youtube.com/watch?v=PQXMU1A8CjI}{青空} [Blue Sky]
+		\item \href{https://www.youtube.com/watch?v=9yY5lwBT4mk}{TOO MUCH PAIN}
+		\item \href{https://www.youtube.com/watch?v=egNok6oeMA0}{1000のバイオリン} [1000 violins]
+		\item 夢 [Dream]
+		\item 君のため [For you]
+		\item 終わらない歌 [A never-ending Song]
+		\item 僕はここに立っているよ [I'm standing here]	
+	\end{itemize}
+	
+	\item Kawaguchi Junnosuke --- 河口 純之助	
+	\begin{itemize}
+		\item \href{https://www.youtube.com/watch?v=J4LKAFe82_w}{シンデレラ(灰の中から)} [Cinderella (from the ashes)]
+		\item 心の救急車 [Ambulance of the Heart]
+		\item 真夜中のテレフォン [Midnight Telephone]
+	\end{itemize}
+\end{itemize}
+
+\bigskip
+
+
+When the band broke up in 1995, Kōmoto Hiroto and Mashima Masatoshi went on to form a new band called ``The High-Lows", and then another band called ``The Cro-Magnons" after that (see~\ref{the-high-lows} and~\ref{the-cro-magnons}). \\
+
+
+\bigskip
+
+This will give us the opportunity to perform different types of queries:
+\begin{itemize}
+	\item most used words in songs by THE BLUE HEARTS (section~\ref{most-used-words-BLUE-HEARTS})
+	
+	\item most used words by the different songwriters throughout their career (not just as part of THE BLUE HEARTS), in section~\ref{most-used-words-by-songwriter}
+\end{itemize}
+
+
+\bigskip
+
+After the band broke up, Kōmoto Hiroto and Mashima Masatoshi chose not to sing any of the songs from THE BLUE HEARTS, with a few occasional exceptions. \\
+
+\bigskip
+
+\subsubsection{The High-Lows (ザ・ハイロウズ)} \label{the-high-lows}
+
+A Japanese punk rock band that was formed in 1995 by former members of THE BLUE HEARTS, Kōmoto Hiroto and Mashima Masatoshi (section~\ref{{THE BLUE HEARTS}}). \\
+
+The band broke up in 2005. \\
+
+Kōmoto and Mashima went on to form ``The Cro-Magnons".
+
+
+\bigskip
+
+\subsubsection{The Cro-Magnons (ザ・クロマニヨンズ)} \label{the-cro-magnons}
+
+A Japanese punk rock band that was formed in 2006 by former members of THE BLUE HEARTS and ``The High-Lows", Kōmoto Hiroto and Mashima Masatoshi (section~\ref{{THE BLUE HEARTS}}). \\
+
+
+\bigskip
+
+
+\subsection{Pop}
+
+\subsubsection{AKB48}
+
+AKB48 (pronounced A.K.B. Forty-Eight) is an idol girl group named after the Akihabara (Akiba for short) area in Tokyo. \\
+
+The band is immensely successful, and has sprouted multiple sister bands, both domestically (NMB48, HKT48, NGT48\dots) and abroad (JKT48, BNK48, MNL48, SNH48\dots) \\
+
+The overall musical style of AKB48 is very girly, and sometimes flirtatious. \\
+
+That being said, some of their songs really stand out:
+
+\begin{itemize}
+	\item \href{https://www.youtube.com/watch?v=fgESmgZ4ld8}{風は吹いている} [The Wind is Blowing] 
+	\item \href{https://www.youtube.com/watch?v=JUbU6VLV6yI}{365日の紙飛行機} [365 Days Paper Plane]
+	\item \href{https://www.youtube.com/watch?v=hUOc1yc8cH0}{桜の栞} [Cherry Blossom Bookmark]
+	\item \href{https://www.youtube.com/watch?v=n24zp_wPC7E}{前しか向かねえ} [Only move forward]	
+\end{itemize}
+
+
+
+
+
+\bigskip
+\subsection{Enka}
+
+Enka (演歌) is a music genre typical from Japan. \\
+
+Musically speaking, \emph{enka} resembles traditional Japanese music. In terms of lyrics, \emph{enka} songs include recurring themes such as: love, loss, loneliness, hardships, etc. to the point that it can be described as some sort of \emph{``Japanese blues"}. \\
+
+\emph{Enka} songs are also often associated with a place and a season. \\
+
+I've included songs from the following \emph{enka} singers in the dataset:
+
+\subsubsection{Ishikawa Sayuri (石川さゆり)}
+
+Born in 1958, Ishikawa Sayuri is a \emph{enka} singer who made her professional debut in 1973. She is one of the most-recognized and successful \emph{enka} singers in history. \\
+
+Ishikawa's most popular songs include: 
+\href{https://www.youtube.com/watch?v=OJxm9Lt-w6Y}{\furi{津軽/つがる,海峡/かいきょう, ・ /,冬/ふゆ,景色/けしき}} [Tsugaru Straight - Winter Scenery] (1977), and
+\href{https://www.youtube.com/watch?v=yvc0LadtZUk}{\furi{天城/あまぎ,越/ご,え/}} [Walk Over the Amagi Pass] (1986).
+
+
+\subsubsection{Miyako Harumi (都はるみ)}
+
+Born in 1948, Miyako Harumi (née Kitamura Harumi) is a singer who made her debut in 1964 and is still active today, making television frequent appearances. \\
+
+Although usually considered as an \emph{enka} singer, Miyako Harumi never thought of herself as such, arguing that the term \emph{``enka"} was not used in that context at the time of her début. \\
+
+Popular song by Miyako Harumi include: \href{https://www.youtube.com/watch?v=QKmma_bRdQE}{\furi{北/きた,の/,宿/やど,から/}} [From an Inn in the North] (1975), and \href{https://www.youtube.com/watch?v=pltL1kuIU4}{\furi{大阪/おおさか,しぐれ/}} [Autumn Rain in Osaka] (1980). \\
+
+
+\bigskip
+
+
+
+\subsection{Metal}
+
+
+\subsubsection{Ningen Isu (人間椅子)}
+
+Ningen Isu (人間椅子 --- \emph{"The Human Chair"}) is a heavy metal band formed in 1987, and active ever since. The band is named after a short story by Edogawa Rampo, published in 1925. \\
+
+The band is known for using some difficult and old words (from the Edo to Showa period, i.e. 1603 onwards), and the themes of their songs include: hell, the universe, Buddhism, etc. \\
+
+For all these reasons, analysing the lyrics of their songs should be interesting (section \ref{most-used-words-Ningen-Isu}). \\
+
+Personal favourites by Ningen Isu include:
+
+\begin{itemize}
+	\item \href{https://www.youtube.com/watch?v=CbI79e5iZKs}{\furi{無情/むじょう}のスキャット} [Heartless Scat]
+	
+	\item \href{https://www.youtube.com/watch?v=tKSjWKDSBmo}{杜子春} [Toshishun]
+	
+	\item \href{https://www.youtube.com/watch?v=CLoUY1kA4ZY}{なまはげ} [Namahage]
+\end{itemize}
+
+\bigskip
+
+\subsubsection{BABYMETAL}
+
+BABYMETAL (ベビーメタル) is a band often credited with the creation and success of a type of metal called ``kawaii metal" (\emph{cute metal}), a genre that combines heavy metal music and J-pop melodies. \\
+
+The band formed in 2010. In October of 2021, the band released a cryptic video hinting a hiatus (or maybe the end of the band). \\
+
+Some of their best songs include:
+
+\begin{itemize}
+	\item \href{https://www.youtube.com/watch?v=pDgqo6fcliY}{NO RAIN, NO RAINBOW}
+
+	\item  \href{https://www.youtube.com/watch?v=nDqaTXqCN-Q}{イジメ、ダメ、ゼッタイ} [Bully, Never, Ever]
+	
+	\item \href{https://www.youtube.com/watch?v=WIKqgE4BwAY}{ギミチョコ！！ --- Gimme chocolate!!} 
+		
+	\item \href{https://www.youtube.com/watch?v=oO7Y8NsnkRg}{PA PA YA!! (feat. F.HERO)}
+	
+	\item \href{https://www.youtube.com/watch?v=cK3NMZAUKGw}{メギツネ - MEGITSUNE}
+	
+	\item 紅月 --- アカツキ [Red moon]
+\end{itemize}
+
+\bigskip
+
+
+
+
+\subsection{Other}
+
+The dataset contains many more bands, and it would take too long to describe them all (the purpose of this section is to give you an idea of the type of band you will find in the dataset, and the reasons why some of the bands were added). \\
+
+The list of bands in the dataset (and the number of songs for each band) can be found on page~\pageref*{query-list-of-bands} in section~\emph{\longref{query-list-of-bands}} \\
+
+
+
+
+
+
+\newpage
+\section{Exploring the dataset} \label{exploring-dataset}
+
+\subsection{Queries and results}
+
+Solr returns results in JSON format. \\
+
+In this article, we show only \emph{part} of the results returned by Solr, in a more readable form (e.g. in textual form, as a table). \\
+
+We also add some extra information (such as pronunciations, and common English translations) for convenience to the reader. \\
+
+\bigskip
+
+Below are the descriptions of the column names:
+
+\begin{longtable}{l p{11.5cm}}
+
+
+\emph{"numFound"} :& The total number of documents (i.e. songs) in the result-set. \\
+& \\
+	
+\emph{Band} :& The band (バンド), or artist name.\\
+& \\
+&
+This is the key returned when performing some \faceting\ on field: \texttt{band\_str}.
+\\
+
+& \\
+
+
+\emph{Songwriter} :& The songwriter. (\furi{作詞家/さくしか})\\
+& \\
+&
+This is the key returned when performing some \faceting\ on field: \texttt{lyrics\_by\_str}. 
+(section \ref{songwriters-TBH}) 
+\\
+
+
+
+& \\
+
+
+\emph{Lexeme}: &
+Lexeme (\furi{語彙素/ごいそ})
+\\
+
+
+& 
+A Japanese word, as it would appear in its dictionary form (i.e. without \emph{inflection})
+\\
+& \\
+
+\emph{何曲}: &  \furi{何/なん,曲/きょく} -- number of songs\\
+
+
+& \emph{nankyoku} -- \emph{``How many songs?", ``What songs?"} \\
+
+& \\
+&
+This column represents the number of songs for each item in the result-set.  \newline
+This is the value returned by Solr when performing some \faceting\ (on the fields like: \texttt{band\_str}, \texttt{lyrics\_by\_str}, \texttt{lyrics\_txt\_ja}), as we will see in the rest of this section. \\
+
+%(何曲 -- \emph{nankyoku} -- \emph{``How many songs?", ``What songs?"})
+
+& \\
+
+\emph{Pronunc.}: 
+&
+\emph{(not part of the result-set returned by Solr; this column is been added for the convenience to the reader)}
+\\
+& \\
+& Shows the most common pronunciations for a particular \emph{lexeme} (some words may have more than one pronunciation), in \emph{romaji}. \\
+
+& \\
+
+\emph{Meanings}:
+&
+\emph{(not part of the result-set returned by Solr; this column is been added for the convenience to the reader)}
+\\
+& \\
+& Shows the most common meanings or English translations for a particular \emph{lexeme}
+\\
+
+
+\end{longtable}
+
+\newpage
+
+\subsection{General queries}  \label{general-queries}
+
+
+
+
+\subsubsection{List of bands (whole dataset)} \label{query-list-of-bands}
+
+Question: \\
+\emph{``Which bands (or solo artists) are in the dataset? (and how many songs do they have?)"} \\
+
+
+Query:
+
+\begin{tabular}{|l|l|}
+	\hline
+	& \\
+	rows: & 0 \\
+	facet: & true \\
+	facet.field: & band\_str \\
+	& \\
+	\hline
+\end{tabular}
+
+
+
+\bigskip
+Result: \\
+
+"numFound":
+\input{content/results/numFound.tex}
+
+\begin{longtable}{|l l|r|}
+	\hline
+	\multicolumn{2}{|c|}{Band (バンド)} & 
+	\multicolumn{1}{|c|}{何曲}
+	\\
+	\hline
+	& & \\
+	\endhead
+	
+	\hline
+	\endfoot
+	
+	\input{content/results/list-bands.tex}
+	& & \\
+\end{longtable}
+
+\bigskip
+
+
+
+\subsubsection{Most used words (whole dataset)} \label{most-used-words-dataset}
+
+Question: \\
+\emph{``Which words appear the most in our dataset?"} \\
+
+Query:
+
+\begin{tabular}{| l | l |}
+	\hline
+	& \\
+	start, rows: & 0, 0 \\
+	facet: & true \\
+	facet.field: & lyrics\_txt\_ja \\
+	%	facet.mincount: & 1 \\
+	& \\
+	\hline
+\end{tabular}
+
+
+
+
+\bigskip
+Result: \\
+
+
+
+
+\begin{myLongTable}{Most used words in songs stored in our dataset}
+	\input{content/results/across-all-bands.tex}
+	& & & \\
+\end{myLongTable}
+
+\bigskip
+\bigskip
+
+
+
+
+
+\subsubsection{List of songwriters (band: ``THE BLUE HEARTS")}  \label{songwriters-TBH}
+
+Question: \\
+\emph{``How many different songwriters are there in the band ``THE BLUE HEARTS"? "} \\
+
+
+Query:
+
+\begin{tabular}{| l |  l |}
+	\hline
+	& \\
+	fq: & band\_str:"THE BLUE HEARTS" \\
+	start, rows: & 0, 0 \\
+	facet: & true \\
+	facet.field: & lyrics\_by\_str \\
+	facet.mincount: & 1 \\
+	& \\
+	\hline
+\end{tabular}
+
+
+\bigskip
+Result: \\
+
+"numFound":101
+
+\begin{longtable}{|l l|l|}
+	\hline
+	\multicolumn{2}{|c|}{Songwriter (作詞家)} & 
+	\multicolumn{1}{|c|}{何曲}
+	\\
+	\hline
+	& & \\
+	\endhead
+	
+	\hline
+	\endfoot
+	
+	真島昌利 & Mashima Masatoshi & 50 \\
+	甲本ヒロト & Kōmoto Hiroto & 45 \\
+	河口純之助 & Kawaguchi Junnosuke & 5 \\
+	甲本ヒロト・真島昌利 & Kōmoto Hiroto ・ & 1 \\
+	& Mashima Masatoshi& \\
+	& & \\
+\end{longtable}
+
+\bigskip
+
+
+
+
+
+
+\newpage
+
+\subsection{Most used words, by band} \label{most-used-words-by-band}
+
+In this section, we are going to find the most used for the following artists:
+
+\begin{itemize}
+	\item THE BLUE HEARTS
+	\item AKB48
+	\item SMAP
+	\item Ningen isu
+	\item Kaneko Ayano
+\end{itemize}
+
+\bigskip
+
+
+\subsubsection{Most used words (band: ``THE BLUE HEARTS")} \label{most-used-words-BLUE-HEARTS}
+
+Question: \\
+\emph{``Which words appear most often in songs by the band ``THE BLUE HEARTS"? "} \\
+
+Query:
+
+\begin{tabular}{| l |  l |}
+	\hline
+	& \\
+	fq: & band\_str:"THE BLUE HEARTS" \\
+	start, rows: & 0, 0 \\
+	facet: & true \\
+	facet.field: & lyrics\_txt\_ja \\
+	%	facet.mincount: & 1 \\
+	& \\
+	\hline
+\end{tabular}
+
+
+\bigskip
+Result: \\
+
+"numFound":101
+
+\begin{myLongTable}{Most used words in songs by the band ``THE BLUE HEARTS"}
+	\input{content/results/bands/band-THE BLUE HEARTS.tex}
+	& & & \\
+\end{myLongTable}
+
+
+\bigskip
+\bigskip
+
+
+
+
+\subsubsection{Most used words (band: ``AKB48")}
+
+Question: \\
+\emph{``Which words appear most often in songs by the band ``AKB48"? "} \\
+
+
+\begin{tabular}{| l |  l |}
+	\hline
+	& \\
+	fq: & band\_str:"AKB48" \\
+	start, rows: & 0, 0 \\
+	facet: & true \\
+	facet.field: & lyrics\_by\_str \\
+	%	facet.mincount: & 1 \\
+	& \\
+	\hline
+\end{tabular}
+
+
+
+\bigskip
+Result: \\
+
+"numFound":376
+
+\begin{myLongTable}{Most used words in songs by the band ``AKB48"}
+	\input{content/results/bands/band-AKB48.tex}
+	& & & \\
+\end{myLongTable}
+
+
+
+
+
+
+
+\bigskip
+\subsubsection{Most used words (band: ``SMAP")}
+
+Question: \\
+\emph{``Which words appear most often in songs by the band ``SMAP"? "} \\
+
+
+\begin{tabular}{| l |  l |}
+	\hline
+	& \\
+	fq: & band\_str:"SMAP" \\
+	start, rows: & 0, 0 \\
+	facet: & true \\
+	facet.field: & lyrics\_by\_str \\
+	%	facet.mincount: & 1 \\
+	& \\
+	\hline
+\end{tabular}
+
+\bigskip
+Result: \\
+
+"numFound":336
+
+\begin{myLongTable}{Most used words in songs by ``Kaneko Ayano"}
+	\input{content/results/bands/band-SMAP.tex}
+	& & & \\
+\end{myLongTable}
+
+
+\bigskip
+\bigskip
+
+
+\newpage
+
+
+
+
+\subsubsection{Most used words (band: ``Ningen isu")} \label{most-used-words-Ningen-Isu}
+
+Question: \\
+\emph{``Which words appear most often in songs by the band ``Ningen isu"? "} \\
+
+
+\begin{tabular}{|l|l|}
+	\hline
+	& \\
+	fq: & band\_str:"人間椅子" \\
+	start, rows: & 0, 0 \\
+	facet: & true \\
+	facet.field: & lyrics\_by\_str \\
+	%	facet.mincount: & 1 \\
+	& \\
+	\hline
+\end{tabular}
+
+
+\bigskip
+Result: \\
+
+"numFound":137
+
+\begin{myLongTable}{Most used words in songs by the band ``Ningen isu"}
+	\input{content/results/bands/band-人間椅子.tex}
+	& & & \\
+\end{myLongTable}
+
+
+
+
+
+
+
+
+\bigskip
+\subsubsection{Most used words (artist: ``Kaneko Ayano")}
+
+Question: \\
+\emph{``Which words appear most often in songs from singer ``Kaneko Ayano"? "} \\
+
+
+\begin{tabular}{| l |  l |}
+	\hline
+	& \\
+	fq: & band\_str:"カネコアヤノ" \\
+	start, rows: & 0, 0 \\
+	facet: & true \\
+	facet.field: & lyrics\_by\_str \\
+	%	facet.mincount: & 1 \\
+	& \\
+	\hline
+\end{tabular}
+
+\bigskip
+Result: \\
+
+"numFound":61
+\begin{myLongTable}{Most used words in songs by ``Kaneko Ayano"}
+	\input{content/results/bands/band-カネコアヤノ.tex}
+	& & & \\
+\end{myLongTable}
+
+
+
+
+
+\bigskip
+\bigskip
+\bigskip
+
+
+
+
+\newpage
+\subsection{Most used words, by songwriter} \label{most-used-words-by-songwriter}
+
+Finding the most used words by band is interesting, as it gives an idea of the kind of themes that the band deals with in their songs. \\
+
+What is perhaps even more relevant, however, is to find the most used words by a particular songwriter, as it provides us with some information about their writing style (in terms of lexicon), especially considering that one songwriter sometimes provides lyrics for several bands (or change bands throughout their career). \\
+
+In this section, we will look at the style of the songwriters from ``THE BLUE HEARTS", two of whom went on to form other bands later on (namely, ``The High-Lows" and ``The Cro-Magnons"). \\
+
+
+\subsubsection{Most used words (writer: Kōmoto Hiroto)}
+
+Question: \\
+\emph{``Which words appear most often in songs by 甲本ヒロト (Kōmoto Hiroto), the singer from ``THE BLUE HEARTS"? "} \\
+
+Query:
+
+\begin{tabular}{| l |  l |}
+	\hline
+	& \\
+	fq: & lyrics\_by\_str:"甲本ヒロト" \\
+	start, rows: & 0, 0 \\
+	facet: & true \\
+	facet.field: & lyrics\_by\_str \\
+	facet.mincount: & 1 \\
+	& \\
+	\hline
+\end{tabular}
+
+
+\bigskip
+Result: \\
+
+"numFound":45
+
+\begin{myLongTable}{Most used words in songs written by Kōmoto Hiroto}
+	\input{content/results/songwriters/writer-甲本ヒロト.tex}
+	& & & \\
+\end{myLongTable}
+
+
+
+
+\bigskip
+\subsubsection{Most used words (writer: Mashima Masatoshi)}
+
+
+Question: \\
+\emph{``Which words appear most often in songs by 真島昌利 (Mashima Masatoshi), the guitarist from ``THE BLUE HEARTS"? "} \\
+
+Query:
+
+\begin{tabular}{| l |  l |}
+	\hline
+	& \\
+	fq: & lyrics\_by\_str:"真島昌利" \\
+	start, rows: & 0, 0 \\
+	facet: & true \\
+	facet.field: & lyrics\_by\_str \\
+	facet.mincount: & 1 \\
+	& \\
+	\hline
+\end{tabular}
+
+
+\bigskip
+Result: \\
+
+"numFound":50 \\
+
+\begin{myLongTable}{Most used words in songs written by Mashima Masatoshi}
+	\input{content/results/songwriters/writer-真島昌利.tex}
+	& & & \\
+\end{myLongTable}
+
+
+
+
+
+
+
+
+
+
+\bigskip
+\subsubsection{Most used words (writer: Kawaguchi Junnosuke)}
+
+
+Question: \\
+\emph{``Which words appear most often in songs by 河口純之助 (Kawaguchi Junnosuke), the bassist from ``THE BLUE HEARTS"? "} \\
+
+\begin{tabular}{| l |  l |}
+	\hline
+	& \\
+	fq: & lyrics\_by\_str:"河口純之助" \\
+	start, rows: & 0, 0 \\
+	facet: & true \\
+	facet.field: & lyrics\_by\_str \\
+	facet.mincount: & 1 \\
+	& \\
+	\hline
+\end{tabular}
+
+
+\bigskip
+Result: \\
+
+"numFound":5
+
+\begin{myLongTable}{Most used words in songs written by Kawaguchi Junnosuke}
+	\input{content/results/songwriters/writer-河口純之助.tex}
+	& & & \\
+\end{myLongTable}
+
+
+\bigskip
+\bigskip
+
+
+
+\input{content/section-word-usage.tex}

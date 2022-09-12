@@ -1,0 +1,185 @@
+% Copyright 2022 Pierre S. Caboche. All rights reserved.
+
+
+\renewcommand{\currentPart}{Other Solr features}
+\part{\currentPart}   \label{part - Other Solr features}
+
+
+\section{``More Like This"} \label{mlt}
+
+
+\subsection{What is ``More Like This"?} \label{what-is-MLT}
+
+\MLT\ is a feature which, given a document, will:
+\begin{enumerate}
+	\item extract a list of ``interesting terms" (based on TF-IDF: \emph{term frequency–inverse document frequency}, see section~\ref{tf–idf}) from a certain field	
+	\item find other documents with similar terms in them
+\end{enumerate}
+
+
+
+
+\bigskip
+
+\subsection{Enabling ``More Like This"} \label{enabling-mlt}
+
+In Solr, the \MLT\ feature is not accessible by default. You need to add a request handler before you can start using it. This can be done by either editing the \texttt{solrconfig.xml}, or by via the Config API. \\
+
+We will activate it with the Config API, similar to this:
+\begin{lstlisting}[language=sh]
+curl -X POST -H 'Content-type:application/json' -d '{   
+	"add-requesthandler": {                            
+		"name": "/mlt",
+		"class": "solr.MoreLikeThisHandler",
+		"defaults": {"mlt.fl": "lyrics_txt_ja"}
+	}
+}' "http://${HOST}:${PORT}/solr/${CORE}/config"
+\end{lstlisting}
+
+\bigskip
+
+
+
+This is done in our script \texttt{mysolr.sh}, which is was featured on page \pageref{mysolr.sh}. \\
+
+All you need to do to enable \MLT\ is call:
+\begin{lstlisting}[language=sh]
+./mysolr.sh enable_mlt
+\end{lstlisting}
+
+
+
+\subsection{Accessing ``More Like This"}
+
+Unlike with regular query (section \emph{\longref{using-solr}}), the \MLT\ feature does not have a dedicated page with a User Interface that you can access through the browser. Instead, we need to query \MLT\ via HTTP requests, at:
+\begin{center}
+	\texttt{http://localhost:8983/solr/songs\_jp/mlt?...}
+\end{center}
+
+\bigskip
+
+The \MLT\ feature requires some query parameter (usually \texttt{q}) that will return one document (it is possible to have a query that returns more than one document, but the list of ``interesting terms" will be shorter and therefore, the suggested documents will be less relevant). \\
+
+For this reason, we recommend using a query based on the \texttt{id} field. 
+
+For example:
+
+\hfill	\texttt{q=id:"THE BLUE HEARTS -- 歩く花"} \hfill $\leftarrow$ (this need to be URL-encoded)
+
+\bigskip
+\bigskip
+
+After that, we need to specify the parameters related to \MLT, the documentation of which can be found here:
+
+\begin{center}
+	\url{https://solr.apache.org/guide/solr/latest/query-guide/morelikethis.html}
+\end{center}
+\bigskip
+
+
+Below are the parameters that we will focus on:
+
+\begin{itemize}
+	\item \emph{mlt.fl}
+	
+	The field (or list of fields) to use for similarity.
+	For better performance, it is advisable that these fields use 
+	\texttt{termsVector}s that are \emph{stored}.
+	
+	This parameter is \emph{required}, but in the configuration (section \ref{enabling-mlt}) we already specified to use the field \texttt{lyrics\_txt\_ja}, so we won't have to specify this parameter every time in the URL.
+	
+	\item \emph{mintf} \hfill (default: \texttt{2})
+	
+	The minimum frequency below which terms will be ignored in the source document.
+	
+	The default is 2 (i.e. repeating terms). 
+	
+	However, our texts are short, and there usually aren't a lot of repeating terms outside of the chorus.	So we will set this to 1.
+	
+	\item \emph{mlt.interestingTerms} \hfill (default: \texttt{none})
+	
+	Shows the top terms used by the \MLT\ query (based on TF-IDF: \emph{term frequency–inverse document frequency}).
+	
+	Possible values: \texttt{none}, \texttt{list}, \texttt{details}.
+	
+	
+	\item \emph{mlt.boost} \hfill (default: \texttt{false})
+	
+	Specifies if the query will be boosted by the interesting term relevance.
+\end{itemize}
+
+\bigskip
+
+
+\subsection{Example} \label{mlt-solr-example}
+
+Below is a script that will illustrate how to query the \MLT\ feature: \\
+
+\texttt{get\_mlt.sh}
+\lstinputlisting[language=sh]{files/bsd-licensed/solr/get_mlt.sh}
+\bigskip
+
+Let's call it on a document of \texttt{id}: ``GReeeeN -- 風" (a song called ``風" -- \emph{kaze} -- ``Wind", by band ``GReeeeN"):
+
+\begin{lstlisting}[language=sh]
+./get_mlt.sh 'GReeeeN -- 風'
+\end{lstlisting}
+
+
+\bigskip
+
+
+
+The response from Solr will be in JSON format. \\
+
+
+
+\newpage
+
+Results: \\
+
+``interesting terms":
+\begin{longtable}{|l l l|}
+	\hline
+	& & \\
+	\endhead
+	
+	\hline
+	\endfoot
+
+	\input{content/results/mlt/GReeeeN -- 風 - interestingTerms.tex}
+	& & \\
+\end{longtable}
+
+
+"docs":
+\begin{longtable}{|l l|}
+	\hline
+	\multicolumn{1}{|c}{Band} & \multicolumn{1}{c|}{Title} \\
+	\hline
+	& \\
+	\endhead
+	
+	\hline
+	\endfoot
+	
+	\input{content/results/mlt/GReeeeN -- 風 - docs.tex}
+	& \\
+\end{longtable}
+
+The list of similar songs that Solr found is comprised of: 5 different songs by AKB48, 2 songs by GReeeeN, and 2 songs by Tokunaga Hideaki (徳永英明).
+
+\newpage
+
+\subsection{Usage}
+
+In section \ref{what-is-MLT} we showed what the \MLT\ feature can be used for. \\
+
+The example allowed us to better visualise \MLT\ in action:
+
+
+\begin{itemize}
+	\item the \emph{``interesting terms"} gives us a list of terms that are characteristic of the song, and make it distinctive
+	
+	\item the \emph{``docs"} list can help us discover the songs whose lyrics have some commonalities with the song being studied. This can help us choose which songs to explore next.
+\end{itemize}

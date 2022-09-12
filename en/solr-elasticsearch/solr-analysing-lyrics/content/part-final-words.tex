@@ -1,0 +1,97 @@
+% Copyright 2022 Pierre S. Caboche. All rights reserved.
+
+\renewcommand{\currentPart}{Final words}
+\part{\currentPart} \label{part - Final words}
+
+
+\section{Comparing Solr and ElasticSearch}
+
+
+\begin{itemize}
+	\item \emph{Solr is easier to get started with}
+\end{itemize}
+
+Getting Solr started was easy: one \texttt{docker run} command and the latest image was downloaded, the container created, and Solr was up and running (for testing purposes). All the results you see in this document were gathered on Solr. \\ 
+
+Then I tried to replicate our study in the immensely popular ElasticSearch\dots \\
+
+
+\bigskip
+	
+I wanted to run ElasticSearch with Kibana. Although not strictly necessary, Kibana provides ways to interact with ElasticSearch other than through a web API. I wanted to evaluate the UI, and compare it to what Solr provides out-of-the-box. \\
+
+I read the official documentation for ElasticSearch (currently at version 8.3.3), created the \texttt{docker-compose} files as instructed (for ElasticSearch and Kibana), tried to execute them, and was greeted with the following message (for all versions from 8.3.1 to 8.3.3):
+\begin{lstlisting}
+ERROR: for kibana  Container "............" is unhealthy.
+ERROR: Encountered errors while bringing up the project.
+\end{lstlisting}
+
+
+\bigskip
+
+Version 7.17.5 was easier to get to work. \\
+
+Unlike with Solr, the \kuromoji\ plugin was not installed by default. This meant writing a \texttt{Dockerfile} to create a custom image, and a \texttt{docker-compose.yml} to run the custom image in a container (with all the parameters that we need). \\
+
+As you can see, the process was more complicated, and I didn't get to run the latest version despite following the documentation to the letter. \\
+
+I hope this would be fixed in the future\dots \\
+
+
+\bigskip
+
+
+\begin{itemize}
+	\item \emph{ElasticSearch has more features} 
+\end{itemize}
+
+ElasticSearch in itself has more features, and those features tend to be more advanced. On top of that, there is a whole environment around ElasticSearch: Kibana (for visualisation), and Logstash (for data integration). \\
+
+ElasticSearch offers some really advanced \aggregations, while Solr only provides basic \faceting. \\
+
+Kibana allows to visualise, explore data, create dashboards, and many other things with the appropriate licence (e.g. Machine Learning). \\
+
+A clear win for ElasticSearch. \\
+
+\bigskip
+\bigskip
+
+\begin{itemize}
+	\item \emph{Solr is free}
+\end{itemize}
+
+Solr is free (it is under Apache License 2.0) \\
+
+ElasticSearch has a dual-licence (both proprietary; source-available): the Elastic License, and the Server Side Public License. \\
+
+
+
+
+
+\section{Conclusion}
+
+This article started as a way to teach the basics of Solr, ElasticSearch, indexing for full-text search, \faceting\ / \aggregations\ (for which we found some interesting use). Then to illustrate how those principles work, we created a catalogue of songs which we wanted to query in different manners. \\
+
+This led us to analyse the lyrics of Japanese songs, by running different statistics about word usage (most used words overall, most used words for a particular band or songwriter, list of bands using a certain word the most\dots) \\
+
+From a technical point of view, we have learned a number of things:
+\begin{itemize}
+	\item fields, types, dynamic fields
+	\item termsVectors, indexing different languages
+	\item \faceting, \aggregations, \MLT\ features
+	\item some of the differences between Solr and ElasticSearch %(both based on Apache Lucene)
+\end{itemize}
+
+We tried to give just enough information to understand the main concepts and become operational quickly. Exploring the dataset (which we created to show the tool's capabilities) would constitute the bulk of this paper. \\
+
+The tool that we created (a set of scripts to interact with Solr) allow us to run statistics, and find commonalities between songs from different bands, and across genres. 
+Starting with a list of common words (sections~\ref{general-queries} to~\ref{most-used-words-by-songwriter}), we can determine the likelihood of a given band to use a certain word (section~\ref{word-usage}), thereby allowing us to establish some sort of profile for certain bands, songwriters, etc. \\
+
+This idea is taken a step further with the \MLT\ feature (section~\ref{mlt}). Given one document (song), it is capable to find a list of documents featuring similar terms (based on \emph{term frequency–inverse document frequency}, section~\ref{tf–idf}). The connections it makes is sometimes very surprising (but all based on statistics), and it can help you discover songs with similar lyrics to the ones you already like. \\
+
+As we add more songs to the dataset, find new ``interesting terms" to explore and run statistics on, we get more insights on the bands' writing styles, and the type of lexicon used in a popular art form. \\
+
+The data presented in \emph{``section \longref{exploring-dataset}"} are only a fraction of the results we gathered. We can establish more statistics by band or lexemes, more suggestions with the \MLT\ feature.
+The only thing I cannot do is share the dataset, for legal reasons.
+\\
+

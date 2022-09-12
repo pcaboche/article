@@ -1,0 +1,12 @@
+{
+	"id": "<band name> -- <song title>",
+	"title_jp": "<song title>",
+	"band": "<band name>",
+	"lyrics_by": "<songwriter's name>",
+	"music_by": "<composer's name>",
+	"release_date": "2022-09-12",
+	"lyrics_jp": "
+This is where you will find the lyrics...
+歌詞はこちらどうぞ。。。
+"
+}

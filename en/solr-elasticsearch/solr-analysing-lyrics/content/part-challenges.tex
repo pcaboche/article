@@ -1,0 +1,93 @@
+% Copyright 2022 Pierre S. Caboche. All rights reserved.
+
+
+\renewcommand{\currentPart}{Challenges}
+\part{\currentPart}  \label{part - Challenges}
+
+Now that we know more about Solr and some of the concepts behind it, we will talk about the things to consider when dealing with texts in multiple languages. We will also see some of the challenges posed by a language like Japanese.
+
+
+\section{Challenges when indexing different languages}
+
+For our case study we want to focus on analysing songs in Japanese, but it is possible to extend this model to other languages. \\
+
+When dealing with information in different languages, it is necessary to use separate morphological analysers. This is because each analyser is specialised to identify lexemes in one language. This also means having to store information in separate fields. \\
+
+There are mainly two ways to handle this problem. \\
+
+The first solution is to have \emph{one field per language}, as follows:
+\begin{itemize}
+	\item declare one field per language, using the appropriate type (using the analyser for that language)
+	
+	\item if necessary, use ``copy ﬁelds" (section \ref{copy-fields}) to copy the content of all the language-specific fields, to a field that uses the standard analyser (which is not language-specific).
+	
+	This field can be used to perform searches across \emph{all} languages (but the search is less accurate).
+\end{itemize}
+
+
+\bigskip
+
+The other solution is to have \emph{one core per language}. \\
+
+
+\subsection{One core per language\dots}
+
+This approach is more suitable in our case because we want to compare the songs in Japanese with other songs in Japanese (and the songs in English with other songs in English, etc.) \\
+
+If we were to mix songs from different languages in the same Solr core, we would have to filter the collections by language before we could extract any form of useful statistical data. \\
+
+Having one core per language makes sense in our case. \\
+
+
+
+
+
+\newpage
+
+\subsection{Challenges specific to Japanese}
+
+Japanese uses different scripts:
+
+\begin{center}
+	\begin{tabular}{l p{7cm} l}
+		\emph{kanji}: & inherited from Chinese over centuries 
+		&  e.g. 花火 \\
+		
+		& & \\
+		
+		\emph{hiragana}: & has many different usages in Japanese (for inflections, particles, etc.) 
+		&  e.g. はなび \\
+		
+		& & \\
+		
+		\emph{katakana}: & used to transcribe foreign words, for emphasis (in lieu of bold, italics), for onomatopoeias, etc.  
+		&  e.g. ハナビ \\
+		& & \\
+		
+		\emph{romaji}: & the Latin alphabet. 
+		&  e.g. FIREWORKS \\
+		
+	\end{tabular}
+\end{center}
+
+\bigskip
+
+On top of that:
+
+\begin{itemize}
+	\item the same word can have different possible writings (one or several \emph{kanji} writings, \emph{kana} writing)
+	
+	\item emphasis is done using \emph{katakana}
+\end{itemize}
+
+This means that the same word may appear several times in our result-set, but with different writings. \\
+
+This also makes filtering a lot more complicated\dots \\
+
+Ideally, a search on either ``涙", ``泪", ``涕", ``なみだ", ``ナミダ", ``なだ", ``なんだ"\dots\  (all different writings for the word ``tears") should return the same result (because they refer to the same lexeme), regardless of how the word appears in the document, but it does not. \\
+
+And to go one step further, it should also be possible to allow search based on the \emph{romaji} writing (``namida"). \\
+
+
+
+These are some of the difficulties of implementing a search engine for the Japanese language. \\

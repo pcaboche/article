@@ -1,0 +1,68 @@
+% Copyright 2022 Pierre S. Caboche. All rights reserved.
+
+
+\newenvironment{myLongTable}[1]{
+	\begin{longtable}{|l|l|l|r|}
+		%	\multicolumn{4}{l}{\textrm{\textit{#1\dots}}} \\
+		\hline
+		Lexeme & Pronunc. & Meanings & 何曲\\
+		\hline
+		& & & \\
+		\endfirsthead
+		
+		\multicolumn{4}{l}{\textrm{\textit{#1\dots\ (continued)}}} \\
+		\hline
+		Lexeme & Pronunc. & Meanings & 何曲\\
+		\hline
+		& & & \\
+		\endhead
+		
+		\hline
+		\endfoot
+}{
+	\end{longtable}
+}
+
+
+
+
+
+
+\newcommand{\wordstats}[3]{
+	\subsubsection{``#1" (#2)}
+	
+	#3 
+		
+	"numFound":
+	\input{content/results/wordcounts/lex-#2-numFound.tex}
+	
+	\begin{longtable}{|l l|r|}
+		\hline
+		\multicolumn{1}{|c}{Band} & & 何曲\\
+		\hline
+		& & \\
+		\endfirsthead
+		
+		\hline
+		& & \\
+		\endhead
+		
+		\hline
+		\endfoot
+		
+		\input{content/results/wordcounts/lex-#2-wordcount.tex}
+		& & \\
+	\end{longtable}
+}
+
+
+\newcommand*{\longref}[1]{\ref{#1}~---~\nameref{#1}}
+\newcommand{\cmd}[1]{\texttt{#1}}
+
+
+\newcommand{\kuromoji}{\emph{kuromoji}\index{kuromoji}}
+\newcommand{\termsVector}{\emph{termsVector}\index{termsVector}}
+\newcommand{\aggregation}{\emph{aggregation}\index{aggregation}}
+\newcommand{\aggregations}{\emph{aggregations}\index{aggregation}}
+\newcommand{\faceting}{\emph{faceting}\index{faceting}}
+\newcommand{\MLT}{\emph{``More Like This"}\index{MoreLikeThis}}

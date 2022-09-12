@@ -1,0 +1,394 @@
+% Copyright 2022 Pierre S. Caboche. All rights reserved.
+
+\renewcommand{\currentPart}{Quick introduction to Solr}
+\part{\currentPart}  \label{part- Quick introduction to Solr}
+
+
+\section{Overview of Solr}
+
+Solr is an enterprise-search platform, which means it is designed to index data and documents from various sources (e.g. databases, file systems, e-mails. etc.) \\
+
+
+In Solr, information is organised as such:
+
+\begin{itemize}
+	\item \texttt{Core} \hfill
+	
+	A \emph{core} is a collection of \emph{documents}
+	
+	\item \texttt{Document} \hfill
+		
+	Information that needs to be queried together is stored in the same \emph{document}. Documents are made up of \emph{fields}.
+	
+	Each document is identified with an \texttt{id} field, which must be unique, but can be automatically generated (section \ref{id-field}).
+	
+	\item \texttt{Field} \hfill
+	
+	A field is a piece of information that can be queried.
+	
+	Fields can be defined explicitly (section \ref{defining-fields}), or dynamically (section \ref{dynamic-fields}).
+	
+	Sometimes the same information needs to be indexed, stored, and queried in different ways. (\longref{copy-fields})
+\end{itemize}
+
+
+Text fields can be analysed, and the index may be stored (with different options such as: terms positions, frequency, etc). Different languages require specific analysers. The analyser for Japanese is called \kuromoji\ (section \ref{kuromoji}).
+
+
+
+
+
+
+\section{The \texttt{id} field}   \label{id-field}
+
+In Solr, every document must have a ﬁeld named \texttt{id}, of type \texttt{string}, which is used to uniquely identify a document. \\
+
+Here are a few things to bear in mind when choosing an \texttt{id}:
+
+\begin{itemize}
+	\item avoid using numeric identifiers (i.e. 1, 2, 3...) \\
+	
+	If your \texttt{id} is exposed to the outside world, it would then be easy for an outsider to retrieve the content of your documents just by going through different numeric values \\
+	
+	
+	\item use characters that can be easily passed in a URL \\
+
+	Most of the time we will need to interact with our documents through a Web API, and the id needs to be passed as part of the URL. \\
+		
+	If your \texttt{id} is not "URL-friendly" then you'll need to encode it, one way or another, to be passed in a URL. Solutions include:
+	
+	\begin{itemize}
+		\item \emph{URL-encoding}
+		
+		Special characters are escaped to be used in a URL. \\
+		
+		\item \emph{base64}
+	
+		allows to convert some binary data as input into a string of 64 different characters (hence the name). The resulting string is around 33 to 37\% longer than the original binary data but has a number of applications, especially on the web. \\
+		
+		The \emph{base64} \texttt{id} can be either generated from a random string, or derived from the data itself. Platforms like YouTube use \emph{base64} for their \texttt{id}s.
+	\end{itemize}
+	
+
+	
+\end{itemize}
+
+
+
+\bigskip
+
+
+\section{Fields}
+
+\subsection{Defining Fields} \label{defining-fields}
+
+Each field must have at least:
+\begin{itemize}
+	\item a \emph{name}
+	\item a \emph{type}
+\end{itemize}
+
+
+A field \emph{may} also have (optional):
+\begin{itemize}
+	\item a \emph{default value}
+	
+	\item \emph{Field Type Override Properties} which define how the field might be stored, indexed, and other properties
+\end{itemize}
+
+
+\subsubsection*{Field Types}
+
+Below are some examples of field types we might encounter:
+
+\begin{longtable}{| p{2.5cm} p{7.5cm} p{3.5cm} |}
+	\hline
+	Type
+	&
+	Description 
+	& 
+	
+	Elasticsearch's \newline
+	closest 
+	equivalent 	
+	\\
+	\hline
+	& & \\
+	\endhead
+	
+	\hline
+	\endfoot
+	
+	\texttt{string}
+	&
+	String (UTF-8 encoded string or Unicode).
+	Has a hard limit of slightly less than 32K.
+	Intended for small fields and are not tokenised or
+	analysed.
+	
+	Examples: ID, email, hostname, postal code, tags...
+	Useful for aggregations (e.g. by tag).
+	
+	& 
+	\texttt{keyword}
+	\\
+	
+	
+	\texttt{text\_general}
+	&
+	Textual information.
+	&
+	\texttt{text}, \newline
+	using the standard analyser \newline
+	\\
+	
+	
+	\texttt{text\_en}
+	&
+	Textual information. \newline
+	Makes use of the analyser for the English language.
+	&
+	\texttt{text}, \newline
+	using the english analyser \newline
+	\\
+	
+	
+	\texttt{text\_ja}
+	&
+	Textual information. \newline
+	Makes use of the \kuromoji\ analyser (section~\ref{kuromoji}) for the Japanese language.
+	&
+	\texttt{text}, \newline
+	using the \kuromoji\ analyser (plugin) \newline
+	\\
+	
+	
+	\texttt{text\_...}
+	&
+	Other \texttt{text} types are available, using different
+	analysers.
+	&
+	\texttt{text}, \newline
+	using the 
+	analyser of your choice \newline
+	\\
+	
+	
+	\texttt{pdate}
+	&
+	Date. \newline
+	Represents a point in time with milliseconddate ,
+	precision.  \newline
+	Example: Album release date. \newline
+	&
+	\texttt{date}, \newline
+	\texttt{date\_nanos}
+	\\
+	
+\end{longtable}
+
+
+\bigskip
+
+
+
+
+\subsubsection*{Field Type Override Properties}
+
+
+\begin{longtable}{| p{2.5cm} p{1.5cm} p{9cm} |}
+	\hline
+	Property
+	&
+	Implicit default
+	&
+	Description
+	\\
+	\hline
+	& & \\
+	\endhead
+	
+	\hline
+	\endfoot
+
+	\texttt{required}
+	&
+	\texttt{false}
+	&
+	Instructs Solr to reject any attempts to add a document which
+	does not have a value for this ﬁeld. This property defaults to
+	false. \newline
+	\\
+	
+	
+	\texttt{multiValued}
+	&
+	\texttt{false}
+	&
+	If true, indicates that a single document might contain multiple
+	values for this ﬁeld type. \newline
+	\\
+	
+	
+	\texttt{stored}
+	&
+	\texttt{true}
+	&
+	If true, the actual value of the ﬁeld can be retrieved by queries. \newline
+	\\
+	
+	\texttt{indexed}
+	&
+	\texttt{true}
+	&
+	If true, the value of the ﬁeld can be used in queries to retrieve
+	matching documents. \newline
+	\\
+	
+	
+	\texttt{docValues}
+	&
+	\texttt{false}
+	&
+	If true, the value of the ﬁeld will be put in a column-oriented DocValues structure (a way of recording ﬁeld values internally that is more efﬁcient for some purposes, such as sorting and faceting, than traditional indexing). \newline
+	
+	DocValues are only available for speciﬁc ﬁeld types (string, boolean, numeric, date...) \newline
+	\\
+	
+	
+	\texttt{uninvertible}
+	&
+	\texttt{false}
+	&
+	\emph{Defaults to true for historical reasons, but users are strongly encouraged to set this to false for stability and use
+	\texttt{"docValues":"true"} as needed.} \newline
+	\newline
+	If true, indicates that an \newline
+	\texttt{"indexed":"true", "docValues":"false"} field can be \newline ``un-inverted" at query time to \emph{build up large in memory data structure} to serve in place of DocValues. \newline
+	\\
+	
+	
+	
+	\texttt{termVectors, termPositions, termOffsets, termPayloads}
+	&
+	\newline
+	\texttt{false}
+	&
+	These options instruct Solr to maintain full \texttt{term vectors} for
+	each document, optionally including \texttt{position}, \texttt{offset} and	\texttt{payload} information for each term occurrence in those vectors. \newline
+	\newline
+	These can be used to accelerate highlighting and other ancillary functionality, but impose a substantial cost in terms of index size. \newline
+	\\
+\end{longtable}
+
+\bigskip
+
+For more information about fields in Solr: \\
+
+\url{https://solr.apache.org/guide/solr/latest/indexing-guide/fields.html} \\
+
+
+\href{https://solr.apache.org/guide/solr/latest/indexing-guide/field-types-included-with-solr.html}{\texttt{https://solr.apache.org/guide/solr/latest/indexing-guide/field-types-included-\newline
+with-solr.html}} \\
+
+\url{https://solr.apache.org/guide/solr/latest/indexing-guide/docvalues.html}
+
+
+
+\bigskip
+\bigskip
+\bigskip
+
+\subsection{Dynamic fields} \label{dynamic-fields}
+
+A dynamic field is like a field that has a name with a wildcard in it. \\
+
+When indexing a document, Solr will try to match field names with:
+\begin{enumerate}
+	\item explicitly defined fields
+	\item dynamic fields
+\end{enumerate}
+
+\bigskip
+
+By using dynamic fields, it becomes easy to add new fields of a certain types by following some naming conventions. \\
+
+For example (the following are defined by default in Solr):
+
+\begin{longtable}{l p{12.5cm}}
+	\cmd{*\_str} & Field of type \cmd{strings} (DocValues, Multivalued, Sort Missing Last). \\
+	& Used for storing lists of \cmd{keywords} (tags, categories). \\
+	& \\
+	\cmd{*\_txt\_ja} & Filed of type \cmd{text\_ja} (Indexed, Tokenized, Stored, UnInvertible) \\
+\end{longtable}
+
+\bigskip
+
+
+Think of dynamic fields as \emph{``convention over configuration"}. \\
+
+
+\newpage
+
+\subsubsection{Explicit vs. Dynamic fields} \label{explicit-vs-dynamic}
+
+The advantage of explicit fields is, you can describe the exact structure of your documents, and also specify which fields are required (and that requirement will be enforced). 
+
+The main drawback is, specifying fields explicitly is tedious, there are lots of options, and any change in the schema can be costly (there is a need to re-index documents for newly specified fields to be taken into account).
+\\
+
+
+
+
+The advantage of dynamic fields is, you can easily add new fields ``on the fly" without modifying the schema. 
+
+The main drawback of dynamic fields is, you need to follow certain conventions, which forces you to rename some fields from your original JSON object (and adapt your queries to match this naming convention too). \\
+
+In our example, we will use dynamic fields a lot. We find it easier to rename fields so that they match the desired convention, rather that declaring each field separately. \\
+
+Also, by following a convention it is easier to remember the purpose of a given field, just by looking at its name (e.g. \cmd{*\_str} fields are for \emph{tags} and other lists of predefined values, while \cmd{*\_txt\_ja} fields have been indexed using the Japanese analyser). \\
+
+
+\bigskip
+
+\subsection{Copy fields} \label{copy-fields}
+
+It is possible to specify that, on indexing, some values must be copied from one field to another. \\
+
+This allows:
+\begin{itemize}
+	\item to have different representations of the same data
+	\item to concatenate different pieces of information (e.g. title, author, etc.) into one field that is easy to query (instead of writing complex queries which will impact performance)
+\end{itemize}
+
+\bigskip
+
+
+\newpage
+
+\section{Defining a schema}
+
+A schema allows you to explicitly define:
+
+\begin{itemize}
+	\item what fields will be used (names and types)
+	\item which fields are required
+	\item how each field is indexed
+	\item which fields need to be copied from one another (\cmd{copyField})
+\end{itemize}
+
+It is also possible to define new Dynamic Fields.
+
+\bigskip
+
+
+A schema can be specified either:
+\begin{itemize}
+	\item in the \cmd{schema.xml} file
+	\item through the \href{https://solr.apache.org/guide/solr/latest/indexing-guide/schema-api.html}{Solr Schema API}
+\end{itemize}
+
+\bigskip
+
+It is easier to interact with the Solr Schema API than with files. That being said, we find it even easier to rely dynamic fields, as explained in sections \ref{dynamic-fields} and \ref{explicit-vs-dynamic}.
+

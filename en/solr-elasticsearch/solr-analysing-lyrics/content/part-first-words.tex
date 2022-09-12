@@ -1,0 +1,179 @@
+% Copyright 2022 Pierre S. Caboche. All rights reserved.
+
+\renewcommand{\currentPart}{First words}
+\part{\currentPart}
+
+
+\section{Introduction}
+
+I was experimenting with Solr and ElasticSearch when I discovered that, in Solr, performing some \faceting\ on a field of type \emph{text} returned some statistics on word usage. \\
+
+Normally, \faceting\ is used to provide some statistic information about the result of a query (e.g. \emph{document count, sum, min, max, average, percentile}\dots). Faceting is usually applied on fields of type \emph{string(s)} (e.g. to group by tags, categories, etc.), or by defining ranges on some numeric values. ElasticSearch takes the concept of \faceting\ even further with its \aggregations\ (section \ref{faceting-and-aggregation}).
+
+
+Performing \faceting\ on a field of type \emph{text} is not common. In fact, this is not enabled by default in ElasticSearch, for a question of performance (sections~\ref{create-es-core} and~\ref{aggregation-termsVectors}).
+\\
+
+
+Seeing the document counts for different words gave me an idea: to use this feature for analysing the writing style of different artists. Also, is the \MLT\ facility to find similar \oe uvres (section~\ref{mlt}).
+\\
+
+In my spare time, I listen to a lot of Japanese music from a variety of artists. I study the lyrics, look for the words that I do not know, practice at the \emph{karaoke}.
+This is why I decided to perform the text analysis on Japanese songs. I also had access to a rather large collection of lyrics, parts of which I could use as a dataset. \\
+
+This case study is interesting because it will allow us to learn about :
+\begin{itemize}
+	\item full-text search, indexing, morphologic analysers, etc.
+	
+	\item managing texts in different languages
+	
+	\item \faceting, \aggregation, which are essential to providing statistical data on a query result-set
+\end{itemize}
+
+
+
+If you like Japanese music (like I do), this article may give you some insights about the word usage of your favourite artists. \\
+
+
+In this article, we will do the following:
+\begin{itemize}
+	\item introduce the tools (Solr and ElastiscSearch)
+	
+	\item introduce the general concepts which will be used in both Solr and ElastiscSearch (Part~\ref{part - A bit of theory})
+	
+	\item present our solution, starting with all the Solr-specific implementation details  (Parts~\ref{part- Quick introduction to Solr} and~\ref{part - Running Solr})
+	
+	\item show some of the considerations that come with handling different languages (Part~\ref{part - Challenges})
+	
+	\item use Solr, run the analysis, display the results (Part~\ref{analysing-lyrics})
+	
+	\item try to replicate the analysis with ElasticSearch (as a proof-of-concept). Show the differences with Solr (Part~\ref{part - ElasticSearch})
+	
+	\item compare the two solutions, in terms of: features, implementation, etc. (Part~\ref{part - Final words})
+\end{itemize}
+
+\bigskip
+
+
+\newpage
+
+
+
+\section{The tools}
+
+Below is a quick introduction to the technologies we are going to use in this article:
+
+\subsection{Lucene}
+
+Apache Lucene is a free and open-source search engine software library, originally written in Java. \\
+
+Lucene is the technology that powers both Solr and ElasticSearch. \\
+
+Lucene is supported by the Apache Software Foundation and is released under the Apache Software License. It has been ported to a number of languages besides Java.
+
+
+
+\subsection{Solr}
+
+Solr (pronounced "solar") is an open-source enterprise-search platform, written in Java and powered by Lucene. It is developed by the Apache Software Foundation. \\
+
+Solr provides features such as: full-text search, hit highlighting, faceted search, and more. Interacting with Solr can be done through an HTTP web interface and schema-free JSON documents. \\
+
+Solr servers can run in a cluster, in which indexes are replicated. This improves scalability, fault tolerance, and allows for search to be distributed between servers.
+
+
+
+\subsection{ElasticSearch}
+
+ElasticSearch is an extremely popular, proprietary enterprise-search platform, written in Java and powered by Lucene. It is developed by the company Elastic~NV. \\
+
+Much like Solr, it provides full-text search, hit highlighting, aggregations\dots\ Interaction can be done through an HTTP web interface and schema-free JSON documents; ElasticSearch supports dynamic clustering, index replication, to achieve scalability, fault tolerance, and allow for  distributed search. \\
+
+The ElasticSearch ecosystem (a.k.a. the \emph{``Elastic Stack"}) also includes: Kibana (for data visualisation, Machine Learning, Alerts\dots), Logstash (for data collection and integration). Some features (e.g. Machine Learning) are only accessible with the appropriate subscription level. \\
+
+
+\bigskip
+
+\newpage
+
+\section{Prerequisites}
+
+\emph{Part~``\longref{analysing-lyrics}"} does not require any technical knowledge, as it shows the results of our statistical analysis of word usage in Japanese songs. \\
+
+For the rest of this document (which explains how we arrived at the results in Part~\ref{analysing-lyrics}), some technical knowledge is necessary. \\
+
+Below is the list of prerequisites to follow along the technical parts of this document:
+
+
+\begin{itemize}
+	\item no knowledge of \emph{Solr} or \emph{ElasticSearch} is required to follow this article. We will explain the core principles as needed
+	
+	\item for simplicity and ease of use, we will use \emph{Docker} to run Solr and ElasticSearch in a virtual, containerised environment.
+	
+	You need to have both \textbf{Docker} and \textbf{docker-compose} installed and ready to run on your system
+	
+	\item we use \textbf{Linux scripts} to run how environments. 
+	
+	Some knowledge of \emph{shell}, \emph{AWK}, or \emph{sed} will help you understand how the scripts work, but is not strictly necessary.
+	
+	It should be possible to run the scripts on Windows, using WSL 2 (Windows Subsystem for Linux 2), but please bear in mind that \emph{localhost} refers to the Linux virtual machine running on WSL 2. Accessing a service running on the Windows host from the WSL 2 Linux machine is a bit tricky\dots
+	
+	\item a basic understanding of \textbf{Web Services} is an advantage, as this is how we usually interact with Solr and ElasticSearch
+	
+	\item a basic understanding of \textbf{JSON} is necessary, as this is the format that we will use to exchange data with Solr and ElasticSearch (both the documents in input, and the query responses are in JSON format)
+\end{itemize}
+
+
+
+\newpage
+
+\section{About the dataset\dots}
+
+Normally when I write an article, I try to provide the reader with all the necessary information they would need to reproduce the experiments, as well as explore the data on their own, perform their own experimentations and come to their own conclusion. \\
+
+However, for this this article, this is not possible\dots\ because of copyright laws. \\
+
+Songs (both the music and the lyrics) are subject to copyright laws. \\
+
+
+
+A copyright is a form of intellectual property protection. It covers \emph{original works} and is generated \emph{automatically} upon creation of said work.
+Items that can be copyrighted include: poetry, novels, art, movies, research\footnote{which includes this paper}, songs\dots\ \\
+
+Individual words cannot be copyrighted. Words can be subject to trademark, a different kind of intellectual property protection which requires registration (and therefore is not automatic). \\
+
+
+For this reason, \emph{I cannot publish the dataset that this study is based on}, because the lyrics it contains are subject to copyright (despite the dataset being assembled from publicly-available information). \\
+
+I can, however, provide you with the results of this study (some statistical data about word usage). \emph{It is impossible to reconstruct the original lyrics based on the results of this study.}
+
+\bigskip
+\bigskip
+
+
+
+
+\newpage
+\section{General Information}
+
+This document was first published at: \\
+\mbox{} \hfill \url{https://pcaboche.github.io} 
+
+\subsection{Legal}
+\input{"READ_ME_(LEGAL).txt"}
+
+
+\bigskip
+\bigskip
+
+\section{Conventions}
+
+\subsection{Name order}
+
+Japanese names consist of a family name (surname), followed by a given name, in that order. \\
+
+When transcribing Japanese names into English, the policy ever since the Meiji era was to follow the English way of ordering names (i.e. first name first, family name last). However, in recent years this policy is being challenged, and Japanese names now tend to follow Japanese name order convention, even when transcribed in English. \\
+
+In this article, we follow the Japanese convention for ordering name (i.e. family name first) \emph{except} when the artist chose a different convention as their stage name (e.g. \emph{Kaneko Ayano}). \\
+
+

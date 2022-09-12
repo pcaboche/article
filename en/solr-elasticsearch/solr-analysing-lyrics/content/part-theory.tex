@@ -1,0 +1,151 @@
+% Copyright 2022 Pierre S. Caboche. All rights reserved.
+
+
+\renewcommand{\currentPart}{A bit of theory}
+\part{\currentPart} \label{part - A bit of theory}
+
+This part will us a quick overview of the concepts that make our text analysis possible in both Solr, and ElasticSearch.
+
+
+\section{Lemmatisation} \label{lemmatisation}
+
+\begin{displayquote}
+Lemmatisation (or lemmatization) in linguistics is the process of grouping together the inflected forms of a word so they can be analysed as a single item, identified by the word's lemma, or dictionary form. \\
+\phantom{.} \hfill -- \url{https://en.wikipedia.org/wiki/Lemmatisation}
+\end{displayquote}
+\bigskip
+
+For example in English, the verb ``to be" can take the following forms (inflexions): \emph{to be, be, am, are, is, 'm, 're, 's, was, were, isn't, aren't, wasn't, weren't, ain't\dots} \\
+
+Japanese also has inflexions (for verbs and i-adjectives), for example the verb 会う (au - ``to meet")\footnote{do not to confuse the verb 会う (au - ``to meet") with 合う (au - \emph{"to match"}). Same pronunciation, similar \emph{kanji}, different verbs\dots} can conjugate into: 会います (aimasu), 会わない (awanai), 会って (atte), 会った (atta), 会おう (aou), 会え(ae), 会うな (auna), 会える (aeru), 合われる (awareru)\dots\\
+
+On top of having inflections as shown above, Japanese also features \emph{agglutinations}, which allows to change the meaning of verbs and i-adjectives by stringing together some \emph{morphemes} (to make the negative form, past form, passive form, etc). \\
+
+For example, the verb 会う (au - \emph{"to meet"}) can conjugate into from 会います (aimasu - \emph{``(is) meeting"}) from which we derive the adjective\footnote{you read that right: the verb turned into an i-adjective} aitai (会いたい - \emph{``want to meet"}) which can then turn into, for example:
+\begin{itemize}
+	\item aitakunai (会いたくない) - \emph{``don't want to meet"}
+	\item aitakatta (会いたかった) - \emph{``wanted to meet"}
+	\item aitakunakatta (会いたくなかった) - \emph{``didn't want to meet"}
+	\item aitakunakattakutemo (会いたくなかったくても) - \emph{``whether (X) wanted to meet or not"}
+\end{itemize}
+
+%All of the forms above derive from the verb 会う (au - \emph{"to meet"}), not to be confused with the verb 合う (au - \emph{"to match"}). \\
+
+All those forms derive from the same \emph{lexeme} (by \emph{inflection}, \emph{agglutination}, or both). \\
+
+A \emph{lemma} is a particular inflection that is chosen to represent words belonging to the same \emph{lexeme}. 
+
+This is often referred to as the ``dictionary form", ``canonical form", or ``citation form". By convention, for verbs it's the infinitive form which is chosen as the ``canonical form" (in this example: 会う ).\\
+
+During the \emph{lemmatisation} process, words in a text will be replaced by their canonical form. 
+These will then be used as \emph{tokens} in the \emph{tokenisation} process (section~\ref{tokenisation}). \\
+
+
+
+
+\section{Morphologic analysers} \label{morphologic-analysers}
+
+
+\begin{displayquote}
+\emph{``Morphology, in linguistics, is the study of the forms of words, and the ways in which words are related to other words of the same language."}  \\
+\phantom{.} \hfill -- \url{https://cowgill.ling.yale.edu/sra/morphology_ecs.ht}
+\end{displayquote}
+\bigskip
+
+A \emph{morphologic analyser} is a piece of software which will take a text in a certain language, analyse this text, and extract the structure of this text. \\
+
+From there, it is possible to extract a list of \emph{lexemes} (section \ref{lemmatisation}), together with some extra information (e.g. lexeme position, offset), which can be used for the \emph{tokenisation} process (section \ref{tokenisation}). \\
+
+
+\subsection{The kuromoji analyser}  \label{kuromoji}
+
+In Lucene (the project which powers both Solr and Elasticsearch), the analysis of texts in Japanese is done using \kuromoji, an open source Japanese morphological analyser written in Java. \\
+
+Kuromoji can be used on its own. \\
+
+According to its website (see below), \kuromoji\ has been donated to the Apache Software Foundation. \\
+
+Website: \hfill \url{https://www.atilika.org} \hfill \hphantom{.} \\
+
+
+\section{Tokenisation} \label{tokenisation}
+
+\emph{Tokenisation} (or \emph{tokenization}) is the process of breaking down some input (e.g. a piece of text) into small units called \emph{tokens}. \\ 
+
+Such tokens are an essential part of indexing (for Solr, ElasticSearch), or Natural Language Processing (NLP). \\
+
+For text, a \emph{morphologic analyser} (section \ref{morphologic-analysers}) for the appropriate language is used to extract the tokens which will be used for indexing. \\
+
+Custom \emph{tokenisers} can also be written to extract important information from a file in a specific format. \\
+
+
+\section{tf–idf} \label{tf–idf}
+
+
+\begin{displayquote}
+\emph{``In information retrieval, \emph{tf–idf}, short for \emph{term frequency–inverse document frequency}, is a numerical statistic that is intended to reflect how important a word is to a document in a collection or corpus."}  \\
+\phantom{.} \hfill -- \url{https://en.wikipedia.org/wiki/Tf%E2%80%93idf}
+\end{displayquote}
+\bigskip
+
+In other words, \emph{tf–idf} is a measure of \emph{``how often a \emph{term} appears in a document \emph{(term frequency)} relative to how often it appears in general, across all documents \emph{(inverse document frequency)}?"}
+
+\emph{tf–idf} is used to measure the \emph{relevance} of a document given a search query. \\
+
+\emph{tf–idf} is also used to find documents with similar word-usage, as we will see in section \emph{\longref{mlt}}.
+
+\bigskip
+
+There are different ways to weigh both the \emph{term frequency} and \emph{inverse document frequency}. For more information on \emph{tf–idf}, see: \\
+\phantom{.} \hfill
+\url{https://en.wikipedia.org/wiki/Tf%E2%80%93idf}
+
+
+
+
+
+\section{TermsVector}
+
+\emph{tf–idf} term vectors are a data-structure which is used to represent text documents, with the intent of performing text mining and machine learning operations. \\
+
+\emph{termVector}s contain information about terms, such as: term (lexeme), frequency, position, start offset, end offset. \\
+
+We will be able to visualise the content of \emph{termVector} in ElasticSearch in sections~\ref{es-testing-kuromoji} and \ref{es-viewing-termsVector}.
+
+
+\bigskip
+
+
+\section{Faceting and Aggregations} \label{faceting-and-aggregation}
+
+
+\emph{Aggregations} (an extension of \faceting), is a very important concept in Solr and ElasticSearch. Our whole statistical study relies on such concepts. \\
+
+\medskip
+
+A \emph{facet} takes a set of documents as input (as returned by a query) and outputs a summary, based on document counts (e.g. number of documents that fall into a certain category / are marked with a certain tag). \\
+
+
+
+\emph{Aggregations} takes this concept a lot further. As mentioned in the documentation:
+
+
+
+
+\begin{displayquote}
+	\emph{``Elasticsearch organizes aggregations into three categories:}
+
+	\begin{itemize}
+		\item \emph{\emph{Metric} aggregations that calculate metrics, such as a sum or average, from field values.
+		\item \emph{Bucket} aggregations that group documents into buckets, also called bins, based on field values, ranges, or other criteria.
+		\item \emph{Pipeline} aggregations that take input from other aggregations instead of documents or fields.}
+	\end{itemize}" \newline
+	--- \url{https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations.html}
+\end{displayquote}
+
+\bigskip
+
+ElasticSearch uses the term \aggregation\ (and all their features). \\
+
+Solr uses the term \faceting, and has more limited capabilities (but are easier to use, and are enough for our use-case). \\
+
